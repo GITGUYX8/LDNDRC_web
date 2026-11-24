@@ -1165,6 +1165,41 @@
 
   /* ---------- boot ---------- */
 
+  var brand = document.getElementById("brand");
+  var brandSub = brand && brand.querySelector(".brand-sub");
+  var brandDefault = "CONCEPT MAP";
+  var brandFull = "LOCAL DYNAMIC NODE DISCOVERY ROS CLUSTER";
+  var scrambleTimer = null;
+  var scrambleChars = "░▒▓#%&@01<>/\\\\";
+
+  function scrambleBrand(target) {
+    if (!brandSub) return;
+    if (scrambleTimer) cancelAnimationFrame(scrambleTimer);
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) { brandSub.textContent = target; return; }
+    var started = performance.now();
+    var duration = 720;
+    function tick(now) {
+      var progress = Math.min(1, (now - started) / duration);
+      var locked = Math.floor(progress * target.length);
+      var text = "";
+      for (var i = 0; i < target.length; i++) {
+        text += i < locked ? target[i] : scrambleChars[(i * 7 + Math.floor(now / 45)) % scrambleChars.length];
+      }
+      brandSub.textContent = text;
+      if (progress < 1) scrambleTimer = requestAnimationFrame(tick);
+      else brandSub.textContent = target;
+    }
+    scrambleTimer = requestAnimationFrame(tick);
+  }
+
+  if (brand && brandSub) {
+    brand.addEventListener("pointerenter", function () { scrambleBrand(brandFull); });
+    brand.addEventListener("pointerleave", function () { scrambleBrand(brandDefault); });
+    brand.addEventListener("focus", function () { scrambleBrand(brandFull); });
+    brand.addEventListener("blur", function () { scrambleBrand(brandDefault); });
+  }
+
   computeLayouts();
   render();
   fit(false);
