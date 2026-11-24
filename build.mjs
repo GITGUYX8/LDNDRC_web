@@ -561,4 +561,4 @@ function dirSize(dir) {
   return total;
 }
 console.log(`\n  dist ready — ${humanBytes(dirSize(dist))}`);
-console.log("  open docs-site/dist/index.html or: npm run serve\n");
+console.log("  open dist/index.html or: npm run serve\n");

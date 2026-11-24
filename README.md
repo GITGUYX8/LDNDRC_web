@@ -12,7 +12,7 @@ rather than copied. No nixmap assets, CSS, mascot, or simulations are used.
 ## Build and run
 
 ```bash
-cd docs-site
+cd ~/.ldndrc_doc_web
 npm install
 npm run build      # writes dist/
 npm run serve      # builds, then serves dist/ on http://127.0.0.1:8090
@@ -26,8 +26,7 @@ lessons, the routes, and the library. Fonts are inlined as `data:` URIs so
 ## What is where
 
 ```text
-docs-site/
-  content/
+content/
     graph.json          topics, domains, goals, prerequisites, verify commands
     topics/<id>.md      one lesson per topic — the authored prose
   assets/fonts/         Ubuntu Sans + JetBrains Mono (woff2)
