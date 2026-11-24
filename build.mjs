@@ -546,7 +546,8 @@ import { fileURLToPath } from "node:url";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "dist");
 const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
-  ".js": "text/javascript; charset=utf-8", ".woff2": "font/woff2", ".json": "application/json",
+  ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8",
+  ".woff2": "font/woff2", ".json": "application/json",
   ".svg": "image/svg+xml", ".png": "image/png", ".md": "text/markdown; charset=utf-8" };
 const port = Number(process.env.PORT || 8090);
 
