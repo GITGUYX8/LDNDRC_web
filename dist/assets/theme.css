@@ -155,10 +155,12 @@ code, pre, kbd, samp { font-family: var(--font-mono); font-variant-ligatures: no
   background: var(--surface);
   border-radius: var(--corner-chip);
   box-shadow: var(--card-lift);
-  transition: max-width .35s var(--ease), background .18s ease, box-shadow .18s ease;
+  text-decoration: none;
+  transition: max-width .35s var(--ease), background .18s ease;
   max-width: 180px;
   overflow: hidden;
 }
+.brand:hover, .brand:focus-visible { text-decoration: none; }
 .brand-mark {
   width: 30px; height: 30px;
   display: grid; place-items: center;
@@ -174,7 +176,6 @@ code, pre, kbd, samp { font-family: var(--font-mono); font-variant-ligatures: no
   font-weight: 900;
   font-size: 0.95rem;
   letter-spacing: 0.01em;
-  text-shadow: 0 0 0 transparent;
 }
 .brand-sub {
   font-family: var(--font-mono);
@@ -184,22 +185,9 @@ code, pre, kbd, samp { font-family: var(--font-mono); font-variant-ligatures: no
   color: var(--text-soft);
   margin-top: 3px;
 }
-.brand:hover { max-width: 430px; background: var(--surface-raised); box-shadow: 0 5px 0 var(--card-edge), 0 0 20px #fabd2f1c; }
-.brand:hover .brand-name { animation: brand-glitch .72s steps(2,end) 1; }
-.brand:hover .brand-mark { animation: brand-pulse .72s ease 1; }
-@keyframes brand-glitch {
-  0%,100% { transform: translate(0); text-shadow: none; }
-  18% { transform: skewX(-8deg); text-shadow: 2px 0 var(--red), -2px 0 var(--blue); }
-  35% { transform: translateX(3px); text-shadow: -3px 0 var(--red), 3px 0 var(--aqua); }
-  52% { transform: skewX(5deg); text-shadow: 1px 0 var(--purple), -1px 0 var(--green); }
-  70% { transform: translateX(-2px); text-shadow: 2px 0 var(--red), -2px 0 var(--blue); }
-}
-@keyframes brand-pulse {
-  50% { box-shadow: 0 0 0 5px #fabd2f26, 0 0 22px #fabd2f66; }
-}
+.brand:hover, .brand:focus-visible { max-width: 430px; background: var(--surface-raised); }
 @media (prefers-reduced-motion: reduce) {
   .brand { transition: none; }
-  .brand:hover .brand-name, .brand:hover .brand-mark { animation: none; }
 }
 
 .top-actions { display: flex; gap: 8px; align-items: center; }
