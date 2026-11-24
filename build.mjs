@@ -274,7 +274,8 @@ function head({ title, description, cssHref, extra = "" }) {
 <title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(description || "")}">
 <link rel="stylesheet" href="${cssHref}">
-<script type="module" src="${cssHref.replace("theme.css", "mermaid-viewer.js")}"></script>
+<script defer src="${cssHref.replace("theme.css", "vendor/mermaid.min.js")}"></script>
+<script defer src="${cssHref.replace("theme.css", "mermaid-viewer.js")}"></script>
 ${extra}
 </head>`;
 }
@@ -313,8 +314,8 @@ fs.copyFileSync(path.join(root, "src/app.js"), path.join(dist, "assets/app.js"))
 fs.copyFileSync(path.join(root, "src/mermaid-viewer.js"), path.join(dist, "assets/mermaid-viewer.js"));
 mkdir(path.join(dist, "assets/vendor"));
 fs.copyFileSync(
-  path.join(root, "node_modules/mermaid/dist/mermaid.esm.min.mjs"),
-  path.join(dist, "assets/vendor/mermaid.esm.min.mjs")
+  path.join(root, "node_modules/mermaid/dist/mermaid.min.js"),
+  path.join(dist, "assets/vendor/mermaid.min.js")
 );
 mkdir(path.join(dist, "assets/fonts"));
 for (const f of fs.readdirSync(path.join(root, "assets/fonts"))) {

@@ -1,12 +1,8 @@
 const diagrams = [...document.querySelectorAll(".mermaid-diagram")];
 
 if (diagrams.length) {
-  const moduleUrl = new URL("./vendor/mermaid.esm.min.mjs", import.meta.url).href;
-  let mermaidPromise;
-
   function loadMermaid() {
-    if (!mermaidPromise) mermaidPromise = import(moduleUrl).then((m) => m.default || m);
-    return mermaidPromise;
+    return Promise.resolve(window.mermaid);
   }
 
   function mount(diagram, index) {
@@ -65,6 +61,7 @@ if (diagrams.length) {
     viewport.addEventListener("pointercancel", () => { dragging = false; viewport.classList.remove("dragging"); });
 
     loadMermaid().then((mermaid) => {
+      if (!mermaid) throw new Error("Mermaid browser bundle did not load");
       mermaid.initialize({ startOnLoad: false, securityLevel: "loose", theme: "base", themeVariables: {
         background: "#1d2021", primaryColor: "#3c3836", primaryTextColor: "#fbf1c7",
         primaryBorderColor: "#fabd2f", lineColor: "#b8bb26", secondaryColor: "#32302f",
