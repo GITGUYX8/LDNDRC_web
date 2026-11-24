@@ -577,6 +577,29 @@ code, pre, kbd, samp { font-family: var(--font-mono); font-variant-ligatures: no
 }
 .code:hover .lang-tag { opacity: 0; }
 
+.mermaid-diagram {
+  position: relative;
+  margin: 1.2rem 0;
+  min-height: 180px;
+  background: var(--bg);
+  border-radius: var(--corner-chip);
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px #ffffff08;
+}
+.mermaid-diagram > pre { margin: 0; padding: 1rem; overflow: auto; color: var(--text-soft); }
+.mermaid-diagram.diagram-ready > pre { display: none; }
+.diagram-viewport { height: min(620px, 68vh); overflow: hidden; cursor: grab; display: grid; place-items: center; }
+.diagram-viewport.dragging { cursor: grabbing; }
+.diagram-canvas { transform-origin: center; transition: transform .2s var(--ease); padding: 32px; }
+.diagram-canvas svg { display: block; max-width: none; min-width: 420px; height: auto; }
+.diagram-toolbar { position: absolute; z-index: 2; top: 10px; right: 10px; display: flex; gap: 5px; opacity: .35; transition: opacity .18s ease; }
+.mermaid-diagram:hover .diagram-toolbar, .mermaid-diagram:focus-within .diagram-toolbar, .mermaid-diagram:fullscreen .diagram-toolbar { opacity: 1; }
+.diagram-toolbar button { border: 0; min-width: 32px; height: 30px; padding: 0 8px; border-radius: 8px; background: var(--surface-raised); color: var(--text-soft); cursor: pointer; font: 700 .72rem var(--font-mono); box-shadow: 0 3px 0 var(--card-edge); }
+.diagram-toolbar button:hover { color: var(--text); background: var(--line); }
+.mermaid-diagram:fullscreen, .mermaid-diagram.theater { position: fixed; z-index: 100; inset: 0; width: 100vw; height: 100vh; margin: 0; border-radius: 0; background: var(--bg); }
+.mermaid-diagram:fullscreen .diagram-viewport, .mermaid-diagram.theater .diagram-viewport { height: 100vh; }
+.diagram-error { color: var(--red); white-space: pre-wrap; padding: 1rem; }
+
 /* gruvbox highlight tokens */
 .hljs-comment, .hljs-quote { color: #928374; font-style: italic; }
 .hljs-keyword, .hljs-selector-tag, .hljs-literal { color: #fb4934; }

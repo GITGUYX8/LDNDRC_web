@@ -6,6 +6,7 @@
 <title>Checkpoint 20 — Real K3s Master Cutover + Baseline (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-20-real-master-cutover.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script type="module" src="../assets/mermaid-viewer.js"></script>
 
 </head>
 <body class="standalone">
@@ -43,7 +44,7 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-20-real-master-cutover.md · 6.4 KB</div>
 <h1 class="page-title">Checkpoint 20 — Real K3s Master Cutover + Baseline (detailed)</h1>
-<div class="prose"><h1 id="checkpoint-20-real-k3s-master-cutover-baseline-detailed">Checkpoint 20 — Real K3s Master Cutover + Baseline (detailed)</h1><h2 id="context">Context</h2><p>First run on a real K3s server on this laptop (<code>hari</code>, <code>192.168.1.37</code>,
+<div class="prose"><h2 id="context">Context</h2><p>First run on a real K3s server on this laptop (<code>hari</code>, <code>192.168.1.37</code>,
 K3s <code>v1.36.4+k3s1</code>, containerd <code>2.3.4</code>), replacing the k3d <code>ldndrc</code>
 demo cluster. Scope was master-only by decision: cutover, redeploy,
 baseline verify, docs. The guest full-agent join is explicitly deferred

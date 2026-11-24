@@ -6,6 +6,7 @@
 <title>Checkpoint 40 — CSRF login-lockout fix live (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-40-csrf-login-fix-live.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script type="module" src="../assets/mermaid-viewer.js"></script>
 
 </head>
 <body class="standalone">
@@ -43,7 +44,7 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-40-csrf-login-fix-live.md · 3.9 KB</div>
 <h1 class="page-title">Checkpoint 40 — CSRF login-lockout fix live (detailed)</h1>
-<div class="prose"><h1 id="checkpoint-40-csrf-login-lockout-fix-live-detailed">Checkpoint 40 — CSRF login-lockout fix live (detailed)</h1><h2 id="the-bug">The bug</h2><p>Re-login from a browser holding a stale <code>ldndrc_session</code> cookie →
+<div class="prose"><h2 id="the-bug">The bug</h2><p>Re-login from a browser holding a stale <code>ldndrc_session</code> cookie →
 <code>403 &quot;csrf token missing or invalid&quot;</code>, login handler never reached.
 <code>guardCSRF</code> required a CSRF header on <em>every</em> cookie-carrying POST,
 but login is the endpoint that <em>issues</em> tokens — it can never require

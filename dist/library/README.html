@@ -6,6 +6,7 @@
 <title>LDNDRC — Local Dynamic Node Discovery ROS Cluster — LDNDRC library</title>
 <meta name="description" content="Source document: README.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script type="module" src="../assets/mermaid-viewer.js"></script>
 
 </head>
 <body class="standalone">
@@ -43,7 +44,7 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · README.md · 21.4 KB</div>
 <h1 class="page-title">LDNDRC — Local Dynamic Node Discovery ROS Cluster</h1>
-<div class="prose"><h1 id="ldndrc-local-dynamic-node-discovery-ros-cluster">LDNDRC — Local Dynamic Node Discovery ROS Cluster</h1><p>A local-first, browser-accessible robotics simulation platform on a dynamic K3s cluster. High-end laptops (<strong>Hosts</strong>) contribute CPU/RAM/GPU to run isolated ROS 2 + Gazebo simulations; low-end laptops (<strong>Guests</strong>) act as thin clients — code, 3D sim, and desktop, all in the browser. No cloud, no dedicated server, just the LAN.</p>
+<div class="prose"><p>A local-first, browser-accessible robotics simulation platform on a dynamic K3s cluster. High-end laptops (<strong>Hosts</strong>) contribute CPU/RAM/GPU to run isolated ROS 2 + Gazebo simulations; low-end laptops (<strong>Guests</strong>) act as thin clients — code, 3D sim, and desktop, all in the browser. No cloud, no dedicated server, just the LAN.</p>
 <p><strong>Who does what:</strong></p>
 <table>
 <thead>
@@ -69,7 +70,7 @@
 <td>Runs K3s + control panel, approves Host join requests, manages sessions</td>
 </tr>
 </tbody></table>
-<h2 id="architecture">Architecture</h2><h3 id="system-overview">System Overview</h3><div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart TB
+<h2 id="architecture">Architecture</h2><h3 id="system-overview">System Overview</h3><div class="mermaid-diagram" data-mermaid="flowchart TB
     Guest[(&quot;Guest Laptop&lt;br/&gt;browser only&quot;)]
 
     Guest -- &quot;control.ros-platform.local&quot; --&gt; TR[&quot;Traefik Ingress&lt;br/&gt;K3s on master laptop&quot;]
@@ -91,7 +92,33 @@
     Lap[(&quot;Laptop&lt;br/&gt;join candidate&quot;)] -- &quot;POST /api/nodes/register&quot; --&gt; CP
     CP -- &quot;operator approves&lt;br/&gt;JWT&quot; --&gt; Lap
     Lap -- &quot;poll → k3s token&lt;br/&gt;agent join, label role=host&quot; --&gt; K3S[&quot;K3s Cluster&lt;br/&gt;Flannel: HTTP/WS/WebRTC only&quot;]
-    Sess -. &quot;schedules via&lt;br/&gt;nodeSelector role=host&quot; .-&gt; K3S</code></pre></div><h3 id="session-lifecycle">Session Lifecycle</h3><div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart LR
+    Sess -. &quot;schedules via&lt;br/&gt;nodeSelector role=host&quot; .-&gt; K3S"><pre><code class="language-mermaid">flowchart TB
+    Guest[(&quot;Guest Laptop&lt;br/&gt;browser only&quot;)]
+
+    Guest -- &quot;control.ros-platform.local&quot; --&gt; TR[&quot;Traefik Ingress&lt;br/&gt;K3s on master laptop&quot;]
+    Guest -- &quot;editor / desktop / gazebo&lt;br/&gt;.ros-platform.local&quot; --&gt; TR
+    TR --&gt; CP[&quot;Control Panel :8082&lt;br/&gt;Go, single static binary&lt;br/&gt;ns: ldndrc&quot;]
+
+    CP -- &quot;JWT auth&lt;br/&gt;POST /api/auth/login&quot; --&gt; Auth[&quot;internal/auth&lt;br/&gt;issue + verify&quot;]
+    CP -- &quot;provision per user&lt;br/&gt;Deployment + Service&lt;br/&gt;+ home PVC 5Gi&quot; --&gt; Sess[&quot;internal/sessions&lt;br/&gt;client-go, ns-scoped RBAC&quot;]
+    Sess --&gt; Pod[&quot;Session Pod&lt;br/&gt;unique ROS_DOMAIN_ID&lt;br/&gt;DDS localhost-only&quot;]
+
+    Pod --&gt; Code[&quot;code-server&lt;br/&gt;editor + terminal&quot;]
+    Pod --&gt; Selkies[&quot;Selkies&lt;br/&gt;WebRTC desktop&quot;]
+    Pod --&gt; GZ[&quot;gazebo-web :9002&lt;br/&gt;supervised WS bridge&quot;]
+    GZ -- &quot;ws scene stream&quot; --&gt; Viewer[&quot;gzweb viewer&lt;br/&gt;Three.js WebGL&quot;]
+    Pod -. &quot;user launches&lt;br/&gt;foreground&quot; .-&gt; Sim[&quot;Gazebo Sim&lt;br/&gt;student&#39;s world&quot;]
+
+    CP -- &quot;cookie-auth gateway&lt;br/&gt;ReverseProxy&quot; --&gt; Pod
+
+    Lap[(&quot;Laptop&lt;br/&gt;join candidate&quot;)] -- &quot;POST /api/nodes/register&quot; --&gt; CP
+    CP -- &quot;operator approves&lt;br/&gt;JWT&quot; --&gt; Lap
+    Lap -- &quot;poll → k3s token&lt;br/&gt;agent join, label role=host&quot; --&gt; K3S[&quot;K3s Cluster&lt;br/&gt;Flannel: HTTP/WS/WebRTC only&quot;]
+    Sess -. &quot;schedules via&lt;br/&gt;nodeSelector role=host&quot; .-&gt; K3S</code></pre></div><h3 id="session-lifecycle">Session Lifecycle</h3><div class="mermaid-diagram" data-mermaid="flowchart LR
+    Login[&quot;POST /api/auth/login&lt;br/&gt;JWT + session cookie&quot;] --&gt; Create[&quot;POST /api/sessions&lt;br/&gt;202 provisioning&quot;]
+    Create --&gt; Ready[&quot;Deployment available&lt;br/&gt;→ ready&quot;]
+    Ready --&gt; Use[&quot;Browser tools&lt;br/&gt;editor / desktop / gazebo&lt;br/&gt;via gateway&quot;]
+    Use --&gt; Done[&quot;DELETE /api/sessions/{id}&lt;br/&gt;tear down&quot;]"><pre><code class="language-mermaid">flowchart LR
     Login[&quot;POST /api/auth/login&lt;br/&gt;JWT + session cookie&quot;] --&gt; Create[&quot;POST /api/sessions&lt;br/&gt;202 provisioning&quot;]
     Create --&gt; Ready[&quot;Deployment available&lt;br/&gt;→ ready&quot;]
     Ready --&gt; Use[&quot;Browser tools&lt;br/&gt;editor / desktop / gazebo&lt;br/&gt;via gateway&quot;]

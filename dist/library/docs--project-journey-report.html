@@ -6,6 +6,7 @@
 <title>LDNDRC Project Journey — A Newcomer&#39;s Guide (Visual Report) — LDNDRC library</title>
 <meta name="description" content="Source document: docs/project-journey-report.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script type="module" src="../assets/mermaid-viewer.js"></script>
 
 </head>
 <body class="standalone">
@@ -43,7 +44,7 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · docs/project-journey-report.md · 27.7 KB</div>
 <h1 class="page-title">LDNDRC Project Journey — A Newcomer&#39;s Guide (Visual Report)</h1>
-<div class="prose"><h1 id="ldndrc-project-journey-a-newcomer-s-guide-visual-report">LDNDRC Project Journey — A Newcomer&#39;s Guide (Visual Report)</h1><blockquote>
+<div class="prose"><blockquote>
 <p>Companion to <code>docs/roadmap.md</code> (what is left, in build order) and
 <code>local_dev_docs/detailed-project-report.md</code> (technical appendix with proofs).
 This document is the <em>friendly front door</em>: what the finished classroom
@@ -92,7 +93,28 @@ no prior context. Jargon is explained in (brackets: plain words) on first use.</
 <li><strong>Final:</strong> many laptops join with one click; every student gets code + 3D sim + desktop in the browser; login is safe (encrypted traffic = TLS, fake-request protection = CSRF); boxes survive restarts; works on Windows too; teachers see dashboards and limits.</li>
 <li><strong>Now (Oct 2026, <code>main</code>):</strong> one real organizer laptop (<code>hari</code>, <code>192.168.1.37:6443</code>) runs everything; students do get code + desktop + sim-data through the browser; login has fake-request protection but no encryption yet; boxes survive small restarts but not big ones; new laptops can ask to join and be approved, but the final automatic &quot;become part of the cluster&quot; step still needs a paired test with two real laptops.</li>
 </ul>
-<div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart LR
+<div class="mermaid-diagram" data-mermaid="flowchart LR
+    classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
+    classDef part fill:#6b4e12,stroke:#f5b86c,color:#fff
+    classDef missing fill:#5c1d1d,stroke:#f56c6c,color:#fff
+
+    subgraph FINAL[&quot;Final dream (plan.md + R7)&quot;]
+        F1[&quot;Many laptops share power&lt;br/&gt;(one-click join, Windows too)&quot;]:::missing
+        F2[&quot;Code + 3D sim + desktop&lt;br/&gt;in the browser&quot;]:::missing
+        F3[&quot;Safe login&lt;br/&gt;(encrypted TLS + CSRF)&quot;]:::missing
+        F4[&quot;Survives restarts&lt;br/&gt;(memory on disk)&quot;]:::missing
+        F5[&quot;Teacher view + limits&lt;br/&gt;(dashboards, quotas)&quot;]:::missing
+    end
+
+    subgraph NOW[&quot;Now (Oct 2026, main)&quot;]
+        N1[&quot;One real organizer (hari)&lt;br/&gt;+ browser website live&quot;]:::done
+        N2[&quot;Code 200 + Desktop 200&lt;br/&gt;live (sim data, viewer next)&quot;]:::done
+        N3[&quot;Login + CSRF live&lt;br/&gt;(TLS next)&quot;]:::part
+        N4[&quot;Survives small restarts&lt;br/&gt;(big ones next)&quot;]:::part
+        N5[&quot;Admin cards live&lt;br/&gt;(limits next)&quot;]:::part
+    end
+
+    NOW -.-&gt;|&quot;left to build&quot;| FINAL"><pre><code class="language-mermaid">flowchart LR
     classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
     classDef part fill:#6b4e12,stroke:#f5b86c,color:#fff
     classDef missing fill:#5c1d1d,stroke:#f56c6c,color:#fff
@@ -166,7 +188,40 @@ NOW: one organizer laptop live | code+desktop live, sim viewer next |
 </tr>
 </tbody></table>
 <h2 id="2-how-it-fits-together-architecture-with-brackets">2. How it fits together (architecture with brackets)</h2><p>Read the boxes top to bottom: your laptop at the top, the organizer in the middle, the sealed robot boxes at the bottom.</p>
-<div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart TB
+<div class="mermaid-diagram" data-mermaid="flowchart TB
+    classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
+    classDef part fill:#6b4e12,stroke:#f5b86c,color:#fff
+    classDef missing fill:#5c1d1d,stroke:#f56c6c,color:#fff
+    classDef gone fill:#2a2d34,stroke:#6b7280,color:#ccc
+
+    Guest([&quot;Guest laptop&lt;br/&gt;(weak laptop, browser only)&lt;br/&gt;✅ Live&quot;]):::done
+    LAN[&quot;Same Wi-Fi + name list&lt;br/&gt;(hosts file: nickname → address)&lt;br/&gt;✅ Live&quot;]:::done
+    Door[&quot;Traefik (the front door)&lt;br/&gt;(reads the web address,&lt;br/&gt;sends you to the right place)&lt;br/&gt;✅ Live&quot;]:::done
+    Desk[&quot;Control panel (the reception desk, Go)&lt;br/&gt;(login + create boxes + guard + find masters)&lt;br/&gt;✅ Live&quot;]:::done
+    Site[&quot;Student website (built into the desk)&lt;br/&gt;(Login / Launch / Workspace / Admin)&lt;br/&gt;✅ Live&quot;]:::done
+    Org[&quot;K3s organizer (real master hari :6443)&lt;br/&gt;(decides which laptop runs what)&lt;br/&gt;✅ Live&quot;]:::done
+    Box[&quot;Sealed box per student&lt;br/&gt;(Deployment: the recipe + Service: the address&lt;br/&gt;+ PVC: the private disk 5Gi)&lt;br/&gt;✅ Live&quot;]:::done
+    World[&quot;Robot world pod (one running box)&lt;br/&gt;(code-server: editor 200 = OK&lt;br/&gt;Selkies: desktop 200 = OK&lt;br/&gt;bridge 404 = data yes, pretty page no)&lt;br/&gt;✅ Live&quot;]:::done
+    View[&quot;Headlamp (the glass wall)&lt;br/&gt;(see everything running, token key)&lt;br/&gt;✅ Live&quot;]:::done
+    Announce[&quot;mDNS announcement&lt;br/&gt;(shouting &#39;classroom here!&#39; on the Wi-Fi)&lt;br/&gt;✅ Live, guest hearing pending&quot;]:::part
+
+    Fix[&quot;Login small fix&lt;br/&gt;(old cookie wrongly blocks login)&lt;br/&gt;🔴 Next&quot;]:::missing
+    Memory[&quot;Full memory (R2-final)&lt;br/&gt;(approvals + boxes on real disk)&lt;br/&gt;🔴 Next&quot;]:::missing
+    Pretty[&quot;Pretty 3D viewer&lt;br/&gt;(today: data in a frame)&lt;br/&gt;🔴 Next&quot;]:::missing
+    Join[&quot;Second laptop fully joins&lt;br/&gt;(install + watcher sees it)&lt;br/&gt;🔴 Needs two laptops&quot;]:::missing
+    Safe[&quot;Full safety (R7)&lt;br/&gt;(encryption + limits + dashboards)&lt;br/&gt;🔴 Later&quot;]:::missing
+
+    Old[&quot;Removed: one shared box&lt;br/&gt;old /code paths, systemd plan&lt;br/&gt;tiny demo image as default, Selkies 1.x&quot;]:::gone
+
+    Guest --&gt; LAN --&gt; Door --&gt; Desk
+    Desk --&gt; Site
+    Desk --&gt; Org --&gt; Box --&gt; World
+    Guest --&gt; View
+    Desk -.-&gt; Announce
+    Desk -.-&gt; Fix
+    Desk -.-&gt; Memory
+    Site -.-&gt; Pretty
+    Desk -.-&gt; Join"><pre><code class="language-mermaid">flowchart TB
     classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
     classDef part fill:#6b4e12,stroke:#f5b86c,color:#fff
     classDef missing fill:#5c1d1d,stroke:#f56c6c,color:#fff
@@ -287,7 +342,49 @@ Removed along the way: one shared box, old web paths, systemd plan,
 every viewer). The native <code>mindmap</code> keyword was tried first and broke:
 it cannot handle <code>(</code> <code>)</code> or <code>&lt;br/&gt;</code> inside labels.</p>
 </blockquote>
-<div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart TB
+<div class="mermaid-diagram" data-mermaid="flowchart TB
+    classDef root fill:#0b0e14,stroke:#7c6cf5,color:#fff,stroke-width:3px
+    classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
+    classDef half fill:#6b4e12,stroke:#f5b86c,color:#fff
+    classDef next fill:#5c1d1d,stroke:#f56c6c,color:#fff
+
+    ROOT([&quot;LDNDRC classroom cluster&lt;br/&gt;(hub = what is built vs left)&quot;]):::root
+
+    EXP[&quot;Student experience ✅&lt;br/&gt;(mostly live)&quot;]:::done
+    JOIN[&quot;Cluster and joining 🟡&lt;br/&gt;(half done)&quot;]:::half
+    WORLD[&quot;Robot world ✅&lt;br/&gt;(live)&quot;]:::done
+    SAFE[&quot;Safety and memory 🟡&lt;br/&gt;(half done)&quot;]:::half
+    VIEW[&quot;Teacher view 🟡&lt;br/&gt;(half done)&quot;]:::half
+
+    ROOT --&gt; EXP &amp; JOIN &amp; WORLD &amp; SAFE &amp; VIEW
+
+    EXP --&gt; E1[&quot;Login ✅ live&quot;]:::done
+    EXP --&gt; E2[&quot;Launch button ✅ live&quot;]:::done
+    EXP --&gt; E3[&quot;Code editor ✅ live&quot;]:::done
+    EXP --&gt; E4[&quot;Desktop screen ✅ live&quot;]:::done
+    EXP --&gt; E5[&quot;Sim data ✅ live&quot;]:::done
+    EXP --&gt; E6[&quot;Pretty 3D viewer 🔴 next&quot;]:::next
+
+    JOIN --&gt; J1[&quot;Ask to join ✅ live&quot;]:::done
+    JOIN --&gt; J2[&quot;Approve laptops ✅ live&quot;]:::done
+    JOIN --&gt; J3[&quot;One-time ticket ✅ live&quot;]:::done
+    JOIN --&gt; J4[&quot;Wi-Fi announce 🟡&lt;br/&gt;(shouting live, hearing pending)&quot;]:::half
+    JOIN --&gt; J5[&quot;Second laptop install 🔴&lt;br/&gt;(needs two laptops)&quot;]:::next
+
+    WORLD --&gt; W1[&quot;Real 10.8GB picture ✅ live&quot;]:::done
+    WORLD --&gt; W2[&quot;TurtleBot3 moves ✅ live&quot;]:::done
+    WORLD --&gt; W3[&quot;Offline models ✅ live&quot;]:::done
+    WORLD --&gt; W4[&quot;GPU sharing 🔴 later&quot;]:::next
+
+    SAFE --&gt; F1[&quot;Click protection ✅ live&quot;]:::done
+    SAFE --&gt; F2[&quot;Login small fix 🔴 next&quot;]:::next
+    SAFE --&gt; F3[&quot;Small-restart memory ✅ live&quot;]:::done
+    SAFE --&gt; F4[&quot;Full-disk memory 🔴 next&quot;]:::next
+    SAFE --&gt; F5[&quot;Encryption and limits 🔴 later (R7)&quot;]:::next
+
+    VIEW --&gt; V1[&quot;See sessions ✅ live&quot;]:::done
+    VIEW --&gt; V2[&quot;Approve laptops ✅ live&quot;]:::done
+    VIEW --&gt; V3[&quot;Dashboards 🔴 later&quot;]:::next"><pre><code class="language-mermaid">flowchart TB
     classDef root fill:#0b0e14,stroke:#7c6cf5,color:#fff,stroke-width:3px
     classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
     classDef half fill:#6b4e12,stroke:#f5b86c,color:#fff
@@ -336,7 +433,31 @@ LDNDRC
 ├── Cluster+joining 🟡 (ask/approve/ticket live; announce half; install needs two laptops)
 ├── Robot world ✅ (real picture, TurtleBot moves, offline models; GPU later)
 ├── Safety+memory 🟡 (click-protection + small-restart live; login fix + full memory + encryption next)
-└── Teacher view 🟡 (see + approve live; dashboards later)</code></pre></div><h3 id="3b-journey-flowchart-the-in-what-order-good-for-history">3b. Journey flowchart (the &quot;in what order&quot; — good for history)</h3><div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart LR
+└── Teacher view 🟡 (see + approve live; dashboards later)</code></pre></div><h3 id="3b-journey-flowchart-the-in-what-order-good-for-history">3b. Journey flowchart (the &quot;in what order&quot; — good for history)</h3><div class="mermaid-diagram" data-mermaid="flowchart LR
+    classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
+    classDef prov fill:#6b4e12,stroke:#f5b86c,color:#fff
+    classDef missing fill:#5c1d1d,stroke:#f56c6c,color:#fff
+    classDef gone fill:#2a2d34,stroke:#6b7280,color:#ccc
+
+    GEN[&quot;Start&lt;br/&gt;idea + first scripts&quot;]:::done
+    FND[&quot;Foundation CP01–04&lt;br/&gt;(join check, desk skeleton,&lt;br/&gt;recipes, design)&quot;]:::done
+    SES[&quot;One box per student CP05–06&lt;br/&gt;(recipe + address + disk)&quot;]:::done
+    GATE[&quot;Doors CP07 + R1&lt;br/&gt;(login guard + names,&lt;br/&gt;old paths deleted)&quot;]:::done
+    PROOF[&quot;Proof CP08–10&lt;br/&gt;(tests + live + glass wall)&quot;]:::done
+    DEMO[&quot;Demo CP11–12&lt;br/&gt;(GPU optional + tiny picture)&quot;]:::done
+    JOIN[&quot;Welcoming CP14–19&lt;br/&gt;(ask/approve/ticket&lt;br/&gt;+ pocket tool + releases)&quot;]:::done
+    REAL[&quot;Real organizer CP20&lt;br/&gt;(k3d demo → real hari&lt;br/&gt;+ 2 real bug fixes)&quot;]:::done
+    SAFE[&quot;Safe + memory CP21&lt;br/&gt;(R3 click-guard + R2 notebook)&quot;]:::done
+    SITE[&quot;Website CP22–26&lt;br/&gt;(R4 Login/Launch/&lt;br/&gt;Workspace/Admin)&quot;]:::done
+    WORLD[&quot;Real world CP27–38&lt;br/&gt;(10.8GB + desktop 200&lt;br/&gt;+ sim at full speed)&quot;]:::done
+    ONE[&quot;One line CP39&lt;br/&gt;(both tracks merged)&quot;]:::done
+    YOU[&quot;YOU ARE HERE&lt;br/&gt;Oct 2026 main ✅&quot;]:::prov
+    NEXT[&quot;Next: login fix&lt;br/&gt;full memory, viewer&quot;]:::missing
+    TWOLAP[&quot;Two-laptop join&lt;br/&gt;(R5)&quot;]:::missing
+    STURDY[&quot;Sturdy (R7)&lt;br/&gt;+ Windows + docs&quot;]:::missing
+    OLD[&quot;Replaced: shared box,&lt;br/&gt;old paths, systemd,&lt;br/&gt;tiny default, Selkies 1.x&quot;]:::gone
+
+    GEN --&gt; FND --&gt; SES --&gt; GATE --&gt; PROOF --&gt; DEMO --&gt; JOIN --&gt; REAL --&gt; SAFE --&gt; SITE --&gt; WORLD --&gt; ONE --&gt; YOU --&gt; NEXT --&gt; TWOLAP --&gt; STURDY"><pre><code class="language-mermaid">flowchart LR
     classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
     classDef prov fill:#6b4e12,stroke:#f5b86c,color:#fff
     classDef missing fill:#5c1d1d,stroke:#f56c6c,color:#fff
@@ -374,7 +495,22 @@ Replaced: shared box, old paths, systemd, tiny default, Selkies 1.x.</code></pre
 <li><strong>Real organizer + website (no more demo).</strong> We moved from a pretend cluster (k3d: cluster-in-a-box for practice) to a real K3s on <code>hari</code>, fixed two real bugs found only there (Wi-Fi wildcard DNS eating our addresses → trailing-dot fix; update deadlock → delete-old-first rule), added click-protection + the notebook that remembers boxes, and built the student website (Login → Launch stepper → Workspace with Code/Sim/Split + Desktop + Admin cards).</li>
 <li><strong>Real robot world (the heavy lifting).</strong> Built the 8.25GB base, then the 10.2GB world (Selkies broken upstream → shipped editor+sim first), proved it boots, froze it with version tags, flipped the live cluster to it, then added Selkies 2.0 (desktop picture live) and pre-packed the two 3D models (Ground Plane + Sun) so the robot moves even with no internet — full speed on plain CPU. Recorded the packing math (2.4GB to send, 10.8GB on disk). Merged both tracks into one <code>main</code>.</li>
 </ol>
-<h2 id="4-joining-flow-how-a-laptop-is-welcomed-step-by-step">4. Joining flow (how a laptop is welcomed, step by step)</h2><div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">sequenceDiagram
+<h2 id="4-joining-flow-how-a-laptop-is-welcomed-step-by-step">4. Joining flow (how a laptop is welcomed, step by step)</h2><div class="mermaid-diagram" data-mermaid="sequenceDiagram
+    participant L as New laptop (pocket tool)
+    participant D as Front door (:80)
+    participant Desk as Reception desk
+    participant T as Teacher (human)
+    participant Org as Organizer (K3s)
+    L-&gt;&gt;D: Ask to join (here are my muscles)
+    D-&gt;&gt;Desk: pass along
+    Desk--&gt;&gt;L: waiting + your number
+    T-&gt;&gt;Desk: Approve (website card or command)
+    L-&gt;&gt;Desk: Am I approved yet? (every 5s)
+    Desk-&gt;&gt;Org: Make a 15-minute ticket
+    Desk--&gt;&gt;L: Yes + ticket + address (once only)
+    L-&gt;&gt;Desk: Am I approved yet? (again)
+    Desk--&gt;&gt;L: status only (ticket already given)
+    Note over L,Org: Ask/approve/ticket proven over real Wi-Fi + real master.&lt;br/&gt;Final install + organizer noticing the new laptop: needs two laptops together."><pre><code class="language-mermaid">sequenceDiagram
     participant L as New laptop (pocket tool)
     participant D as Front door (:80)
     participant Desk as Reception desk
@@ -396,7 +532,80 @@ laptop --ask--&gt; desk (waiting + number) | teacher approves
   | later polls --&gt; status only.
 Proven on real Wi-Fi; final install awaits the paired run.</code></pre></div><p>Today: ask/approve/ticket/cleanup all work, including from the Admin cards. The pocket tool&#39;s screens are built and tested; the final step (actually installing the agent software and the organizer marking it <code>joined</code>) is red — it needs two physical laptops in one room.</p>
 <h2 id="5-decision-graph-why-we-built-it-this-way-tech-method-rejected">5. Decision graph (why we built it this way — tech + method + rejected)</h2><p>How to read: each block is <code>Need → Chosen (tech + how we proved it) → Rejected (what we dropped and why)</code>. This is the branch-by-branch map you asked for.</p>
-<div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart TB
+<div class="mermaid-diagram" data-mermaid="flowchart TB
+    classDef need fill:#3a3f4b,stroke:#8b93a7,color:#fff
+    classDef chose fill:#1d5c2e,stroke:#3ecf8e,color:#fff
+    classDef rej fill:#2a2d34,stroke:#6b7280,color:#ccc
+
+    N1[&quot;Need: desk language&quot;]:::need
+    C1[&quot;Chosen: Go, one static file&lt;br/&gt;(method: unit + live on cluster)&quot;]:::chose
+    R1[&quot;Rejected: NestJS/Node&lt;br/&gt;(needs a runtime, heavier)&quot;]:::rej
+    N1 --&gt; C1 --&gt; R1
+
+    N2[&quot;Need: one world per student&quot;]:::need
+    C2[&quot;Chosen: Deployment+Service+PVC per student&lt;br/&gt;(method: two-user live test, 403s)&quot;]:::chose
+    R2[&quot;Rejected: fixed StatefulSet + shared Service&lt;br/&gt;(not flexible, demolished R1)&quot;]:::rej
+    N2 --&gt; C2 --&gt; R2
+
+    N3[&quot;Need: browser doors&quot;]:::need
+    C3[&quot;Chosen: cookie wristband + web-address names&lt;br/&gt;(method: live 200/401/404 matrix)&quot;]:::chose
+    R3[&quot;Rejected: path routing /code /sim&lt;br/&gt;(collides, removed)&quot;]:::rej
+    N3 --&gt; C3 --&gt; R3
+
+    N4[&quot;Need: run the desk&quot;]:::need
+    C4[&quot;Chosen: in-cluster Deployment + client-go&lt;br/&gt;(method: live rollout, RBAC probes)&quot;]:::chose
+    R4[&quot;Rejected: root systemd unit&lt;br/&gt;(outside the cluster, amended)&quot;]:::rej
+    N4 --&gt; C4 --&gt; R4
+
+    N5[&quot;Need: join tickets&quot;]:::need
+    C5[&quot;Chosen: bootstrap Secrets, 15-min, once-only&lt;br/&gt;(method: Wi-Fi live mint + cleanup)&quot;]:::chose
+    R5[&quot;Rejected: CLI-minted tokens&lt;br/&gt;(manual, less safe)&quot;]:::rej
+    N5 --&gt; C5 --&gt; R5
+
+    N6[&quot;Need: weak demo machines&quot;]:::need
+    C6[&quot;Chosen: GPU optional flag (0 = skip)&lt;br/&gt;(method: scheduler refusal + schedule proofs)&quot;]:::chose
+    R6[&quot;Rejected: faking GPU capacity&lt;br/&gt;(lies to the scheduler)&quot;]:::rej
+    N6 --&gt; C6 --&gt; R6
+
+    N7[&quot;Need: prove plumbing fast&quot;]:::need
+    C7[&quot;Chosen: tiny 82MB stand-in first, real image later&lt;br/&gt;(method: stand-in 200s, then R6 flip)&quot;]:::chose
+    R7[&quot;Rejected: big-bang 10GB on day one&lt;br/&gt;(blocks everyone)&quot;]:::rej
+    N7 --&gt; C7 --&gt; R7
+
+    N8[&quot;Need: pocket join tool UI&quot;]:::need
+    C8[&quot;Chosen: Bubble Tea text screens&lt;br/&gt;(method: keypress matrix + 3-OS builds)&quot;]:::chose
+    R8[&quot;Rejected: Fyne/Electron apps&lt;br/&gt;(signing + budget pain)&quot;]:::rej
+    N8 --&gt; C8 --&gt; R8
+
+    N9[&quot;Need: fake-click safety (R3)&quot;]:::need
+    C9[&quot;Chosen: HMAC stamp over login, checked on changes&lt;br/&gt;(method: 7 guard + 5 binding tests + live 403s)&quot;]:::chose
+    R9[&quot;Rejected: nothing (rely on Bearer only)&lt;br/&gt;(SPA needs cookie safety)&quot;]:::rej
+    N9 --&gt; C9 --&gt; R9
+
+    N10[&quot;Need: remember boxes (R2)&quot;]:::need
+    C10[&quot;Chosen: sessions.json notebook + adopt/mark-stopped&lt;br/&gt;(method: kill-restart, zero orphans)&quot;]:::chose
+    R10[&quot;Rejected: silent-delete or silent-rebuild&lt;br/&gt;(hides loss)&quot;]:::rej
+    N10 --&gt; C10 --&gt; R10
+
+    N11[&quot;Need: student website (R4)&quot;]:::need
+    C11[&quot;Chosen: Vite+React built INTO the Go file&lt;br/&gt;(method: webbuild stage, live bundle 200s)&quot;]:::chose
+    R11[&quot;Rejected: sidecar web server&lt;br/&gt;(second thing to deploy)&quot;]:::rej
+    N11 --&gt; C11 --&gt; R11
+
+    N12[&quot;Need: desktop picture&quot;]:::need
+    C12[&quot;Chosen: Selkies 2.0 pure-Python behind a flag&lt;br/&gt;(method: local 200 + live 200)&quot;]:::chose
+    R12[&quot;Rejected: Selkies 1.6.2 installer&lt;br/&gt;(upstream deleted the files, 404)&quot;]:::rej
+    N12 --&gt; C12 --&gt; R12
+
+    N13[&quot;Need: sim works offline&quot;]:::need
+    C13[&quot;Chosen: pre-pack 2 models (68K) into the picture&lt;br/&gt;(method: no-network container + live RTF)&quot;]:::chose
+    R13[&quot;Rejected: download at start&lt;br/&gt;(Wi-Fi wildcard DNS eats it)&quot;]:::rej
+    N13 --&gt; C13 --&gt; R13
+
+    N14[&quot;Need: ship 10GB pictures&quot;]:::need
+    C14[&quot;Chosen: version tags + 2.4GB tarball in $HOME&lt;br/&gt;(method: import 164s→28s, ~4.5x)&quot;]:::chose
+    R14[&quot;Rejected: :latest + /tmp&lt;br/&gt;(untracked + too small + wiped)&quot;]:::rej
+    N14 --&gt; C14 --&gt; R14"><pre><code class="language-mermaid">flowchart TB
     classDef need fill:#3a3f4b,stroke:#8b93a7,color:#fff
     classDef chose fill:#1d5c2e,stroke:#3ecf8e,color:#fff
     classDef rej fill:#2a2d34,stroke:#6b7280,color:#ccc

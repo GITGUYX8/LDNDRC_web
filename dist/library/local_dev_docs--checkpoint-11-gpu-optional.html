@@ -6,6 +6,7 @@
 <title>Checkpoint 11 — GPU Requests Become Optional — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-11-gpu-optional.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script type="module" src="../assets/mermaid-viewer.js"></script>
 
 </head>
 <body class="standalone">
@@ -43,7 +44,7 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-11-gpu-optional.md · 3.8 KB</div>
 <h1 class="page-title">Checkpoint 11 — GPU Requests Become Optional</h1>
-<div class="prose"><h1 id="checkpoint-11-gpu-requests-become-optional">Checkpoint 11 — GPU Requests Become Optional</h1><h2 id="the-big-picture-first">The big picture first</h2><p>Bob&#39;s session pod sat in Pending with <code>Insufficient nvidia.com/gpu</code> because
+<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>Bob&#39;s session pod sat in Pending with <code>Insufficient nvidia.com/gpu</code> because
 every session demanded one GPU time-slice, and the k3d demo node has no GPU.
 On real Host laptops that demand is correct; on a CPU-only demo cluster it
 made every session unschedulable. This checkpoint made the GPU request

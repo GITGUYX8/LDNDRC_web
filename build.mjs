@@ -175,6 +175,10 @@ const marked = new Marked({ gfm: true, breaks: false });
 const renderer = {
   code(token) {
     const lang = (token.lang || "").trim().split(/\s+/)[0];
+    if (lang === "mermaid") {
+      return `<div class="mermaid-diagram" data-mermaid="${escapeHtml(token.text)}">` +
+        `<pre><code class="language-mermaid">${escapeHtml(token.text)}</code></pre></div>`;
+    }
     const terminal = ["bash", "sh", "shell", "console", "text", "txt", ""].includes(lang);
     let html;
     if (lang && hljs.getLanguage(lang)) {
@@ -270,6 +274,7 @@ function head({ title, description, cssHref, extra = "" }) {
 <title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(description || "")}">
 <link rel="stylesheet" href="${cssHref}">
+<script type="module" src="${cssHref.replace("theme.css", "mermaid-viewer.js")}"></script>
 ${extra}
 </head>`;
 }
@@ -305,6 +310,12 @@ themeSrc = themeSrc.replace(/url\("\.\/fonts\/([^"]+)"\)/g, (m, name) => {
 });
 fs.writeFileSync(path.join(dist, "assets/theme.css"), themeSrc);
 fs.copyFileSync(path.join(root, "src/app.js"), path.join(dist, "assets/app.js"));
+fs.copyFileSync(path.join(root, "src/mermaid-viewer.js"), path.join(dist, "assets/mermaid-viewer.js"));
+mkdir(path.join(dist, "assets/vendor"));
+fs.copyFileSync(
+  path.join(root, "node_modules/mermaid/dist/mermaid.esm.min.mjs"),
+  path.join(dist, "assets/vendor/mermaid.esm.min.mjs")
+);
 mkdir(path.join(dist, "assets/fonts"));
 for (const f of fs.readdirSync(path.join(root, "assets/fonts"))) {
   fs.copyFileSync(
@@ -418,7 +429,9 @@ for (const file of RAW_FILES) {
   const title = firstHeading(raw, file);
   libIndex.push({ file, slug, title, group: groupFor(file), bytes: Buffer.byteLength(raw) });
 
-  let html = marked.parse(raw);
+  // The page shell supplies the document title; avoid rendering the source H1 twice.
+  const libraryMarkdown = raw.replace(/^#\s+.*\n+/, "");
+  let html = marked.parse(libraryMarkdown);
   // relative .md links → library pages
   html = html.replace(/href="([^"]+?)\.md(#[^"]*)?"/g, (m, p, hash) => {
     const clean = p.replace(/^\.\//, "");

@@ -6,6 +6,7 @@
 <title>Design: LDNDRC Workshop Cluster — full HLD + LLD (staged, agnostic) — LDNDRC library</title>
 <meta name="description" content="Source document: ldndrc-workshop-design.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script type="module" src="../assets/mermaid-viewer.js"></script>
 
 </head>
 <body class="standalone">
@@ -43,7 +44,7 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · ldndrc-workshop-design.md · 30.0 KB</div>
 <h1 class="page-title">Design: LDNDRC Workshop Cluster — full HLD + LLD (staged, agnostic)</h1>
-<div class="prose"><h1 id="design-ldndrc-workshop-cluster-full-hld-lld-staged-agnostic">Design: LDNDRC Workshop Cluster — full HLD + LLD (staged, agnostic)</h1><h1 id="dont-take-action-on-this-its-only-for-future">DONT TAKE ACTION ON THIS (its only for future)</h1><ul>
+<div class="prose"><h1 id="dont-take-action-on-this-its-only-for-future">DONT TAKE ACTION ON THIS (its only for future)</h1><ul>
 <li>Slice: <code>--full</code></li>
 <li>Scope line: design LDNDRC for local workshops at 100–150 users, strong session ownership and isolation / eventual sim freshness.</li>
 <li><blockquote>
@@ -93,7 +94,9 @@
 </tbody></table>
 <p>Scope method follows <code>requirements-scoping</code> (scope capture: turn vague prompt into FR plus NFR plus out-of-scope): three lists plus revisable <code>Assumption:</code> lines, no silent facts. You state the guesses now so you can argue with them later.</p>
 <h2 id="step-1-naive-v1-mermaid-1-3-nodes-archetype-shaped">Step 1 — Naive v1 + mermaid #1 (≤3 nodes, archetype-shaped)</h2><p>Archetype: hybrid, so v1 is the cheapest correct control loop: browser talks to one Go (Go language: compiled single-binary backend) panel, panel creates one pod on one K3s (lightweight Kubernetes: cluster manager for containers on laptops) node. You feel the real shape early: correctness lives in session ownership, cost lives in streams.</p>
-<div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart LR
+<div class="mermaid-diagram" data-mermaid="flowchart LR
+    C[Guests] --&gt;|1 HTTP login| API[Panel&lt;br/&gt;Go single]
+    API --&gt;|2 create pod| K8S[(K3s single&lt;br/&gt;one node)]"><pre><code class="language-mermaid">flowchart LR
     C[Guests] --&gt;|1 HTTP login| API[Panel&lt;br/&gt;Go single]
     API --&gt;|2 create pod| K8S[(K3s single&lt;br/&gt;one node)]</code></pre></div><ul>
 <li>Why starting simple is correct: (a) one panel plus K3s API (application programming interface: exact request plus response contract) satisfies FR-1 and FR-4 with local transactions and no distribution tax; (b) control-plane QPS (queries per second: requests arriving each second) is near zero, so no cache, queue, or shard earns its keep yet; (c) BOTEC (back-of-the-envelope calculation: rough sizing math that decides the shape) host math becomes the baseline before you add ingress, gateway hosts, or GPU (graphics processing unit: chip that renders sim and video) slicing.</li>
@@ -180,7 +183,14 @@
 <li>Errors: <code>{error:{code,message,request_id,retryable}}</code> plus <code>429 + Retry-After</code> on register flood, <code>401</code> missing cookie, <code>404</code> no session, <code>503</code> provisioning, <code>502</code> pod unhealthy. Versioning: additive fields only; reserve <code>/v1</code> when student UI (user interface: browser app) pins a contract.</li>
 </ul>
 <h2 id="step-4-evolved-reads-hld-mermaid-2-10-nodes-step-2-read-verdict-forces-it">Step 4 — Evolved reads HLD + mermaid #2 (≤10 nodes; Step-2 read verdict forces it)</h2><p>Verdicts forcing reads: 690 Mbps aggregate plus per-user 4.6 Mbps plus image 10GB pull storm. Principle first: streams should never touch the panel twice, and bytes should stay on the room wire.</p>
-<div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart LR
+<div class="mermaid-diagram" data-mermaid="flowchart LR
+    C[Guests] --&gt;|1 HTTPS host| TR[Traefik&lt;br/&gt;L7 route]
+    TR --&gt;|2 forward host| CP[Panel&lt;br/&gt;cookie gateway]
+    CP --&gt;|3 proxy session| SVC[(Session svc&lt;br/&gt;per user)]
+    SVC --&gt;|4 GET editor| ED[Editor&lt;br/&gt;code-server]
+    SVC -.-&gt;|WS scene| GZ[Sim view&lt;br/&gt;gzweb WS]
+    SVC -.-&gt;|WebRTC desktop| DE[Desktop&lt;br/&gt;Selkies]
+    IMG[(Image cache&lt;br/&gt;pulled once)] -.-&gt;|image warm| SVC"><pre><code class="language-mermaid">flowchart LR
     C[Guests] --&gt;|1 HTTPS host| TR[Traefik&lt;br/&gt;L7 route]
     TR --&gt;|2 forward host| CP[Panel&lt;br/&gt;cookie gateway]
     CP --&gt;|3 proxy session| SVC[(Session svc&lt;br/&gt;per user)]
@@ -196,7 +206,16 @@
 <li>Editor versus stream split — Why: code-server stays sync request-response while Selkies and gzweb stay async push, matching their freshness budgets. Without-it: polling the scene at 30 Hz multiplies control QPS 100-fold. Change-when: scene Hz times viewers exceeds AP budget → drop to 10 Hz plus delta frames. Uses <code>content-delivery</code> (edge bytes: push static close to users): deferred as internet CDN, applied as LAN pre-warm plus pull-once.</li>
 </ul>
 <h2 id="step-5-evolved-writes-hld-mermaid-3-10-nodes-write-and-coupling-verdict-forces-it">Step 5 — Evolved writes HLD + mermaid #3 (≤10 nodes; write and coupling verdict forces it)</h2><p>Verdict forcing writes: 150 concurrent Deployments plus PVC mounts plus one-time join tokens. Principle first: keep the money path — your session record — synchronous and exact, push everything else to poll and retry.</p>
-<div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart TB
+<div class="mermaid-diagram" data-mermaid="flowchart TB
+    C[Guests] --&gt;|1 POST login| CP[Panel&lt;br/&gt;auth sessions]
+    C --&gt;|2 POST sessions| CP
+    CP --&gt;|3 write record| NDB[(Node file&lt;br/&gt;JSON store)]
+    CP --&gt;|4 create deploy| API[K3s API&lt;br/&gt;etcd write]
+    API --&gt;|5 schedule pod| DEP[Session deploy&lt;br/&gt;per user]
+    DEP --&gt;|6 mount home| PVC[(Home PVC&lt;br/&gt;5Gi each)]
+    LAP[Laptop&lt;br/&gt;join poll] -.-&gt;|poll status| CP
+    CP -.-&gt;|mint token once| LAP
+    W[Watcher&lt;br/&gt;label loop] -.-&gt;|label host| API"><pre><code class="language-mermaid">flowchart TB
     C[Guests] --&gt;|1 POST login| CP[Panel&lt;br/&gt;auth sessions]
     C --&gt;|2 POST sessions| CP
     CP --&gt;|3 write record| NDB[(Node file&lt;br/&gt;JSON store)]
@@ -214,7 +233,14 @@
 <li>5s label watcher — Why: marks <code>Ready</code> nodes <code>role=host</code> so session scheduler lands pods only on qualified laptops. Without-it: pods pend on the master or weak Guests. Change-when: watch lag exceeds 15s → move label to join-time admission webhook. Uses <code>messaging-streaming</code> (async transport: queue versus stream plus DLQ): applied as poll plus file, stream deferred because no replay or fan-out need exists.</li>
 </ul>
 <h2 id="step-6-lld-deep-dive-mermaid-4-10-nodes-one-subsystem-only">Step 6 — LLD deep-dive + mermaid #4 (≤10 nodes, one subsystem only)</h2><p>Target: gateway fan-out plus per-user routing — the tightest latency SLO and the first place 150 browsers collide.</p>
-<div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart TB
+<div class="mermaid-diagram" data-mermaid="flowchart TB
+    G[Browser] --&gt;|1 HTTPS host| TR[Traefik&lt;br/&gt;entry]
+    TR --&gt;|2 forward host| GW[Gateway&lt;br/&gt;cookie auth]
+    GW --&gt;|3 lookup session| RT[Resolver&lt;br/&gt;user map]
+    RT --&gt;|4 proxy editor| SV[(Session svc&lt;br/&gt;per user)]
+    SV --&gt;|5 serve code| ED[Editor&lt;br/&gt;7682]
+    SV -.-&gt;|WS scene 9002| GZ[Sim bridge&lt;br/&gt;WS]
+    SV -.-&gt;|WebRTC 8080| DE[Desktop&lt;br/&gt;Selkies]"><pre><code class="language-mermaid">flowchart TB
     G[Browser] --&gt;|1 HTTPS host| TR[Traefik&lt;br/&gt;entry]
     TR --&gt;|2 forward host| GW[Gateway&lt;br/&gt;cookie auth]
     GW --&gt;|3 lookup session| RT[Resolver&lt;br/&gt;user map]
@@ -227,7 +253,41 @@
 <li>Failure injection: kill each box and state user-visible degrade plus recovery. Traefik down → all tabs fail; degrade to direct <code>panelIP:8082</code> emergency list; recover by restarting static binary, clients retry with jitter. Gateway slow → 503 with <code>Retry-After: 5</code>; degrade to cached <code>ready</code> map for GETs, fail closed for POSTs; recover with half-open probe plus slow-start. Session pod crash → editor 502, scene freezes; degrade to <code>provisioning</code> page plus auto-recreate from PVC; recover with exponential backoff plus jitter, max 3 restarts then <code>stopped</code>. Master etcd stall → creates queue; degrade to read-only use of running sessions; recover by compaction plus snapshot, drain join polls first. Uses <code>resilience-failure</code> (stay-up tricks: timeouts plus breakers plus degrade): every remote call gets timeout at p99 plus breaker plus explicit stale-or-closed choice.</li>
 <li>Bottleneck metric plus signal threshold. Watch gateway p99 above 100ms for 5 min, Traefik active WebSockets above 400 per instance, per-Host CPU above 85% for 10 min, and session <code>provisioning → ready</code> p90 above 90s. Any one firing means the room, not the code, is full.</li>
 </ul>
-<h2 id="step-7-final-topology-mermaid-5-14-nodes-topology-only">Step 7 — Final topology + mermaid #5 (≤14 nodes, topology only)</h2><div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart TB
+<h2 id="step-7-final-topology-mermaid-5-14-nodes-topology-only">Step 7 — Final topology + mermaid #5 (≤14 nodes, topology only)</h2><div class="mermaid-diagram" data-mermaid="flowchart TB
+    subgraph Edge[Edge]
+        E[Traefik&lt;br/&gt;L7 ingress]
+    end
+    subgraph Svc[Services]
+        CP[Panel&lt;br/&gt;Go 8082]
+        SC[Sess ctrl&lt;br/&gt;provision]
+        JC[Join ctrl&lt;br/&gt;approve]
+        SP[Session pods&lt;br/&gt;per user]
+        OBS[Observe&lt;br/&gt;health metrics]
+    end
+    subgraph Async[Async]
+        W[[Watcher&lt;br/&gt;label loop]]
+    end
+    subgraph State[State]
+        K8S[(K3s API&lt;br/&gt;etcd)]
+        PVC[(Home PVC&lt;br/&gt;5Gi)]
+        NDB[(Node file&lt;br/&gt;JSON)]
+        IMG[(Image cache&lt;br/&gt;per host)]
+    end
+    C[Guests] --&gt; E --&gt; CP
+    L[Laptops] -.-&gt; CP
+    CP --&gt; SC
+    CP --&gt; JC
+    SC --&gt; K8S
+    K8S --&gt; SP
+    SP --&gt; PVC
+    SP -.-&gt; IMG
+    CP --&gt; NDB
+    W -.-&gt; K8S
+    SP -.-&gt; OBS
+    style CP fill:#1f2d4d,stroke:#fff,color:#fff
+    style SP fill:#1f3b2d,stroke:#fff,color:#fff
+    style K8S fill:#3b310d,stroke:#fff,color:#fff
+    style E fill:#111,stroke:#fff,color:#fff"><pre><code class="language-mermaid">flowchart TB
     subgraph Edge[Edge]
         E[Traefik&lt;br/&gt;L7 ingress]
     end

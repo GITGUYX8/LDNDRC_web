@@ -6,6 +6,7 @@
 <title>Checkpoint 8 — Static Verification and Manifest Cross-Check — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-08-static-verification.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script type="module" src="../assets/mermaid-viewer.js"></script>
 
 </head>
 <body class="standalone">
@@ -43,7 +44,7 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-08-static-verification.md · 6.1 KB</div>
 <h1 class="page-title">Checkpoint 8 — Static Verification and Manifest Cross-Check</h1>
-<div class="prose"><h1 id="checkpoint-8-static-verification-and-manifest-cross-check">Checkpoint 8 — Static Verification and Manifest Cross-Check</h1><h2 id="the-big-picture-first">The big picture first</h2><p>The gateway code was written but never compiled or tested here — the Go
+<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>The gateway code was written but never compiled or tested here — the Go
 toolchain was missing and no cluster was connected. Before asking a real K3s
 cluster to run any of it, we needed proof that the code at least builds,
 passes its unit tests, and that the YAML manifests agree with each other.

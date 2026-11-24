@@ -6,6 +6,7 @@
 <title>LAN Onboarding Portal (Connection Approval Gate) — LDNDRC library</title>
 <meta name="description" content="Source document: docs/lan-onboarding-portal.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script type="module" src="../assets/mermaid-viewer.js"></script>
 
 </head>
 <body class="standalone">
@@ -43,7 +44,7 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · docs/lan-onboarding-portal.md · 8.8 KB</div>
 <h1 class="page-title">LAN Onboarding Portal (Connection Approval Gate)</h1>
-<div class="prose"><h1 id="lan-onboarding-portal-connection-approval-gate">LAN Onboarding Portal (Connection Approval Gate)</h1><p>Status: <strong>implemented</strong> (checkpoint 41) and <strong>verified on real hardware</strong>
+<div class="prose"><p>Status: <strong>implemented</strong> (checkpoint 41) and <strong>verified on real hardware</strong>
 (checkpoint 43). The soft-portal enrollment flow ships in the control panel
 binary; the onboarding AP + interception harness lives in
 <a href="..--tools--captive-portal--README.html"><code>tools/captive-portal/</code></a>; gateway-level
@@ -73,7 +74,18 @@ served from the master laptop.</p>
      ├─ /api/downloads/count    public aggregate counter
      └─ /api/downloads/stats    JWT-gated detail for the admin console</code></pre></div><p><strong>Traffic separation is physical</strong>: the master hosts the onboarding AP only; the
 cluster router carries all cluster traffic. The master laptop is never a router.</p>
-<h2 id="enrollment-flow">Enrollment flow</h2><div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">sequenceDiagram
+<h2 id="enrollment-flow">Enrollment flow</h2><div class="mermaid-diagram" data-mermaid="sequenceDiagram
+    participant L as New laptop (onboarding Wi-Fi)
+    participant P as Control panel :8082 (/portal)
+    participant A as Instructor console
+    L-&gt;&gt;P: GET /portal (welcome + counter)
+    L-&gt;&gt;P: GET /portal/joining-cluster.sh (or .ps1)
+    Note over L: user runs the script manually
+    L-&gt;&gt;P: POST /api/nodes/register (fingerprint, idempotent)
+    L-&gt;&gt;P: GET /api/nodes/{id} poll every 5s
+    A-&gt;&gt;P: POST /api/nodes/{id}/approve | deny
+    L-&gt;&gt;P: poll returns approved (+ k3s token for Hosts)
+    L-&gt;&gt;L: switch Wi-Fi (nmcli/netsh or manual)"><pre><code class="language-mermaid">sequenceDiagram
     participant L as New laptop (onboarding Wi-Fi)
     participant P as Control panel :8082 (/portal)
     participant A as Instructor console

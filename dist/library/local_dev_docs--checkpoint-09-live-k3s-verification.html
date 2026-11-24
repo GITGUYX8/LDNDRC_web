@@ -6,6 +6,7 @@
 <title>Checkpoint 9 — Live K3s Verification of Sessions and Gateway — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-09-live-k3s-verification.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script type="module" src="../assets/mermaid-viewer.js"></script>
 
 </head>
 <body class="standalone">
@@ -43,7 +44,7 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-09-live-k3s-verification.md · 5.4 KB</div>
 <h1 class="page-title">Checkpoint 9 — Live K3s Verification of Sessions and Gateway</h1>
-<div class="prose"><h1 id="checkpoint-9-live-k3s-verification-of-sessions-and-gateway">Checkpoint 9 — Live K3s Verification of Sessions and Gateway</h1><h2 id="the-big-picture-first">The big picture first</h2><p>Until now every claim about Kubernetes was backed by unit tests with a fake
+<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>Until now every claim about Kubernetes was backed by unit tests with a fake
 client. This checkpoint put the real thing underneath: a live K3s cluster
 (via k3d) on this machine, the actual control-panel container, and real HTTP
 requests exercising login, provisioning, ownership, teardown, and gateway

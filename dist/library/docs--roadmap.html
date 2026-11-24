@@ -6,6 +6,7 @@
 <title>LDNDRC Roadmap — What Is Built, What Is Left (Plain-English Tracker) — LDNDRC library</title>
 <meta name="description" content="Source document: docs/roadmap.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script type="module" src="../assets/mermaid-viewer.js"></script>
 
 </head>
 <body class="standalone">
@@ -43,7 +44,7 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · docs/roadmap.md · 11.3 KB</div>
 <h1 class="page-title">LDNDRC Roadmap — What Is Built, What Is Left (Plain-English Tracker)</h1>
-<div class="prose"><h1 id="ldndrc-roadmap-what-is-built-what-is-left-plain-english-tracker">LDNDRC Roadmap — What Is Built, What Is Left (Plain-English Tracker)</h1><blockquote>
+<div class="prose"><blockquote>
 <p>Companion to <code>docs/project-journey-report.md</code> (the friendly front door:
 final-vs-now, mind-map, architecture with brackets, decision graph) and
 <code>local_dev_docs/detailed-project-report.md</code> (technical appendix).
@@ -53,7 +54,28 @@ final-vs-now, mind-map, architecture with brackets, decision graph) and
 a plain-text fallback follows each diagram.</p>
 <p><strong>Last updated:</strong> 2026-10-13 · <code>main@299702f</code> (R1/R2/R3/R4/R6 shipped, CP01–CP39).</p>
 </blockquote>
-<h2 id="1-the-map">1. The Map</h2><h3 id="1a-journey-how-we-got-here-plain-names">1a. Journey (how we got here — plain names)</h3><div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart LR
+<h2 id="1-the-map">1. The Map</h2><h3 id="1a-journey-how-we-got-here-plain-names">1a. Journey (how we got here — plain names)</h3><div class="mermaid-diagram" data-mermaid="flowchart LR
+    classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
+    classDef next fill:#6b4e12,stroke:#f5b86c,color:#fff
+    classDef later fill:#3a3f4b,stroke:#8b93a7,color:#fff
+
+    START[&quot;Start&lt;br/&gt;(idea + scripts)&quot;]:::done
+    BOX[&quot;One box per student&lt;br/&gt;(CP05-06)&quot;]:::done
+    DOOR[&quot;Doors&lt;br/&gt;(guard + names, old paths gone)&quot;]:::done
+    PROOF[&quot;Proof&lt;br/&gt;(tests + live + glass wall)&quot;]:::done
+    WELCOME[&quot;Welcoming&lt;br/&gt;(ask/approve/ticket)&quot;]:::done
+    REAL[&quot;Real organizer&lt;br/&gt;(CP20 hari live)&quot;]:::done
+    SAFE[&quot;Safe + memory&lt;br/&gt;(R3 + R2 live)&quot;]:::done
+    SITE[&quot;Website&lt;br/&gt;(R4 Login..Admin live)&quot;]:::done
+    WORLD[&quot;Real world&lt;br/&gt;(R6 10.8GB live)&quot;]:::done
+    ONE[&quot;One line&lt;br/&gt;(CP39 merge)&quot;]:::done
+    YOU[&quot;YOU ARE HERE&lt;br/&gt;Oct 2026 main&quot;]:::next
+
+    FIX[&quot;Login fix + full memory&lt;br/&gt;+ pretty viewer&quot;]:::next
+    R5[&quot;Two-laptop join&lt;br/&gt;(R5)&quot;]:::next
+    STURDY[&quot;Sturdy: encryption,&lt;br/&gt;limits, dashboards (R7)&lt;br/&gt;+ Windows + docs&quot;]:::later
+
+    START --&gt; BOX --&gt; DOOR --&gt; PROOF --&gt; WELCOME --&gt; REAL --&gt; SAFE --&gt; SITE --&gt; WORLD --&gt; ONE --&gt; YOU --&gt; FIX --&gt; R5 --&gt; STURDY"><pre><code class="language-mermaid">flowchart LR
     classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
     classDef next fill:#6b4e12,stroke:#f5b86c,color:#fff
     classDef later fill:#3a3f4b,stroke:#8b93a7,color:#fff
@@ -78,7 +100,30 @@ a plain-text fallback follows each diagram.</p>
 
 idea → one-box-per-student → doors → proof → welcoming → real organizer
   → safe+memory → website → real world → one line =&gt; YOU ARE HERE
-  =&gt; login fix + full memory + viewer =&gt; two-laptop join =&gt; sturdy + Windows + docs.</code></pre></div><h3 id="1b-system-what-works-vs-what-is-missing-same-brackets-as-the-journey-doc">1b. System (what works vs what is missing — same brackets as the journey doc)</h3><div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart TB
+  =&gt; login fix + full memory + viewer =&gt; two-laptop join =&gt; sturdy + Windows + docs.</code></pre></div><h3 id="1b-system-what-works-vs-what-is-missing-same-brackets-as-the-journey-doc">1b. System (what works vs what is missing — same brackets as the journey doc)</h3><div class="mermaid-diagram" data-mermaid="flowchart TB
+    classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
+    classDef missing fill:#6b4e12,stroke:#f5b86c,color:#fff
+
+    Browser([&quot;Your browser + website&lt;br/&gt;(Login/Launch/Workspace/Admin)&lt;br/&gt;✅ Live&quot;]):::done
+    Door[&quot;Front door Traefik (:80/:443)&lt;br/&gt;(reads the address, forwards)&lt;br/&gt;✅ Live&quot;]:::done
+    Desk[&quot;Reception desk (Go)&lt;br/&gt;(login + boxes + guard)&lt;br/&gt;✅ Live&quot;]:::done
+    Notebook[&quot;Notebook sessions.json&lt;br/&gt;(remembers boxes, small restarts safe)&lt;br/&gt;✅ Live&quot;]:::done
+    Disk[&quot;Full memory on disk&lt;br/&gt;(big redeploys safe)&lt;br/&gt;🔴 R2-final&quot;]:::missing
+    Org[&quot;Organizer hari :6443&lt;br/&gt;(decides what runs where)&lt;br/&gt;✅ Live&quot;]:::done
+    World[&quot;Robot world 10.8GB&lt;br/&gt;(editor 200 + desktop 200 + sim data)&lt;br/&gt;✅ Live&quot;]:::done
+    Viewer[&quot;Pretty 3D viewer&lt;br/&gt;(🔴 next, data frame today)&quot;]:::missing
+    LoginFix[&quot;Login small fix&lt;br/&gt;(🔴 next)&quot;]:::missing
+    Join[&quot;Second laptop installs&lt;br/&gt;(🔴 needs two laptops)&quot;]:::missing
+    Glass[&quot;Glass wall Headlamp&lt;br/&gt;✅ Live&quot;]:::done
+
+    Browser --&gt; Door --&gt; Desk
+    Desk --&gt; Notebook
+    Desk -.-&gt; Disk
+    Desk --&gt; Org --&gt; World
+    World -.-&gt; Viewer
+    Browser --&gt; Glass
+    Desk -.-&gt; Join
+    Desk -.-&gt; LoginFix"><pre><code class="language-mermaid">flowchart TB
     classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
     classDef missing fill:#6b4e12,stroke:#f5b86c,color:#fff
 

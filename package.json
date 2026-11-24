@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "highlight.js": "^11.11.1",
-    "marked": "^15.0.7"
+    "marked": "^15.0.7",
+    "mermaid": "^11.17.2"
   }
 }

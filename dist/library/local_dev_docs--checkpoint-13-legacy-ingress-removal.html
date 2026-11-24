@@ -6,6 +6,7 @@
 <title>Checkpoint 13 — Legacy Ingress Removal — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-13-legacy-ingress-removal.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script type="module" src="../assets/mermaid-viewer.js"></script>
 
 </head>
 <body class="standalone">
@@ -43,7 +44,7 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-13-legacy-ingress-removal.md · 2.5 KB</div>
 <h1 class="page-title">Checkpoint 13 — Legacy Ingress Removal</h1>
-<div class="prose"><h1 id="checkpoint-13-legacy-ingress-removal">Checkpoint 13 — Legacy Ingress Removal</h1><h2 id="the-big-picture-first">The big picture first</h2><p>Since checkpoint 7 the cluster has carried two front doors: the new
+<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>Since checkpoint 7 the cluster has carried two front doors: the new
 host-based ingress (<code>control</code>, <code>editor</code>, <code>desktop</code>, <code>gazebo</code> subdomains)
 and the legacy path-based one (<code>/code</code>, <code>/stream</code>, <code>/sim</code> on the bare
 hostname, backed by a shared Service and a fixed 3-replica StatefulSet).

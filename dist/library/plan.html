@@ -6,6 +6,7 @@
 <title>LOCAL DYNAMIC NODE DISCOVERY ROS CLUSTER — LDNDRC library</title>
 <meta name="description" content="Source document: plan.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script type="module" src="../assets/mermaid-viewer.js"></script>
 
 </head>
 <body class="standalone">
@@ -43,7 +44,7 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · plan.md · 18.6 KB</div>
 <h1 class="page-title">LOCAL DYNAMIC NODE DISCOVERY ROS CLUSTER</h1>
-<div class="prose"><h1 id="local-dynamic-node-discovery-ros-cluster">LOCAL DYNAMIC NODE DISCOVERY ROS CLUSTER</h1><h2 id="1-project-overview">1. Project Overview</h2><p>This platform is a local-first, browser-accessible robotics simulation environment built on a dynamic Kubernetes (K3s) cluster. It is designed to run entirely on a network of consumer laptops without a dedicated server.</p>
+<div class="prose"><h2 id="1-project-overview">1. Project Overview</h2><p>This platform is a local-first, browser-accessible robotics simulation environment built on a dynamic Kubernetes (K3s) cluster. It is designed to run entirely on a network of consumer laptops without a dedicated server.</p>
 <p>High-end laptops (&quot;Hosts&quot;) contribute their CPU, RAM, and GPU resources to run ROS2 and Gazebo simulations. Low-end laptops (&quot;Guests&quot;) act as thin clients, accessing the platform via a web browser to write code (Monaco), view 3D simulation (Gazebo Sim web app), and stream desktop (Selkies).</p>
 <h3 id="key-characteristics">Key Characteristics</h3><ul>
 <li><strong>Workload per Pod:</strong> 3-4 CPU cores, 4-8GB RAM, 1 GPU (time-sliced).</li>
