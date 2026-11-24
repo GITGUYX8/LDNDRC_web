@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contributing to LDNDRC — LDNDRC library</title>
+<meta name="description" content="Source document: CONTRIBUTING.md">
+<link rel="stylesheet" href="../assets/theme.css">
+
+</head>
+<body class="standalone">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5zM2 9v8l10 5V14zM22 9l-10 5v8l10-5z"/></symbol>
+    <symbol id="i-nodes" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.6"/><circle cx="5" cy="18" r="2.6"/><circle cx="19" cy="18" r="2.6"/><path d="M12 7.6v4M11 12H7L5.6 15.4M13 12h4l1.4 3.4" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><path d="M5 19c0-6 3.5-7 7-7s7-1 7-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="7" r="2.4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 9l3 3-3 3M12.5 15H18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3 8h13l-3.5-3.5M21 16H8l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="10" width="4" height="4" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 11l9 9M16.5 16.5l2-2M19 19l2-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-door" viewBox="0 0 24 24"><path d="M5 3h11v18H5z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="12" r="1.2"/><path d="M19 5v14" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+    <symbol id="i-sim" viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7l9 5 9-5M12 12v10" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-stack" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4.5" rx="1.2"/><rect x="3" y="10.5" width="18" height="4.5" rx="1.2"/><rect x="3" y="17" width="18" height="3.5" rx="1.2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 3v15M15 6v15" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-timeline" viewBox="0 0 24 24"><path d="M2 12h20" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="18" cy="12" r="2.2"/></symbol>
+    <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13l-5-5M18 12l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+<div class="page-doc">
+  <a class="back" href="../index.html#/">← back to the map</a>
+  <div class="eyebrow" style="margin-bottom:10px">source document · CONTRIBUTING.md · 11.4 KB</div>
+<h1 class="page-title">Contributing to LDNDRC</h1>
+<div class="prose"><h1 id="contributing-to-ldndrc">Contributing to LDNDRC</h1><p>Thanks for wanting to help. This project is a workshop platform built by people who
+had to run it in front of a room, so the bar is simple: <strong>if you claim it works, show
+the command that proves it.</strong></p>
+<p>You do not need to be a Kubernetes expert to contribute. Documentation, tests, and
+honest failure reports are as valuable as features.</p>
+<h2 id="the-three-laws">The three laws</h2><p>These are not style preferences. Every merge should respect them.</p>
+<ol>
+<li><strong>The LAN comes first.</strong> Nothing may require the public internet to run a class.
+No cloud identity, no hosted database, no external registry at demo time.</li>
+<li><strong>Isolation is a structural property.</strong> One student per pod, one namespace per
+session, DDS never crossing the pod boundary. Do not &quot;fix&quot; isolation with a
+firewall rule or a shared workspace.</li>
+<li><strong>Least privilege, proven by command.</strong> The panel runs with namespace-scoped RBAC.
+A new permission needs a <code>kubectl auth can-i</code> line showing exactly what it grants.</li>
+</ol>
+<h2 id="ways-to-help">Ways to help</h2><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>What it looks like</th>
+<th>Start here</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Docs</strong></td>
+<td>Fix a wrong command, explain a failure mode, turn a checkpoint into a lesson</td>
+<td><code>README.md</code>, <code>local_dev_docs/</code>, <code>docs-site/content/topics/</code></td>
+</tr>
+<tr>
+<td><strong>Control panel (Go)</strong></td>
+<td>Sessions, auth/CSRF, onboarding, gateway, portal</td>
+<td><code>control-panel/</code> — <code>go test ./...</code> is green</td>
+</tr>
+<tr>
+<td><strong>Student UI (React)</strong></td>
+<td>Launch screen, workspace shell, instructor console</td>
+<td><code>control-panel/web/</code></td>
+</tr>
+<tr>
+<td><strong>Manifests</strong></td>
+<td>RBAC, Deployment/Service/Ingress, GPU scheduling</td>
+<td><code>manifests/</code></td>
+</tr>
+<tr>
+<td><strong>Join path</strong></td>
+<td><code>join-cluster.sh</code>, <code>ldndrc-join</code>, mDNS, release pipeline</td>
+<td><code>join-cluster.sh</code>, <code>docs/host-joiner-tui-spec.md</code></td>
+</tr>
+<tr>
+<td><strong>Simulation</strong></td>
+<td>Session image, Gazebo worlds, websocket scene bridge</td>
+<td><code>images/</code>, <code>sim-web-app/</code></td>
+</tr>
+<tr>
+<td><strong>Docs site</strong></td>
+<td>The concept map and library under <code>docs-site/</code></td>
+<td><code>docs-site/README.md</code></td>
+</tr>
+<tr>
+<td><strong>Testing</strong></td>
+<td>Root-free checks that run in seconds</td>
+<td><code>test-join.sh</code>, <code>test-joining.sh</code>, <code>test-captive-trap.sh</code></td>
+</tr>
+</tbody></table>
+<p>Never contributed before? Take any row in <code>docs/roadmap.md</code> and shrink it until it
+is one afternoon of work. That is how this repo was built: 43 checkpoints, each one
+the smallest provable step.</p>
+<h2 id="repository-map">Repository map</h2><div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">control-panel/          Go service + embedded React SPA
+  internal/             auth, sessions, nodes, gateway, portal, discovery, join
+  web/                  student + instructor UI (Vite, TypeScript)
+manifests/              the entire declared Kubernetes surface
+images/                 session image layers + demo stand-in
+sim-web-app/            standalone gzweb viewer harness (:9002 scene path)
+tools/captive-portal/   onboarding Wi-Fi harness (prints privileged steps, never runs them)
+docs/                   design docs: roadmap, joiner TUI, portal, UI/UX, journey
+local_dev_docs/         build checkpoints and the operator cheatsheet
+docs-site/              the concept map site (content/ + src/ + build.mjs)</code></pre></div><h2 id="setup">Setup</h2><p>Prerequisites: Go ≥ 1.26, Node ≥ 22 (docs site ≥ 20), Docker, <code>kubectl</code>, <code>k3d</code>.</p>
+<div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-comment"># optional, matches the repo&#x27;s tool pins</span>
+mise install
+
+<span class="hljs-comment"># container access without sudo</span>
+<span class="hljs-built_in">sudo</span> usermod -aG docker <span class="hljs-string">&quot;<span class="hljs-variable">$USER</span>&quot;</span>
+newgrp docker
+docker ps</code></pre></div><p>The fastest full-stack loop is the one-laptop demo in <code>README.md</code> (Path A) or
+<code>docs/local-cluster-headlamp.md</code>. You do not need a GPU or a second laptop for it.</p>
+<h2 id="the-development-loop">The development loop</h2><h3 id="control-panel">Control panel</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-built_in">cd</span> control-panel
+go build ./...
+go <span class="hljs-built_in">test</span> ./...          <span class="hljs-comment"># ~12s; internal/join covers the driver</span></code></pre></div><p>Run it locally, outside any cluster, for API work. The three databases default to
+<code>/var/lib/ldndrc/</code>, which needs root on most machines — point them somewhere writable:</p>
+<div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-built_in">mkdir</span> -p /tmp/ldndrc-dev
+JWT_SECRET=dev-only \
+  CONTROL_PANEL_PORT=8087 \
+  ADVERTISE_MDNS=<span class="hljs-literal">false</span> \
+  SESSIONS_DB=/tmp/ldndrc-dev/sessions.json \
+  NODES_DB=/tmp/ldndrc-dev/nodes.json \
+  DOWNLOADS_DB=/tmp/ldndrc-dev/downloads.json \
+  go run ./cmd/server
+
+curl -s http://127.0.0.1:8087/healthz    <span class="hljs-comment"># {&quot;status&quot;:&quot;ok&quot;}</span></code></pre></div><p>Without in-cluster config the panel still serves login, sessions (recorded, not
+provisioned), node registration, the portal, and the gateway routes — enough to test
+auth, CSRF, validation, and handler behaviour. Anything that needs a real pod
+requires Path A.</p>
+<p>The student UI must be built before <code>go build</code> embeds a real SPA. <code>control-panel/web/dist/</code>
+is gitignored:</p>
+<div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-built_in">cd</span> control-panel/web
+npm ci
+npm run build</code></pre></div><h3 id="images">Images</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">docker build -t ldndrc/control-panel:dev ./control-panel
+docker build -t ldndrc/demo-standin:dev ./images/demo-standin
+k3d image import ldndrc/control-panel:dev ldndrc/demo-standin:dev -c ldndrc</code></pre></div><p>The workspace image is ~10 GB and takes a long time. Do not rebuild it to test a
+frontend change. Use <code>demo-standin</code> unless the change is actually inside the session.</p>
+<h3 id="docs-site">Docs site</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-built_in">cd</span> docs-site
+npm install
+npm run build      <span class="hljs-comment"># validates the graph, then writes dist/</span>
+npm run serve      <span class="hljs-comment"># http://127.0.0.1:8090</span></code></pre></div><h2 id="verification-matrix">Verification matrix</h2><p>Pick the row that matches your change. Paste the command and its output in the PR.</p>
+<table>
+<thead>
+<tr>
+<th>Change</th>
+<th>Prove it with</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Go logic</td>
+<td><code>cd control-panel &amp;&amp; go test ./...</code></td>
+</tr>
+<tr>
+<td>Panel boots</td>
+<td><code>JWT_SECRET=x go run ./cmd/server</code> then <code>/healthz</code></td>
+</tr>
+<tr>
+<td>Manifest / RBAC</td>
+<td><code>kubectl apply --dry-run=server -f manifests/</code> + <code>kubectl -n ldndrc auth can-i …</code></td>
+</tr>
+<tr>
+<td>Session lifecycle</td>
+<td>Create a session, wait for <code>ready</code>, <code>curl</code> the editor host with and without the cookie (<code>200</code> / <code>401</code>)</td>
+</tr>
+<tr>
+<td>Join detection</td>
+<td><code>./test-join.sh</code> and <code>./test-joining.sh</code></td>
+</tr>
+<tr>
+<td>Captive redirect</td>
+<td><code>./test-captive-trap.sh</code></td>
+</tr>
+<tr>
+<td>Student UI</td>
+<td><code>cd control-panel/web &amp;&amp; npm run build</code> (runs <code>tsc</code>)</td>
+</tr>
+<tr>
+<td>Docs site</td>
+<td><code>cd docs-site &amp;&amp; npm run build</code> (fails on a broken graph)</td>
+</tr>
+<tr>
+<td>Anything user-visible</td>
+<td>A screenshot or a two-line before/after, not a description</td>
+</tr>
+</tbody></table>
+<p>If a check needs hardware you do not have, say so explicitly. &quot;Not tested on a
+second laptop&quot; is an acceptable sentence. &quot;Should work&quot; is not a verification.</p>
+<h2 id="making-a-change">Making a change</h2><ol>
+<li><p><strong>Open an issue or leave a note first</strong> for anything bigger than a docs fix, so
+the design conversation does not happen inside a diff.</p>
+</li>
+<li><p><strong>Branch by intent:</strong> <code>feat/&lt;scope&gt;</code>, <code>fix/&lt;scope&gt;</code>, <code>docs/&lt;scope&gt;</code>.</p>
+</li>
+<li><p><strong>Keep the change one idea.</strong> A refactor mixed with a behavior change cannot be
+reviewed or reverted cleanly.</p>
+</li>
+<li><p><strong>Update the docs in the same commit.</strong> A feature with no operator instructions
+is not finished; this repo has been burned by that.</p>
+</li>
+<li><p><strong>Record the proof.</strong> For a milestone, add the next
+<code>local_dev_docs/checkpoint-NN-&lt;slug&gt;.md</code> using the existing checkpoints as the
+template: big picture, what got built, what was verified, what was not.</p>
+</li>
+<li><p><strong>Commit style</strong> (conventional-ish, lowercase scope):</p>
+<div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">feat(portal): register the onboarding page before approval
+fix(csrf): exempt login from the CSRF guard
+docs: checkpoint 43 records the captive harness promotion</code></pre></div></li>
+<li><p><strong>PR description:</strong> what changed, why, the verification output, and the known
+gaps. Link the roadmap row or checkpoint it closes.</p>
+</li>
+</ol>
+<h2 id="conventions">Conventions</h2><h3 id="go">Go</h3><ul>
+<li>Standard library first: <code>net/http</code>, <code>client-go</code>, <code>encoding/json</code>. Justify any new
+dependency in the PR.</li>
+<li>Keep the package boundaries: <code>internal/auth</code>, <code>sessions</code>, <code>nodes</code>, <code>gateway</code>,
+<code>portal</code>, <code>discovery</code>, <code>join</code>. A handler that talks to Kubernetes directly is a
+smell — put it in <code>internal/sessions</code>.</li>
+<li>Errors at the gateway have one meaning each: <code>401</code> no cookie, <code>404</code> no session,
+<code>503</code> provisioning, <code>502</code> unhealthy pod. Do not collapse them.</li>
+<li>Tests are table-driven and hermetic. Do not require a live cluster for <code>go test</code>.</li>
+</ul>
+<h3 id="kubernetes">Kubernetes</h3><ul>
+<li>One concern per manifest, and the filename says which concern.</li>
+<li>RBAC stays namespace-scoped. Cluster-wide verbs need a written reason.</li>
+<li>Session pods request <code>nvidia.com/gpu</code> only when the deployment says so; the demo
+path (<code>SESSION_GPU_LIMIT=0</code>) must keep working.</li>
+<li>Never commit a Secret. <code>secret.example.yaml</code> documents the shape; the real value
+is created at deploy time.</li>
+</ul>
+<h3 id="ui">UI</h3><p>Five rules are in <code>docs/uiux-design.md</code>; the important ones for review: one primary
+action per screen, status is ambient (top bar), and the desktop is an escape hatch,
+not a default. Match the existing dark/warm visual language instead of introducing
+a second design system.</p>
+<h3 id="docs-and-lessons">Docs and lessons</h3><p>There are three shelves. Put the document on the right one.</p>
+<table>
+<thead>
+<tr>
+<th>Shelf</th>
+<th>Purpose</th>
+<th>Tone</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docs/</code></td>
+<td>Design and operations references</td>
+<td>Precise, current, command-first</td>
+</tr>
+<tr>
+<td><code>local_dev_docs/</code></td>
+<td>Historical checkpoints and the cheatsheet</td>
+<td>Past tense, receipts, honest gaps</td>
+</tr>
+<tr>
+<td><code>docs-site/content/topics/</code></td>
+<td>Taught lessons distilled from the two above</td>
+<td>One concept, prerequisites, a <code>Verify</code> command</td>
+</tr>
+</tbody></table>
+<p>Lesson voice: start with the problem, name the mechanism, state the failure mode,
+end with something the reader can run. A lesson that only links to another document
+is a stub and should not be marked <code>shipped</code>.</p>
+<p>To add a topic:</p>
+<ol>
+<li>Add the node to <code>docs-site/content/graph.json</code> with <code>domain</code>, <code>title</code>, <code>summary</code>,
+<code>status</code>, <code>minutes</code>, <code>requires</code>, <code>sources</code>, <code>glyph</code>, and <code>verify</code>.</li>
+<li>Write <code>docs-site/content/topics/&lt;id&gt;.md</code>. Use <code>[[other-topic-id]]</code> for links.</li>
+<li><code>npm run build</code> — it refuses unknown prerequisites, missing files, and cycles.</li>
+<li>Check the rendered route with <strong>Route to here</strong>.</li>
+</ol>
+<p>Status is a claim: <code>shipped</code> = proven on real machines, <code>partial</code> = works in pieces
+with the gap named, <code>designed</code> = written down but not built. When in doubt, downgrade.</p>
+<h2 id="what-will-not-be-merged">What will not be merged</h2><ul>
+<li>A cloud dependency in the live path, or anything that breaks with the uplink down.</li>
+<li>A second shared workspace, or an isolation change that relies on cooperation.</li>
+<li>Secrets, private IPs, tokens, or machine-specific paths committed to the repo.</li>
+<li><code>AUTO_APPROVE=true</code> as a default, or any path that removes the human approval step.</li>
+<li>&quot;Done&quot; without a command, a checkpoint, or a live proof.</li>
+<li>Assets or CSS copied from <code>vimjoyer.com/nixmap</code>; the docs site re-implements the
+design from tokens.</li>
+<li>A large speculative feature that is not on the roadmap and has no smallest slice.</li>
+</ul>
+<h2 id="review-checklist">Review checklist</h2><p>For the author, before asking for review:</p>
+<ul>
+<li><input disabled="" type="checkbox"> The change is one idea and its diff is readable.</li>
+<li><input disabled="" type="checkbox"> <code>go test ./...</code> (and <code>npm run build</code> where relevant) passes.</li>
+<li><input disabled="" type="checkbox"> The verification command is in the PR and its output is pasted.</li>
+<li><input disabled="" type="checkbox"> Docs and the roadmap row are updated in the same commit.</li>
+<li><input disabled="" type="checkbox"> Known gaps are stated, not hidden.</li>
+<li><input disabled="" type="checkbox"> No secret, private address, or vendor-specific hack without a comment.</li>
+</ul>
+<p>For the reviewer:</p>
+<ul>
+<li><input disabled="" type="checkbox"> Does it keep the LAN-first and isolation laws?</li>
+<li><input disabled="" type="checkbox"> Is the new permission or dependency justified?</li>
+<li><input disabled="" type="checkbox"> Does the failure mode have a diagnosable status or log line?</li>
+<li><input disabled="" type="checkbox"> Does the claim match the proof?</li>
+</ul>
+<h2 id="where-to-start-right-now">Where to start right now</h2><p>From <code>docs/roadmap.md</code>, in order of impact:</p>
+<ol>
+<li><strong>R2-final</strong> — durable panel state across a redeploy (PVC + safe rollout).</li>
+<li><strong>R4</strong> — the pretty 3D viewer instead of the raw data frame.</li>
+<li><strong>R5</strong> — a full two-laptop install rehearsal, end to end.</li>
+<li><strong>R7</strong> — encryption at rest, resource limits, operator dashboards.</li>
+<li><strong>Docs</strong> — every <code>designed</code> topic on the map is an invitation to build or to
+sharpen the specification.</li>
+</ol>
+<h2 id="getting-unstuck">Getting unstuck</h2><ul>
+<li><code>local_dev_docs/cheatsheet.md</code> — &quot;if X, run Y&quot; for operators.</li>
+<li><code>docs/project-journey-report.md</code> — the plain-English architecture and glossary.</li>
+<li><code>docs/roadmap.md</code> — what is done, what is left, and why in that order.</li>
+<li>The docs site (<code>docs-site/</code>) — the same material as a guided map, with a verify
+command on every topic.</li>
+</ul>
+<p>Open an issue with the failing command, the output, and what you expected. A good
+bug report is a contribution in itself.</p>
+</div>
+</div>
+</body>
+</html>

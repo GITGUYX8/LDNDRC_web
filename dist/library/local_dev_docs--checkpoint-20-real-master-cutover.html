@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkpoint 20 — Real K3s Master Cutover + Baseline (detailed) — LDNDRC library</title>
+<meta name="description" content="Source document: local_dev_docs/checkpoint-20-real-master-cutover.md">
+<link rel="stylesheet" href="../assets/theme.css">
+
+</head>
+<body class="standalone">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5zM2 9v8l10 5V14zM22 9l-10 5v8l10-5z"/></symbol>
+    <symbol id="i-nodes" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.6"/><circle cx="5" cy="18" r="2.6"/><circle cx="19" cy="18" r="2.6"/><path d="M12 7.6v4M11 12H7L5.6 15.4M13 12h4l1.4 3.4" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><path d="M5 19c0-6 3.5-7 7-7s7-1 7-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="7" r="2.4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 9l3 3-3 3M12.5 15H18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3 8h13l-3.5-3.5M21 16H8l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="10" width="4" height="4" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 11l9 9M16.5 16.5l2-2M19 19l2-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-door" viewBox="0 0 24 24"><path d="M5 3h11v18H5z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="12" r="1.2"/><path d="M19 5v14" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+    <symbol id="i-sim" viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7l9 5 9-5M12 12v10" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-stack" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4.5" rx="1.2"/><rect x="3" y="10.5" width="18" height="4.5" rx="1.2"/><rect x="3" y="17" width="18" height="3.5" rx="1.2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 3v15M15 6v15" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-timeline" viewBox="0 0 24 24"><path d="M2 12h20" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="18" cy="12" r="2.2"/></symbol>
+    <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13l-5-5M18 12l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+<div class="page-doc">
+  <a class="back" href="../index.html#/">← back to the map</a>
+  <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-20-real-master-cutover.md · 6.4 KB</div>
+<h1 class="page-title">Checkpoint 20 — Real K3s Master Cutover + Baseline (detailed)</h1>
+<div class="prose"><h1 id="checkpoint-20-real-k3s-master-cutover-baseline-detailed">Checkpoint 20 — Real K3s Master Cutover + Baseline (detailed)</h1><h2 id="context">Context</h2><p>First run on a real K3s server on this laptop (<code>hari</code>, <code>192.168.1.37</code>,
+K3s <code>v1.36.4+k3s1</code>, containerd <code>2.3.4</code>), replacing the k3d <code>ldndrc</code>
+demo cluster. Scope was master-only by decision: cutover, redeploy,
+baseline verify, docs. The guest full-agent join is explicitly deferred
+to a later paired run. No push this run (HEAD stays local).</p>
+<p>Prior state (checkpoint-19): k3d demo, <code>K3S_JOIN_URL</code> rehearsal value,
+<code>ADVERTISE_MDNS=false</code>, no <code>:6443</code> listener, TUI Join correctly locked.</p>
+<h2 id="step-by-step-with-observed-outputs">Step-by-step with observed outputs</h2><h3 id="1-jwt-recovery-k3d-briefly-revived-then-stopped-again">1. JWT recovery (k3d briefly revived, then stopped again)</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">k3d cluster start ldndrc
+kubectl -n ldndrc get secret ldndrc-control-panel -o jsonpath=<span class="hljs-string">&#x27;{.data.JWT_SECRET}&#x27;</span> | <span class="hljs-built_in">base64</span> -d &gt; /tmp/ldndrc-jwt  <span class="hljs-comment"># 64 hex chars, mode 600</span>
+k3d cluster stop ldndrc   <span class="hljs-comment"># :80/:443 confirmed free afterwards</span></code></pre></div><p>Recovery succeeded — no fresh secret needed, all existing operator
+tokens stay valid. Rollback preserved: <code>k3d cluster start ldndrc</code> +
+<code>kubectl config use-context k3d-ldndrc</code> restores the demo world (its
+kubeconfig context was left untouched).</p>
+<h3 id="2-lifeboats-kubeconfig-images-one-sudo-block-user-run">2. Lifeboats + kubeconfig + images (one sudo block, user-run)</h3><ul>
+<li><code>docker save</code> both images to <code>/tmp/*.tar</code> (the fork session&#39;s
+tarballs were gone — <code>/tmp</code> is tmpfs; images re-saved from docker).</li>
+<li>User ran: kubeconfig export (<code>sudo cat /etc/rancher/k3s/k3s.yaml &gt; ~/.kube/k3s-real.yaml</code>, server <code>https://127.0.0.1:6443</code>), both
+<code>k3s ctr images import</code> (confirmed via <code>crictl</code>: <code>control-panel:dev</code>
+<code>7a45b2fef6cc4</code>, <code>demo-standin:dev</code>), <code>get nodes</code> (<code>hari Ready control-plane</code>, INTERNAL-IP <code>192.168.1.37</code>).</li>
+<li>Firewall verified from <code>ufw status</code>: <code>6443/tcp</code>, <code>80,443/tcp</code>,
+<code>5353/udp</code>, <code>8472/udp</code> all ALLOW (v4+v6), plus a pre-existing
+<code>ALLOW FWD 10.42.0.0/24</code> pod-network forward rule.</li>
+</ul>
+<h3 id="3-redeploy-order-matters">3. Redeploy (order matters)</h3><ol>
+<li><code>control-panel-rbac.yaml</code> — 8 resources created (namespace, SA,
+session Role + binding, nodes Role + binding in kube-system,
+nodes ClusterRole + binding).</li>
+<li>Secret from <code>/tmp/ldndrc-jwt</code>, verified round-trip
+(<code>SECRET-MATCHES-RECOVERED</code>).</li>
+<li>Deployment with <code>ADVERTISE_MDNS=true</code> (manifest flip, committed).</li>
+<li><strong>Correction:</strong> <code>kubectl apply</code> on
+<code>control-panel-hostnetwork-patch.yaml</code> fails — the file is a merge
+fragment, not a full object (<code>spec.selector: Required value</code>).
+Applied the identical intent via <code>kubectl patch --type=strategic</code>
+<code>{&quot;hostNetwork&quot;:true,&quot;dnsPolicy&quot;:&quot;ClusterFirstWithHostNet&quot;}</code>.
+Do not <code>apply</code> that file; the patch command is the procedure.</li>
+<li>Service, Ingress (traefik, 4 hosts, ADDRESS <code>192.168.1.37</code>),
+Headlamp (ghcr.io pull OK, <code>1/1 Running</code>).</li>
+<li>Read-back: <code>hostNetwork=true</code>, <code>dnsPolicy=ClusterFirstWithHostNet</code>,
+<code>ADVERTISE_MDNS=true</code>, <code>K3S_JOIN_URL=https://192.168.1.37:6443</code>.
+First real evidence: panel pod IP is <code>192.168.1.37</code> (the host).</li>
+</ol>
+<h3 id="4-baseline-incident-a-session-stuck-pending-documented-path">4. Baseline incident A — session stuck Pending (documented path)</h3><p>New session stayed <code>provisioning</code>; pod <code>Pending</code>:
+<code>didn&#39;t match Pod&#39;s node affinity/selector</code> — fresh master lacks the
+<code>role=host</code> label. Fix per README/runbook/checkpoint-09 precedent:</p>
+<div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl label node hari node-role.kubernetes.io/role=host</code></pre></div><p>Pod scheduled, PVC <code>Bound</code> (<code>local-path</code>, 5Gi).</p>
+<h3 id="5-baseline-incident-b-editor-502-via-wildcard-dns-new-finding">5. Baseline incident B — editor 502 via wildcard DNS (new finding)</h3><p>With the pod Running and session <code>ready</code>-capable, gateway <code>editor</code>
+returned 502 <code>workspace service unavailable</code> while pod-direct and
+ClusterIP curls both returned 200. Replicated with a <code>busybox</code> pod in
+the panel&#39;s exact posture (<code>hostNetwork:true</code>,
+<code>ClusterFirstWithHostNet</code>): <code>nslookup</code> correct (<code>10.43.44.89</code>), but
+<code>wget</code> dialed <strong><code>185.38.109.203</code></strong> — the LAN&#39;s wildcard DNS answer.</p>
+<p>Mechanism: the host&#39;s DHCP search suffix (<code>domain.name</code>) is inherited
+by the pod&#39;s <code>resolv.conf</code>; the target has 4 dots &lt; <code>ndots:5</code>, so the
+stub resolver walks the search list first and the wildcard hit
+short-circuits the correct CoreDNS reply. k3d never saw this (docker
+DNS, no such suffix). Fix (one line + comment,
+<code>session_gateway.go:67</code>): trailing dot makes the upstream a FQDN so
+the search list is skipped:</p>
+<div class="code" data-lang="go"><span class="lang-tag">go</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-go"><span class="hljs-string">&quot;http://&quot;</span> + session.ServiceName + <span class="hljs-string">&quot;.&quot;</span> + ns + <span class="hljs-string">&quot;.svc.cluster.local.:&quot;</span> + port</code></pre></div><h3 id="6-rollout-incident-hostnetwork-port-deadlock-new-finding">6. Rollout incident — hostNetwork port deadlock (new finding)</h3><p><code>rollout restart</code> with the fixed image deadlocked: new pod <code>Pending</code>
+(<code>didn&#39;t have free ports</code>), old pod holding <code>:8082</code>, <code>maxUnavailable:0</code>
+waiting for a ready successor that could never schedule. Fixed by
+deleting the old panel pod (~40s API downtime). <strong>Side effect:</strong>
+in-memory sessions wiped (known R2 debt); the verify session&#39;s K8s
+resources orphaned exactly as documented, then cleaned by hand
+(deploy+svc+pvc deleted). Future rollouts on a single hostNetwork node
+need <code>maxUnavailable:1</code> or the same delete-old-first step.</p>
+<h3 id="7-baseline-green-new-session-fc4fc8545676-via-traefik-80">7. Baseline GREEN (new session <code>fc4fc8545676</code>, via Traefik <code>:80</code>)</h3><table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Observed</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Session <code>provisioning</code> → <code>ready</code></td>
+<td>via gateway <code>Current()</code> flip</td>
+</tr>
+<tr>
+<td><code>editor</code> + cookie</td>
+<td><strong>200 + stand-in body</strong> (first time on this master)</td>
+</tr>
+<tr>
+<td><code>desktop</code> + cookie</td>
+<td>502 by design</td>
+</tr>
+<tr>
+<td><code>editor</code> no cookie</td>
+<td>401</td>
+</tr>
+<tr>
+<td>Cookie-domain lesson</td>
+<td>login must go through <code>control.ros-platform.local</code> (cookie <code>Domain=.ros-platform.local</code> is rejected for <code>127.0.0.1</code> logins by curl&#39;s jar — harness artifact, not a bug)</td>
+</tr>
+<tr>
+<td>mDNS</td>
+<td><strong><code>discovery: advertising _ldndrc-master._tcp on hari:8082</code></strong> — first real advertisement in project history</td>
+</tr>
+</tbody></table>
+<h2 id="what-this-proves-and-what-it-doesn-t">What this proves (and what it doesn&#39;t)</h2><p>Proves: full stack (RBAC, recovered Secret, hostNetwork panel with
+mDNS, Traefik ingress, Headlamp, per-user sessions, gateway matrix)
+runs on the real master with zero k3d in the path; two first-time
+findings (wildcard-DNS trap, hostNetwork rollout deadlock) diagnosed
+and fixed/documented.</p>
+<p>Does not prove: guest agent join (deferred — needs the paired run with
+<code>TEST_*</code> overrides), guest-side mDNS sighting (<code>avahi-browse</code> from the
+second laptop still pending), real workspace image (still stand-in),
+persistence across restarts (R2, observed live again here).</p>
+<h2 id="follow-ups">Follow-ups</h2><ul>
+<li>Paired guest join: register → approve → token → toolkit-skip →
+real <code>k3s agent</code> install → watcher-joined → session schedules on the
+new node; plus first <code>avahi-browse -r _ldndrc-master._tcp</code> sighting.</li>
+<li>Consider <code>maxUnavailable:1</code> (or Recreate) for the panel Deployment
+so single-node rollouts never deadlock again.</li>
+<li>Journey report + roadmap updated alongside (same checkpoint commit).</li>
+</ul>
+</div>
+</div>
+</body>
+</html>

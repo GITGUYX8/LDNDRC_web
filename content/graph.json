@@ -1,0 +1,789 @@
+{
+  "site": {
+    "title": "LDNDRC",
+    "subtitle": "Local Dynamic Node Discovery ROS Cluster",
+    "tagline": "A map of the concepts this platform is built on.",
+    "repo": "LDNDRC"
+  },
+  "domains": [
+    {
+      "id": "foundations",
+      "name": "Foundations",
+      "color": "#b8bb26",
+      "blurb": "What the platform is, who it is for, and the constraint that shaped every other decision."
+    },
+    {
+      "id": "cluster",
+      "name": "Cluster",
+      "color": "#458588",
+      "blurb": "K3s on laptops, the local demo, and the networking that carries traffic."
+    },
+    {
+      "id": "compute",
+      "name": "Compute",
+      "color": "#8ec07c",
+      "blurb": "Which laptops may contribute resources, and how a consumer GPU is shared."
+    },
+    {
+      "id": "sessions",
+      "name": "Sessions",
+      "color": "#d3869b",
+      "blurb": "One private, isolated ROS workspace per student, provisioned on demand."
+    },
+    {
+      "id": "workspace",
+      "name": "Workspace",
+      "color": "#fe8019",
+      "blurb": "The three browser tools: editor, desktop, and the streaming simulator."
+    },
+    {
+      "id": "join",
+      "name": "Join",
+      "color": "#fabd2f",
+      "blurb": "How a new laptop announces itself, asks for approval, and becomes a Host."
+    },
+    {
+      "id": "experience",
+      "name": "Experience",
+      "color": "#83a598",
+      "blurb": "The student-facing shell that wraps the tools into one product."
+    },
+    {
+      "id": "direction",
+      "name": "Direction",
+      "color": "#fb4934",
+      "blurb": "The stack, the history, and what is still left to build."
+    }
+  ],
+  "goals": [
+    {
+      "id": "goal-demo",
+      "title": "Demo it on one laptop",
+      "blurb": "Stand the whole platform up on a single machine in about ten minutes.",
+      "requires": [
+        "control-panel-deploy"
+      ]
+    },
+    {
+      "id": "goal-gazebo",
+      "title": "Run a Gazebo session",
+      "blurb": "From a cold browser to a robot driving around a world you can see.",
+      "requires": [
+        "gazebo-gzweb"
+      ]
+    },
+    {
+      "id": "goal-join",
+      "title": "Join a host laptop",
+      "blurb": "Take a second laptop from stranger to approved compute node.",
+      "requires": [
+        "join-binary"
+      ]
+    },
+    {
+      "id": "goal-lan",
+      "title": "Go live on a real LAN",
+      "blurb": "Master, Hosts, onboarding, and students on actual hardware.",
+      "requires": [
+        "control-panel-deploy",
+        "captive-portal"
+      ]
+    }
+  ],
+  "topics": [
+    {
+      "id": "what-is-ldndrc",
+      "title": "What LDNDRC is",
+      "domain": "foundations",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 4,
+      "glyph": "box",
+      "summary": "A local-first ROS 2 lab where laptops contribute compute and everyone else just opens a browser.",
+      "requires": [],
+      "sources": [
+        "README.md"
+      ],
+      "verify": "curl -s http://127.0.0.1:8082/healthz"
+    },
+    {
+      "id": "roles",
+      "title": "Hosts, Guests, Operators",
+      "domain": "foundations",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 4,
+      "glyph": "nodes",
+      "summary": "Three roles split by hardware, not by permission.",
+      "requires": [
+        "what-is-ldndrc"
+      ],
+      "sources": [
+        "README.md",
+        "docs/project-journey-report.md"
+      ],
+      "verify": "kubectl get nodes -L node-role.kubernetes.io/role"
+    },
+    {
+      "id": "lan-first",
+      "title": "The LAN-first constraint",
+      "domain": "foundations",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 4,
+      "glyph": "route",
+      "summary": "No cloud, no dedicated server, no internet dependency \u2014 and what that forces.",
+      "requires": [
+        "what-is-ldndrc"
+      ],
+      "sources": [
+        "ldndrc-workshop-design.md",
+        "README.md"
+      ],
+      "verify": "ip -4 addr show | grep inet"
+    },
+    {
+      "id": "dds-isolation",
+      "title": "Why DDS never leaves the pod",
+      "domain": "foundations",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 5,
+      "glyph": "lock",
+      "summary": "Isolation is a network-namespace property, not a firewall rule.",
+      "requires": [
+        "roles"
+      ],
+      "sources": [
+        "README.md",
+        "local_dev_docs/checkpoint-02-workspace-containers-and-isolation.md"
+      ],
+      "verify": "kubectl -n ldndrc exec <session-pod> -- env | grep ROS_DOMAIN_ID"
+    },
+    {
+      "id": "why-k3s",
+      "title": "Why K3s, not Kubernetes",
+      "domain": "cluster",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 4,
+      "glyph": "layers",
+      "summary": "One binary, one small datastore, and a single command on a laptop.",
+      "requires": [
+        "lan-first"
+      ],
+      "sources": [
+        "ldndrc-workshop-design.md",
+        "docs/local-cluster-headlamp.md"
+      ],
+      "verify": "k3s --version"
+    },
+    {
+      "id": "k3d-demo",
+      "title": "The one-laptop demo (k3d)",
+      "domain": "cluster",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 5,
+      "glyph": "terminal",
+      "summary": "The entire platform in a throwaway container cluster, no GPU required.",
+      "requires": [
+        "why-k3s"
+      ],
+      "sources": [
+        "README.md",
+        "docs/local-cluster-headlamp.md"
+      ],
+      "verify": "k3d cluster list"
+    },
+    {
+      "id": "networking",
+      "title": "Flannel and Traefik",
+      "domain": "cluster",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 5,
+      "glyph": "flow",
+      "summary": "One CNI that deliberately carries no DDS, and one ingress that reads hostnames.",
+      "requires": [
+        "why-k3s"
+      ],
+      "sources": [
+        "README.md"
+      ],
+      "verify": "kubectl -n kube-system get svc traefik"
+    },
+    {
+      "id": "control-panel-deploy",
+      "title": "Deploying the control panel",
+      "domain": "cluster",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 6,
+      "glyph": "cpu",
+      "summary": "A Go binary, namespace-scoped RBAC, and four manifests.",
+      "requires": [
+        "k3d-demo",
+        "networking"
+      ],
+      "sources": [
+        "README.md",
+        "local_dev_docs/checkpoint-06-control-panel-k3s-deployment.md"
+      ],
+      "verify": "kubectl -n ldndrc rollout status deployment/ldndrc-control-panel"
+    },
+    {
+      "id": "hardware-gate",
+      "title": "The hardware gate",
+      "domain": "compute",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 4,
+      "glyph": "chip",
+      "summary": "Eight cores, sixteen gigabytes, and an NVIDIA GPU decide what a laptop becomes.",
+      "requires": [
+        "roles"
+      ],
+      "sources": [
+        "README.md",
+        "join-cluster.sh",
+        "local_dev_docs/checkpoint-01-join-logic-and-k3d-tests.md"
+      ],
+      "verify": "TEST_CPU=12 TEST_RAM=16 TEST_GPU=nvidia ./join-cluster.sh"
+    },
+    {
+      "id": "auth-csrf",
+      "title": "JWT, cookies, and CSRF stamps",
+      "domain": "sessions",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 6,
+      "glyph": "key",
+      "summary": "Two credentials for two jobs: a bearer token for the API, a stamped cookie for the gateway.",
+      "requires": [
+        "control-panel-deploy"
+      ],
+      "sources": [
+        "README.md",
+        "local_dev_docs/checkpoint-21-r3-r2.md",
+        "local_dev_docs/checkpoint-40-csrf-login-fix-live.md"
+      ],
+      "verify": "curl -s -o /dev/null -w '%{http_code}\\n' -X POST http://127.0.0.1:8082/api/sessions"
+    },
+    {
+      "id": "session-lifecycle",
+      "title": "The session lifecycle",
+      "domain": "sessions",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 5,
+      "glyph": "play",
+      "summary": "Create returns 202, not 200. Readiness is a question you poll.",
+      "requires": [
+        "control-panel-deploy"
+      ],
+      "sources": [
+        "README.md",
+        "local_dev_docs/checkpoint-05-kubernetes-session-provisioning.md"
+      ],
+      "verify": "curl -s http://127.0.0.1:8082/api/sessions -H \"Authorization: Bearer $TOKEN\""
+    },
+    {
+      "id": "per-user-workload",
+      "title": "One Deployment, Service, and PVC per user",
+      "domain": "sessions",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 5,
+      "glyph": "box",
+      "summary": "The unit of tenancy is a Kubernetes object set, not a row in a database.",
+      "requires": [
+        "session-lifecycle",
+        "hardware-gate"
+      ],
+      "sources": [
+        "README.md",
+        "local_dev_docs/checkpoint-05-kubernetes-session-provisioning.md"
+      ],
+      "verify": "kubectl -n ldndrc get deploy,svc,pvc"
+    },
+    {
+      "id": "ros-domain-id",
+      "title": "Unique ROS_DOMAIN_ID per pod",
+      "domain": "sessions",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 4,
+      "glyph": "lock",
+      "summary": "Defense in depth: the namespace already isolates, the domain ID makes it obvious.",
+      "requires": [
+        "per-user-workload",
+        "dds-isolation"
+      ],
+      "sources": [
+        "README.md",
+        "local_dev_docs/checkpoint-02-workspace-containers-and-isolation.md"
+      ],
+      "verify": "kubectl -n ldndrc exec <session-pod> -- bash -c 'echo $ROS_DOMAIN_ID'"
+    },
+    {
+      "id": "gateway-proxy",
+      "title": "The cookie gateway",
+      "domain": "sessions",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 5,
+      "glyph": "door",
+      "summary": "Hostname tells the proxy which tool; the cookie tells it whose pod.",
+      "requires": [
+        "auth-csrf",
+        "per-user-workload"
+      ],
+      "sources": [
+        "README.md",
+        "local_dev_docs/checkpoint-07-cookie-gateway-routing.md"
+      ],
+      "verify": "curl -s -o /dev/null -w '%{http_code}\\n' -H 'Host: editor.ros-platform.local' http://127.0.0.1:8082/"
+    },
+    {
+      "id": "gazebo-gzweb",
+      "title": "Gazebo over a websocket",
+      "domain": "workspace",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 6,
+      "glyph": "sim",
+      "summary": "Headless physics in the pod, a Three.js scene in the browser, one bridge on :9002.",
+      "requires": [
+        "per-user-workload",
+        "ros-domain-id"
+      ],
+      "sources": [
+        "README.md",
+        "local_dev_docs/checkpoint-36-sim-fuel-seed.md",
+        "local_dev_docs/checkpoint-37-sim-live.md"
+      ],
+      "verify": "kubectl -n ldndrc exec <session-pod> -- supervisorctl status"
+    },
+    {
+      "id": "nodes-api",
+      "title": "Register, approve, poll",
+      "domain": "join",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 5,
+      "glyph": "nodes",
+      "summary": "Four states and one rule: strangers may knock, only an operator may open the door.",
+      "requires": [
+        "control-panel-deploy",
+        "auth-csrf"
+      ],
+      "sources": [
+        "README.md",
+        "local_dev_docs/checkpoint-14-nodes-api.md"
+      ],
+      "verify": "curl -s http://127.0.0.1:8082/api/nodes -H \"Authorization: Bearer $TOKEN\""
+    },
+    {
+      "id": "join-binary",
+      "title": "The join binary",
+      "domain": "join",
+      "status": "partial",
+      "spine": true,
+      "minutes": 6,
+      "glyph": "terminal",
+      "summary": "A guided TUI that checks hardware, explains the verdict, and only then asks for permission.",
+      "requires": [
+        "nodes-api",
+        "hardware-gate"
+      ],
+      "sources": [
+        "docs/host-joiner-tui-spec.md",
+        "local_dev_docs/checkpoint-15-join-binary.md",
+        "local_dev_docs/checkpoint-18-join-wiring.md"
+      ],
+      "verify": "./ldndrc-join --plain"
+    },
+    {
+      "id": "captive-portal",
+      "title": "The captive onboarding portal",
+      "domain": "join",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 6,
+      "glyph": "door",
+      "summary": "Join the Wi-Fi, get a real page instead of a dead internet, download the agent.",
+      "requires": [
+        "join-binary"
+      ],
+      "sources": [
+        "docs/lan-onboarding-portal.md",
+        "local_dev_docs/checkpoint-41-lan-onboarding-portal.md",
+        "local_dev_docs/checkpoint-43-captive-portal-live.md"
+      ],
+      "verify": "curl -s http://<master-ip>:8082/api/downloads/count"
+    },
+    {
+      "id": "tech-stack",
+      "title": "The stack, layer by layer",
+      "domain": "direction",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 6,
+      "glyph": "stack",
+      "summary": "Every technology in the system and the one job it is allowed to do.",
+      "requires": [
+        "what-is-ldndrc"
+      ],
+      "sources": [
+        "README.md",
+        "local_dev_docs/cheatsheet.md"
+      ],
+      "verify": "kubectl version --short"
+    },
+    {
+      "id": "dev-timeline",
+      "title": "How it was built, in order",
+      "domain": "direction",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 7,
+      "glyph": "timeline",
+      "summary": "Seven eras from a shell script to a live student website.",
+      "requires": [
+        "what-is-ldndrc"
+      ],
+      "sources": [
+        "docs/roadmap.md",
+        "docs/project-journey-report.md",
+        "local_dev_docs/"
+      ],
+      "verify": "ls local_dev_docs/checkpoint-*.md | wc -l"
+    },
+    {
+      "id": "roadmap",
+      "title": "What is still left",
+      "domain": "direction",
+      "status": "shipped",
+      "spine": true,
+      "minutes": 5,
+      "glyph": "map",
+      "summary": "The honest done-versus-remaining list, in build order.",
+      "requires": [
+        "dev-timeline"
+      ],
+      "sources": [
+        "docs/roadmap.md"
+      ],
+      "verify": "curl -s https://api.github.com/repos/<owner>/LDNDRC/commits?per_page=1"
+    },
+    {
+      "id": "headlamp",
+      "title": "Headlamp for cluster sight",
+      "domain": "cluster",
+      "status": "shipped",
+      "spine": false,
+      "minutes": 3,
+      "glyph": "layers",
+      "summary": "A visual dashboard so the operator can see pods without memorising kubectl flags.",
+      "requires": [
+        "k3d-demo"
+      ],
+      "sources": [
+        "README.md",
+        "local_dev_docs/checkpoint-10-headlamp-visuals.md"
+      ],
+      "verify": "kubectl -n ldndrc get svc ldndrc-headlamp"
+    },
+    {
+      "id": "manifests-layout",
+      "title": "The manifests directory",
+      "domain": "cluster",
+      "status": "shipped",
+      "spine": false,
+      "minutes": 3,
+      "glyph": "stack",
+      "summary": "Deployment, service, ingress, RBAC, secret example, and Headlamp \u2014 one apply each.",
+      "requires": [
+        "control-panel-deploy"
+      ],
+      "sources": [
+        "README.md",
+        "manifests/"
+      ],
+      "verify": "ls manifests/"
+    },
+    {
+      "id": "gpu-timeslicing",
+      "title": "Time-slicing one GPU",
+      "domain": "compute",
+      "status": "partial",
+      "spine": false,
+      "minutes": 4,
+      "glyph": "chip",
+      "summary": "A consumer GeForce pretends to be four GPUs so four students fit.",
+      "requires": [
+        "hardware-gate"
+      ],
+      "sources": [
+        "README.md",
+        "local_dev_docs/checkpoint-11-gpu-optional.md"
+      ],
+      "verify": "kubectl get nodes -o jsonpath='{.items[*].status.allocatable.nvidia\\.com/gpu}'"
+    },
+    {
+      "id": "durable-state",
+      "title": "Surviving a redeploy",
+      "domain": "sessions",
+      "status": "partial",
+      "spine": false,
+      "minutes": 4,
+      "glyph": "stack",
+      "summary": "Sessions and approvals live on emptyDir today; the fix is durable storage.",
+      "requires": [
+        "session-lifecycle"
+      ],
+      "sources": [
+        "docs/roadmap.md",
+        "local_dev_docs/checkpoint-42-r2final-durable-sessions.md"
+      ],
+      "verify": "kubectl -n ldndrc get pvc"
+    },
+    {
+      "id": "code-server",
+      "title": "VS Code in a tab",
+      "domain": "workspace",
+      "status": "shipped",
+      "spine": false,
+      "minutes": 3,
+      "glyph": "terminal",
+      "summary": "The editor and its terminals are the student's actual workbench.",
+      "requires": [
+        "per-user-workload"
+      ],
+      "sources": [
+        "README.md"
+      ],
+      "verify": "curl -s -o /dev/null -w '%{http_code}\\n' -H 'Host: editor.ros-platform.local' http://127.0.0.1:8082/"
+    },
+    {
+      "id": "selkies",
+      "title": "The streamed desktop",
+      "domain": "workspace",
+      "status": "shipped",
+      "spine": false,
+      "minutes": 4,
+      "glyph": "desktop",
+      "summary": "WebRTC Linux desktop for GUI tools that will never work in a browser pane.",
+      "requires": [
+        "per-user-workload"
+      ],
+      "sources": [
+        "README.md",
+        "local_dev_docs/checkpoint-34-selkies-2.0.0.md",
+        "local_dev_docs/checkpoint-35-selkies-live.md"
+      ],
+      "verify": "curl -s -o /dev/null -w '%{http_code}\\n' -H 'Host: desktop.ros-platform.local' http://127.0.0.1:8082/"
+    },
+    {
+      "id": "workspace-image",
+      "title": "Building the workspace image",
+      "domain": "workspace",
+      "status": "shipped",
+      "spine": false,
+      "minutes": 4,
+      "glyph": "layers",
+      "summary": "Base layers, an immutable tag, and an import path the laptop cluster understands.",
+      "requires": [
+        "per-user-workload"
+      ],
+      "sources": [
+        "local_dev_docs/checkpoint-27-r6-base-image.md",
+        "local_dev_docs/checkpoint-28-r6-workspace-build.md",
+        "local_dev_docs/checkpoint-30-r6-tag-tarball.md"
+      ],
+      "verify": "kubectl -n ldndrc get deploy -o jsonpath='{.items[*].spec.template.spec.containers[*].image}'"
+    },
+    {
+      "id": "disk-budget",
+      "title": "The disk budget",
+      "domain": "workspace",
+      "status": "shipped",
+      "spine": false,
+      "minutes": 3,
+      "glyph": "chip",
+      "summary": "Ten gigabytes of image on a workshop laptop is a planning problem, not a build problem.",
+      "requires": [
+        "workspace-image"
+      ],
+      "sources": [
+        "local_dev_docs/checkpoint-31-r6-disk-spec.md",
+        "local_dev_docs/checkpoint-38-compression-record.md"
+      ],
+      "verify": "docker images | grep ldndrc"
+    },
+    {
+      "id": "release-pipeline",
+      "title": "The release pipeline",
+      "domain": "join",
+      "status": "shipped",
+      "spine": false,
+      "minutes": 3,
+      "glyph": "flow",
+      "summary": "Tag a version and GitHub builds five binaries, checks them, and seals them.",
+      "requires": [
+        "join-binary"
+      ],
+      "sources": [
+        ".github/workflows/release-join.yml",
+        "local_dev_docs/checkpoint-16-release-pipeline.md"
+      ],
+      "verify": "gh release list"
+    },
+    {
+      "id": "joiner-tui",
+      "title": "The joiner's screens",
+      "domain": "join",
+      "status": "designed",
+      "spine": false,
+      "minutes": 4,
+      "glyph": "desktop",
+      "summary": "Pre-flight matrix, driver rules D1\u2013D4, and consent before anything is downloaded.",
+      "requires": [
+        "join-binary"
+      ],
+      "sources": [
+        "docs/host-joiner-tui-spec.md",
+        "onboarding-design-report.md"
+      ],
+      "verify": "./ldndrc-join --detect-only"
+    },
+    {
+      "id": "uiux-principles",
+      "title": "Focus over window management",
+      "domain": "experience",
+      "status": "designed",
+      "spine": false,
+      "minutes": 4,
+      "glyph": "map",
+      "summary": "One active tool, a persistent rail, ambient status, and exactly three layouts.",
+      "requires": [
+        "per-user-workload"
+      ],
+      "sources": [
+        "docs/uiux-design.md"
+      ],
+      "verify": "open http://control.ros-platform.local/launch"
+    },
+    {
+      "id": "student-spa",
+      "title": "Login, launch, workspace",
+      "domain": "experience",
+      "status": "shipped",
+      "spine": false,
+      "minutes": 4,
+      "glyph": "flow",
+      "summary": "A small state machine with exactly one primary action at every state.",
+      "requires": [
+        "uiux-principles",
+        "session-lifecycle"
+      ],
+      "sources": [
+        "docs/uiux-design.md",
+        "local_dev_docs/checkpoint-23-r4-ui1-ui2.md"
+      ],
+      "verify": "curl -s http://127.0.0.1:8082/ | head -5"
+    },
+    {
+      "id": "instructor-console",
+      "title": "The instructor console",
+      "domain": "experience",
+      "status": "shipped",
+      "spine": false,
+      "minutes": 3,
+      "glyph": "nodes",
+      "summary": "Approve or deny join requests without touching curl.",
+      "requires": [
+        "student-spa",
+        "nodes-api"
+      ],
+      "sources": [
+        "local_dev_docs/checkpoint-25-r4-ui3-admin.md",
+        "local_dev_docs/checkpoint-26-r4-ui3-live-verify.md"
+      ],
+      "verify": "open http://control.ros-platform.local/admin"
+    },
+    {
+      "id": "glossary",
+      "title": "Every hard word, in plain words",
+      "domain": "direction",
+      "status": "shipped",
+      "spine": false,
+      "minutes": 3,
+      "glyph": "book",
+      "summary": "Pod, deployment, PVC, ingress, DDS, domain ID \u2014 one line each.",
+      "requires": [
+        "what-is-ldndrc"
+      ],
+      "sources": [
+        "docs/project-journey-report.md"
+      ],
+      "verify": "echo ok"
+    },
+    {
+      "id": "ops-cheatsheet",
+      "title": "Daily operations cheatsheet",
+      "domain": "direction",
+      "status": "shipped",
+      "spine": false,
+      "minutes": 5,
+      "glyph": "terminal",
+      "summary": "Is it up, read the logs, test the gateway, and the if-X-run-Y table.",
+      "requires": [
+        "gateway-proxy"
+      ],
+      "sources": [
+        "local_dev_docs/cheatsheet.md"
+      ],
+      "verify": "./local_dev_docs/cheatsheet.md"
+    },
+    {
+      "id": "interview-qa",
+      "title": "100 interview questions",
+      "domain": "direction",
+      "status": "shipped",
+      "spine": false,
+      "minutes": 8,
+      "glyph": "book",
+      "summary": "The project explained through the questions an interviewer would actually ask.",
+      "requires": [
+        "tech-stack"
+      ],
+      "sources": [
+        "more_queries.md"
+      ],
+      "verify": "echo ok"
+    },
+    {
+      "id": "contributing",
+      "title": "Contribute to LDNDRC",
+      "domain": "direction",
+      "status": "shipped",
+      "spine": false,
+      "minutes": 6,
+      "glyph": "nodes",
+      "summary": "Open-source contribution workflow: issues, pull requests, proof, and review.",
+      "requires": [
+        "roadmap"
+      ],
+      "sources": [
+        "CONTRIBUTING.md",
+        ".github/ISSUE_TEMPLATE/bug_report.md",
+        ".github/ISSUE_TEMPLATE/feature_request.md",
+        ".github/ISSUE_TEMPLATE/docs_update.md",
+        ".github/PULL_REQUEST_TEMPLATE.md"
+      ],
+      "verify": "test -f CONTRIBUTING.md && test -f .github/PULL_REQUEST_TEMPLATE.md && echo \"contribution workflow is present\""
+    }
+  ]
+}

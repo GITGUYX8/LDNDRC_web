@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Nixmap Pattern: A Teardown of a Map-Shaped Documentation System — LDNDRC library</title>
+<meta name="description" content="Source document: nixmap.md">
+<link rel="stylesheet" href="../assets/theme.css">
+
+</head>
+<body class="standalone">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5zM2 9v8l10 5V14zM22 9l-10 5v8l10-5z"/></symbol>
+    <symbol id="i-nodes" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.6"/><circle cx="5" cy="18" r="2.6"/><circle cx="19" cy="18" r="2.6"/><path d="M12 7.6v4M11 12H7L5.6 15.4M13 12h4l1.4 3.4" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><path d="M5 19c0-6 3.5-7 7-7s7-1 7-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="7" r="2.4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 9l3 3-3 3M12.5 15H18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3 8h13l-3.5-3.5M21 16H8l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="10" width="4" height="4" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 11l9 9M16.5 16.5l2-2M19 19l2-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-door" viewBox="0 0 24 24"><path d="M5 3h11v18H5z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="12" r="1.2"/><path d="M19 5v14" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+    <symbol id="i-sim" viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7l9 5 9-5M12 12v10" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-stack" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4.5" rx="1.2"/><rect x="3" y="10.5" width="18" height="4.5" rx="1.2"/><rect x="3" y="17" width="18" height="3.5" rx="1.2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 3v15M15 6v15" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-timeline" viewBox="0 0 24 24"><path d="M2 12h20" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="18" cy="12" r="2.2"/></symbol>
+    <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13l-5-5M18 12l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+<div class="page-doc">
+  <a class="back" href="../index.html#/">← back to the map</a>
+  <div class="eyebrow" style="margin-bottom:10px">source document · nixmap.md · 42.5 KB</div>
+<h1 class="page-title">The Nixmap Pattern: A Teardown of a Map-Shaped Documentation System</h1>
+<div class="prose"><h1 id="the-nixmap-pattern-a-teardown-of-a-map-shaped-documentation-system">The Nixmap Pattern: A Teardown of a Map-Shaped Documentation System</h1><p>Most documentation is a book. It has a table of contents, a beginning, and an end. You are expected to read it in order, or search it when you already know what you are looking for.</p>
+<p><a href="https://vimjoyer.com/nixmap/" target="_blank" rel="noreferrer">Nixmap</a> is not a book. It is a map.</p>
+<p>That sounds like a cosmetic difference until you use it. Nixmap treats learning as navigation: you choose a destination, it computes the prerequisites, and it gives you one small, doable step at a time. The interface is a zoomable concept map, the lessons are short, and almost every page ends with something you can actually run.</p>
+<p>I went through the site, its 131 map nodes, its lesson payloads, and its microcopy to pull apart how it works. This is the teardown: the philosophy, the information architecture, the page anatomy, the writing voice, the interaction design, and the parts worth stealing for your own docs.</p>
+<hr>
+<h2 id="prerequisites">Prerequisites</h2><p>You do not need to know Nix to follow this. I will explain the examples as they come up.</p>
+<p>It helps if you have:</p>
+<ul>
+<li>read or written technical documentation before,</li>
+<li>used a docs site with a sidebar and a table of contents,</li>
+<li>and wondered why people still ask the same beginner questions anyway.</li>
+</ul>
+<p>No installation, no account, and no Nix knowledge required. That is, not coincidentally, the same promise Nixmap makes.</p>
+<hr>
+<h2 id="the-one-sentence-version">The one-sentence version</h2><blockquote>
+<p>Nixmap turns documentation into a dependency-aware learning environment: every concept is a small node, every goal is a route through its prerequisites, and every page ends with something you can do.</p>
+</blockquote>
+<p>That sentence contains the whole design. The rest of this article unpacks it.</p>
+<hr>
+<h2 id="a-teardown-at-a-glance">A teardown at a glance</h2><table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>What Nixmap does</th>
+<th>Pattern name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Content model</td>
+<td>Concepts linked to what they build on</td>
+<td>Knowledge graph</td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Pick a goal, show only its ancestors</td>
+<td>Goal-derived route</td>
+</tr>
+<tr>
+<td>Lesson unit</td>
+<td>One concept, roughly 350 words, one sitting</td>
+<td>Atomic lesson</td>
+</tr>
+<tr>
+<td>Practice</td>
+<td>Live REPL, real terminal, simulations</td>
+<td>Executable explanation</td>
+</tr>
+<tr>
+<td>Interface</td>
+<td>Map view plus a side sheet</td>
+<td>Spatial learning environment</td>
+</tr>
+<tr>
+<td>Voice</td>
+<td>Second person, short sentences, concrete examples</td>
+<td>Friendly expert</td>
+</tr>
+<tr>
+<td>First run</td>
+<td>A short dialogue that asks about you</td>
+<td>Guided onboarding</td>
+</tr>
+<tr>
+<td>Trust</td>
+<td>Credits, licenses, no signup, no install</td>
+<td>Creator-led product</td>
+</tr>
+</tbody></table>
+<p>The interesting part is not any single row. It is that all eight rows agree with each other.</p>
+<hr>
+<h2 id="1-what-nixmap-actually-is">1. What Nixmap actually is</h2><p>The site describes itself in one line:</p>
+<blockquote>
+<p>A map of Nix concepts and the concepts each one builds on.</p>
+</blockquote>
+<p>That is accurate, but it undersells the product. Nixmap is a learning environment with four kinds of content:</p>
+<ol>
+<li><strong>Knowledge nodes</strong> — 121 small concept pages, from “Numbers” to “Conditional imports and infinite recursion.”</li>
+<li><strong>Simulations</strong> — 8 guided, browser-based projects, such as installing NixOS, turning a configuration into a flake, and packaging a Node.js project.</li>
+<li><strong>Dialogue beats</strong> — 2 onboarding sequences where the creator, Yurii (Vimjoyer), talks you through the model.</li>
+<li><strong>A map</strong> — 131 nodes connected by 219 prerequisite edges, arranged spatially and color-coded by domain.</li>
+</ol>
+<p>The map is not decoration. It is the table of contents, the progress tracker, and the recommendation engine at the same time.</p>
+<p>A traditional docs site says: “Here are 300 pages, alphabetized.” Nixmap says: “Here are 131 things you might need, here is how they depend on each other, and here is the shortest path to the thing you actually want.”</p>
+<p>That is a different product category.</p>
+<p>It is also a product, not a docs generator. It has onboarding, settings, progress, search, feedback, support, and a credits page. Those are product concerns, not documentation concerns. That is why it feels different from a docs site with a nice theme.</p>
+<hr>
+<h2 id="2-the-core-thesis-knowledge-is-a-graph-learning-is-a-route">2. The core thesis: knowledge is a graph, learning is a route</h2><p>Most documentation is organized as a tree: chapters, sections, subsections. A tree is good for reference. It is bad for learning, because the order that makes sense to the author is rarely the order that makes sense to the reader.</p>
+<p>Nixmap organizes its content as a directed acyclic graph. Each edge means “this concept is useful before that one.” For example:</p>
+<ul>
+<li><code>expressions</code> comes before <code>strings</code>.</li>
+<li><code>attribute sets</code> comes before <code>configuration.nix</code>.</li>
+<li><code>flakes</code> comes before <code>nixos-flake</code>.</li>
+<li><code>sim-install-nixos</code> comes before <code>sim-configure-nixos</code>.</li>
+</ul>
+<p>When you choose a goal, Nixmap does not show you the whole graph. It computes the goal’s ancestors and keeps only those. Everything else disappears.</p>
+<p>The onboarding explains it better than I can:</p>
+<blockquote>
+<p>“You pick a goal, and it shows you only the steps to get there. Then you go at your own pace.”</p>
+</blockquote>
+<p>And then it demonstrates it:</p>
+<blockquote>
+<p>“See? Everything else is gone, and only the steps that lead to NixOS are left. Start from the top and go at your own pace.”</p>
+</blockquote>
+<p>This is the single most important design decision on the site.</p>
+<h3 id="why-a-route-beats-a-curriculum">Why a route beats a curriculum</h3><p>A curriculum is written for an imagined average learner. A route is computed for a specific goal.</p>
+<p>That difference shows up in the numbers. In the current graph:</p>
+<ul>
+<li>The route to <strong>Install NixOS</strong> has 18 prerequisites, or 19 steps including the goal.</li>
+<li>The route to <strong>Package your project</strong> has 47 prerequisites, or 48 steps.</li>
+<li>The route to <strong>Take your home with you</strong> has 42 prerequisites, or 43 steps.</li>
+</ul>
+<p>A single linear course would have to pick one of those lengths and force everyone through it. A graph lets the same content serve all three goals.</p>
+<p>It also solves the “where do I start?” problem without writing a “Getting Started” page that nobody reads. You start at the goal.</p>
+<h3 id="the-map-is-also-a-memory-aid">The map is also a memory aid</h3><p>The spatial layout is doing real work. Concepts live in branches:</p>
+<ul>
+<li>language concepts in yellow,</li>
+<li>Nixpkgs in green,</li>
+<li>the store and packaging in blue,</li>
+<li>the Nix CLI in gray,</li>
+<li>NixOS in blue-purple,</li>
+<li>modules in red,</li>
+<li>Home Manager in orange,</li>
+<li>flakes in purple,</li>
+<li>devshells in aqua-green.</li>
+</ul>
+<p>After a while, you remember that “overlays” is a green thing near Nixpkgs, and “mkIf” is a red thing near modules. That is spatial memory, and it is something a sidebar cannot give you.</p>
+<p>The map is not just pretty. It is a second index.</p>
+<hr>
+<h2 id="3-the-philosophy-in-eight-moves">3. The philosophy, in eight moves</h2><p>Nixmap’s design is opinionated. Here are the beliefs I think it is built on, with the evidence for each.</p>
+<h3 id="move-1-start-from-the-goal-not-the-syllabus">Move 1: Start from the goal, not the syllabus</h3><p>The first question is not “what should I teach?” It is “what is the reader trying to do?”</p>
+<p>The onboarding literally asks you to pick a goal, then builds the route for you. The rest of the site is organized around that moment.</p>
+<p><strong>Pattern:</strong> goal-derived route.</p>
+<h3 id="move-2-teach-just-in-time-not-just-in-case">Move 2: Teach just in time, not just in case</h3><p>A traditional reference teaches everything about a topic because you might need it someday. Nixmap teaches the minimum needed for the next step.</p>
+<p>The lessons are short. The median lesson is about 350 words of material, code and terminal output included. The 90th percentile is about 685 words. That is not an accident. It is a deliberate limit on how much a single page can ask from you.</p>
+<p><strong>Pattern:</strong> atomic lesson.</p>
+<h3 id="move-3-one-concept-per-page-one-sitting-per-concept">Move 3: One concept per page, one sitting per concept</h3><p>The page titles are small and specific:</p>
+<ul>
+<li>“Fallbacks with <code>or</code>”</li>
+<li>“Checking with <code>?</code>”</li>
+<li>“Merging sets with <code>//</code>”</li>
+<li>“Extra arguments with <code>...</code>”</li>
+<li>“Naming arguments with <code>@</code>”</li>
+</ul>
+<p>These are not chapter titles. They are the names of things you can learn in a few minutes and then use.</p>
+<p>The site rarely uses headings inside a lesson. In the entire corpus, there are only 76 <code>&lt;h2&gt;</code> headings, and all 76 of them are the words “Try it.” There is no “Introduction,” “Overview,” “Summary,” or “Further Reading” scaffolding. The page is a conversation, not a report.</p>
+<p><strong>Pattern:</strong> one idea, one page, one action.</p>
+<h3 id="move-4-understanding-comes-from-manipulation">Move 4: Understanding comes from manipulation</h3><p>Every lesson is built to be touched. Across the 131 lessons, the site contains:</p>
+<ul>
+<li>214 live Nix REPL blocks,</li>
+<li>294 terminal transcripts,</li>
+<li>186 editable code blocks,</li>
+<li>103 exercises across 78 lessons.</li>
+</ul>
+<p>The exercises are not quizzes about definitions. They are small edits with observable consequences:</p>
+<blockquote>
+<p>“Change the last line to <code>hello-world.outPath</code>. That’s where the result will land, before anything is built.”</p>
+</blockquote>
+<blockquote>
+<p>“Add <code>:${port}</code> right after <code>localhost</code>, inside the quotes, and read the error. Then fix it by changing <code>port</code> to <code>toString port</code>.”</p>
+</blockquote>
+<p>The reader is not asked to recall. The reader is asked to change something and look at what happens.</p>
+<p><strong>Pattern:</strong> executable explanation.</p>
+<h3 id="move-5-errors-are-teaching-material">Move 5: Errors are teaching material</h3><p>A lot of docs hide errors. Nixmap puts them in the main flow.</p>
+<p>In the derivations lesson, the author removes <code>&gt; $out</code> from a build script and shows the real failure:</p>
+<blockquote>
+<p>“The builder does have to create <code>$out</code> itself though. Remove <code>&gt; $out</code> from the script, and the build fails, because nothing was left behind. <code>-L</code> shows what the builder printed too.”</p>
+</blockquote>
+<p>Then comes the actual terminal output, including the long error message. The error is not a footnote. It is the lesson.</p>
+<p>This does two things:</p>
+<ol>
+<li>It teaches the contract of <code>$out</code> better than a definition could.</li>
+<li>It normalizes failure. The reader learns that errors are part of the workflow, not evidence that they are bad at this.</li>
+</ol>
+<p><strong>Pattern:</strong> error-driven learning.</p>
+<h3 id="move-6-meet-the-learner-where-they-are">Move 6: Meet the learner where they are</h3><p>The onboarding asks two questions:</p>
+<ul>
+<li>“Have you written code before? Tell me which language you think in. When Nix does something similar, I’ll show you both for comparison.”</li>
+<li>“Given my name, I have to ask. Standard editor shortcuts, or Vim keybindings? No wrong answer.”</li>
+</ul>
+<p>Those answers change the experience. The site supports six real comparison languages plus “other” and “none,” and four keymaps: standard, Vim, Emacs, and Helix.</p>
+<p>This is a small feature with a large effect. It says: “You are not a blank slate, and I am not going to pretend you are.”</p>
+<p><strong>Pattern:</strong> adaptive examples.</p>
+<h3 id="move-7-respect-attention">Move 7: Respect attention</h3><p>The site is free, requires no account, and installs nothing. The simulations say it explicitly:</p>
+<blockquote>
+<p>“Everything happens in your browser. Nothing gets installed on your computer.”</p>
+</blockquote>
+<p>Each simulation also gives a time estimate:</p>
+<blockquote>
+<p>“Takes about 15 minutes.”</p>
+</blockquote>
+<p>And a short “You’ll” list:</p>
+<ul>
+<li>“boot the NixOS installer”</li>
+<li>“go through the installer’s pages: time zone, keyboard, your account, the desktop, unfree software and the disk”</li>
+<li>“let it install, then restart into your new system and log in”</li>
+</ul>
+<p>This is respect for the reader’s calendar. It is also good product design: you know what you are committing to before you start.</p>
+<p><strong>Pattern:</strong> explicit contracts.</p>
+<h3 id="move-8-confidence-through-continuity">Move 8: Confidence through continuity</h3><p>The simulations form a chain. Each one says what it continues from:</p>
+<ul>
+<li>“Continues from Install NixOS.”</li>
+<li>“Continues from Configure NixOS.”</li>
+<li>“Continues from Turn it into a flake.”</li>
+</ul>
+<p>Progress is visible as checkmarks on the map. There is a “Complete” button at the end of each lesson, a “Copy progress link” option, and a “Reset all progress” option. The route card shows “Up next.”</p>
+<p>This is not gamification for its own sake. It is a way to make a large, intimidating subject feel like a sequence of finished things.</p>
+<p><strong>Pattern:</strong> visible progress, continuous spine.</p>
+<h3 id="the-philosophy-in-one-line">The philosophy in one line</h3><blockquote>
+<p>Nix is notoriously hard to learn. It can do so many things that it’s impossible to know which parts will be useful for you.</p>
+</blockquote>
+<p>Nixmap’s answer is not to teach less. It is to teach the right parts, in the right order, at the right moment.</p>
+<hr>
+<h2 id="4-the-information-architecture">4. The information architecture</h2><p>Here is the shape of the content, as observed from the site.</p>
+<h3 id="the-branches">The branches</h3><table>
+<thead>
+<tr>
+<th>Branch</th>
+<th>Color</th>
+<th align="right">Nodes</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Language</td>
+<td>Yellow</td>
+<td align="right">37</td>
+<td>Expressions, strings, lists, functions, laziness</td>
+</tr>
+<tr>
+<td>Nixpkgs</td>
+<td>Green</td>
+<td align="right">9</td>
+<td><code>pkgs</code>, <code>callPackage</code>, <code>override</code>, overlays</td>
+</tr>
+<tr>
+<td>Store and packaging</td>
+<td>Blue</td>
+<td align="right">26</td>
+<td>Store paths, derivations, <code>mkDerivation</code>, build phases</td>
+</tr>
+<tr>
+<td>Nix CLI</td>
+<td>Gray</td>
+<td align="right">9</td>
+<td><code>nix repl</code>, <code>nix build</code>, <code>nix shell</code>, <code>nix profile</code></td>
+</tr>
+<tr>
+<td>NixOS</td>
+<td>Blue-purple</td>
+<td align="right">16</td>
+<td><code>configuration.nix</code>, <code>nixos-rebuild</code>, generations, services</td>
+</tr>
+<tr>
+<td>Modules</td>
+<td>Red</td>
+<td align="right">10</td>
+<td>Options, <code>imports</code>, merging, <code>mkIf</code>, <code>mkOption</code></td>
+</tr>
+<tr>
+<td>Home Manager</td>
+<td>Orange</td>
+<td align="right">7</td>
+<td><code>programs</code>, <code>home.file</code>, Home Manager inside NixOS</td>
+</tr>
+<tr>
+<td>Flakes</td>
+<td>Purple</td>
+<td align="right">9</td>
+<td>Flake references, <code>follows</code>, <code>flake-parts</code>, Git</td>
+</tr>
+<tr>
+<td>Devshells</td>
+<td>Aqua-green</td>
+<td align="right">6</td>
+<td><code>mkShell</code>, <code>devShells</code>, <code>nix develop</code>, direnv, devenv</td>
+</tr>
+<tr>
+<td>Root and beats</td>
+<td>Text</td>
+<td align="right">2</td>
+<td>Welcome, Nix</td>
+</tr>
+</tbody></table>
+<p>The colors are not random. They map to domains, and the map’s labels repeat the color, so the encoding is redundant. That matters for accessibility and for memory.</p>
+<p>A simplified view of the shape:</p>
+<div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">welcome
+   │
+  nix
+   ├── language ── expressions ── strings / lists / attribute sets ── functions ── ...
+   ├── store ── store paths ── derivations ── mkDerivation ── build phases ── ...
+   ├── nixpkgs ── pkgs ── callPackage ── override ── overlays ── ...
+   ├── nixos ── configuration.nix ── nixos-rebuild ── generations ── ...
+   ├── modules ── options ── imports ── merging ── mkIf ── ...
+   ├── flakes ── flake references ── follows ── flake-parts ── ...
+   └── home-manager ── programs ── home.file ── ...</code></pre></div><p>This is a tree for readability, but the real graph is a DAG. Many edges cross branches: Home Manager depends on modules, NixOS from a flake depends on flakes, and devshells depend on both flakes and Nixpkgs.</p>
+<h3 id="the-node-types">The node types</h3><p>There are three kinds:</p>
+<ol>
+<li><strong>Knowledge nodes</strong> — the atomic concept pages.</li>
+<li><strong>Simulation nodes</strong> — the guided projects.</li>
+<li><strong>Beat nodes</strong> — the dialogue onboarding.</li>
+</ol>
+<p>Only the first two are “content” in the usual sense. The beats are part of the interface.</p>
+<h3 id="the-edges">The edges</h3><p>The 219 edges are prerequisites, not categories. They answer the question: “What do I need to understand before this will make sense?”</p>
+<p>This is why the graph can generate routes. It is also why the graph is the hard part to maintain. Every new concept needs a careful answer to “what does this depend on?” A wrong edge produces a route that either skips a prerequisite or wastes the reader’s time.</p>
+<h3 id="the-route-mechanics">The route mechanics</h3><p>When you select a node, you get two actions:</p>
+<ul>
+<li><strong>Build the route</strong> — show only the ancestors of this node.</li>
+<li><strong>Open</strong> — open the lesson without changing the map.</li>
+</ul>
+<p>Once a route is active, the interface shows:</p>
+<ul>
+<li>“The way to [goal]”</li>
+<li>a progress count,</li>
+<li>an “Up next” card,</li>
+<li>and a “Leave route” control.</li>
+</ul>
+<p>The URL can encode a route, and progress can be copied as a link. That makes the route shareable. A teacher can send a student a path, not a table of contents.</p>
+<h3 id="search">Search</h3><p>The search palette says: “Search the map, videos and pages.” It supports keyboard navigation with arrow keys and Enter. This is a small thing, but it fits the audience: people who live in a terminal expect search to be fast and keyboard-driven.</p>
+<h3 id="onboarding">Onboarding</h3><p>The first-run experience is a ten-beat dialogue with Vimjoyer. It does five things in about two minutes:</p>
+<ol>
+<li>Welcomes you and names the problem.</li>
+<li>Explains the map model in one sentence.</li>
+<li>Asks about your programming background and editor keys.</li>
+<li>Recommends a first goal and walks you through “Build the route.”</li>
+<li>Mentions support, without blocking anything.</li>
+</ol>
+<p>This is how the site solves the cold-start problem. A 131-node graph is intimidating if you land in the middle of it. A short conversation makes the first move obvious.</p>
+<hr>
+<h2 id="5-the-anatomy-of-a-lesson">5. The anatomy of a lesson</h2><p>The lessons look informal, but they follow a repeatable structure. Here is the pattern, using the “Derivations” lesson as the example.</p>
+<h3 id="the-template">The template</h3><ol>
+<li><strong>Hook</strong> — a concrete claim or question.</li>
+<li><strong>Scenario</strong> — why the naive approach breaks.</li>
+<li><strong>Definition</strong> — the concept, in plain language.</li>
+<li><strong>Minimal example</strong> — the smallest code that shows it.</li>
+<li><strong>Annotation</strong> — what each line means, in prose.</li>
+<li><strong>Variation</strong> — one change, one consequence.</li>
+<li><strong>Error</strong> — what happens when it goes wrong.</li>
+<li><strong>Generalization</strong> — how the real world uses it.</li>
+<li><strong>Try it</strong> — one or two concrete edits with observable results.</li>
+</ol>
+<p>Not every lesson uses every step, but the rhythm is consistent.</p>
+<h3 id="the-hook">The hook</h3><blockquote>
+<p>“Every package in the store was built from a recipe. In Nix, that recipe is called a derivation, and it’s just an attribute set that says what to run, and on which system.”</p>
+</blockquote>
+<p>Notice what this does:</p>
+<ul>
+<li>It starts with something familiar: a recipe.</li>
+<li>It defines the term by its function, not its category.</li>
+<li>It uses “just” to lower the intimidation level.</li>
+<li>It avoids the word “fundamental.”</li>
+</ul>
+<h3 id="the-annotation">The annotation</h3><p>After the minimal example, the lesson explains each field:</p>
+<ul>
+<li>“<code>name</code> ends up in the store path.”</li>
+<li>“<code>system</code> says which kind of machine can build it, here a 64-bit Intel or AMD Linux.”</li>
+<li>“<code>builder</code> is the program Nix runs, here a shell.”</li>
+<li>“<code>args</code> is what the builder gets, so the shell runs <code>echo hello world &gt; $out</code> as a script.”</li>
+</ul>
+<p>Each sentence is short, concrete, and tied to a line of code. There is no separate “Parameters” table. The explanation lives next to the thing it explains.</p>
+<h3 id="the-inline-glossary">The inline glossary</h3><p>Terms like <code>repl</code>, <code>store path</code>, and <code>derivation</code> are clickable. Clicking one opens a short definition without leaving the page.</p>
+<p>That is just-in-time documentation at the sentence level. The reader does not have to open a new tab, lose their place, and come back. They fill the gap and keep reading.</p>
+<h3 id="the-distinction">The distinction</h3><p>Then the lesson makes a distinction that most introductions skip:</p>
+<blockquote>
+<p>“Evaluating this didn’t build anything. Instead, Nix wrote the recipe into the store as a file ending in <code>.drv</code>, and that’s the path the repl printed. This step is called instantiation.”</p>
+</blockquote>
+<p>And later:</p>
+<blockquote>
+<p>“Running the recipe is called realisation.”</p>
+</blockquote>
+<p>This is a good example of teaching the model, not just the commands. The reader learns that there are two phases, and why the <code>.drv</code> file exists.</p>
+<h3 id="the-error">The error</h3><p>Then the lesson breaks it on purpose:</p>
+<blockquote>
+<p>“The builder does have to create <code>$out</code> itself though. Remove <code>&gt; $out</code> from the script, and the build fails, because nothing was left behind.”</p>
+</blockquote>
+<p>The real error follows. Then the fix is implicit: put <code>&gt; $out</code> back. The reader has now seen the contract from both sides.</p>
+<h3 id="the-try-it">The try it</h3><p>The lesson ends with two exercises:</p>
+<blockquote>
+<p>“Change the last line to <code>hello-world.outPath</code>. That’s where the result will land, before anything is built.”</p>
+</blockquote>
+<blockquote>
+<p>“The script is part of the recipe. Change <code>hello world</code> in the script to <code>hello nix</code>. The name stays the same, but the hash doesn’t, because this is a different package now.”</p>
+</blockquote>
+<p>Each exercise has three properties:</p>
+<ol>
+<li><strong>One action.</strong> Change one thing.</li>
+<li><strong>One concept.</strong> <code>outPath</code>, or the relationship between script and hash.</li>
+<li><strong>One observable result.</strong> You can see the path, or the hash, change.</li>
+</ol>
+<p>That is the formula. It is much better than “experiment with the configuration.”</p>
+<h3 id="the-ending">The ending</h3><p>At the bottom of the sheet, there is a “Complete” button, a “Send feedback” link, and a “goals” control. The lesson does not end with a summary. It ends with a completion.</p>
+<p>That is a deliberate choice. Summaries are for reference. Completions are for learning.</p>
+<hr>
+<h2 id="6-the-writing-tone">6. The writing tone</h2><p>This is where Nixmap is most distinctive, and most copyable.</p>
+<p>I measured the lesson corpus. These are rough numbers, with code and terminal output included:</p>
+<ul>
+<li>About 50,000 words of lesson material.</li>
+<li>3,844 sentences.</li>
+<li>Mean sentence length: 13 words.</li>
+<li>Median sentence length: 9 words.</li>
+<li>634 uses of “you” and 365 uses of “your.”</li>
+<li>19 uses of “we” and 6 uses of “our.”</li>
+<li>86 question marks.</li>
+<li>0 uses of “obviously.”</li>
+<li>1 use of “basically.”</li>
+</ul>
+<p>That last pair is not an accident. The voice is confident without being condescending.</p>
+<h3 id="the-voice">The voice</h3><p>It is a knowledgeable friend, not a professor.</p>
+<ul>
+<li>“I” appears mainly in the onboarding, where Vimjoyer is a character.</li>
+<li>“You” is the default for the reader.</li>
+<li>“We” is rare, and when it appears it is a genuine “you and me together,” not a royal “we.”</li>
+</ul>
+<p>The tone is warm but not chatty. It does not waste words on “Welcome to this comprehensive guide.” It starts with the thing.</p>
+<h3 id="the-openers">The openers</h3><p>The lessons tend to open with one of four moves:</p>
+<p><strong>A question:</strong></p>
+<blockquote>
+<p>“Almost all Nix code uses code from somewhere else, usually nixpkgs, the huge collection of packages. But which version of it?”</p>
+</blockquote>
+<p><strong>A scenario:</strong></p>
+<blockquote>
+<p>“Say an update broke your Wi-Fi. On NixOS you just go back to the system you had yesterday, because every system you build is kept as a generation.”</p>
+</blockquote>
+<p><strong>A contrast:</strong></p>
+<blockquote>
+<p>“Here are two scripts that do the same thing. Which one would you trust more?”</p>
+</blockquote>
+<p><strong>A surprising claim:</strong></p>
+<blockquote>
+<p>“Removing something in Nix doesn’t delete it.”</p>
+</blockquote>
+<p>None of them start with “In this section, we will discuss…” That alone puts Nixmap ahead of a lot of documentation.</p>
+<h3 id="the-rhythm">The rhythm</h3><p>Short sentences. One idea each. A concrete noun in almost every sentence.</p>
+<p>Here is a typical passage:</p>
+<blockquote>
+<p>“The simplest way to make one is the built-in <code>derivation</code> function. Give it a set, and it gives you a derivation back.”</p>
+</blockquote>
+<p>Two sentences. Eleven words each. Subject, verb, object. No hedging.</p>
+<p>Then the explanation deepens:</p>
+<blockquote>
+<p>“<code>$out</code> isn’t Nix. It’s a shell variable, and Nix sets it to the one place in the store the builder is allowed to write to. Whatever the builder leaves there becomes the package, here a single file that says hello world.”</p>
+</blockquote>
+<p>Still short. Still concrete. The abstract idea (“the builder is sandboxed”) is expressed as a physical place (“the one place in the store the builder is allowed to write to”).</p>
+<h3 id="the-empathy">The empathy</h3><p>The voice occasionally steps out of explanation to acknowledge difficulty:</p>
+<blockquote>
+<p>“Most flakes live in a Git repository, and that’s where almost everyone trips up once.”</p>
+</blockquote>
+<blockquote>
+<p>“Don’t mind the <code>inputs:</code> in front of the braces for now. We’ll get to it as soon as there’s something to download.”</p>
+</blockquote>
+<p>These lines do real work. They tell the reader: “This is hard, you are not alone, and it is safe to keep going.” That is the opposite of the “obviously” school of technical writing.</p>
+<h3 id="the-comparisons">The comparisons</h3><p>Because the onboarding asks about your background, the site can show the same idea in a language you already know. The “Compare with” feature covers Python, JavaScript, Rust, Go, Java, and Haskell.</p>
+<p>For example, the attribute-set lesson can show a Python dictionary, a JavaScript object, and a Nix attribute set side by side. The reader does not have to translate from scratch. They can anchor the new idea to an old one.</p>
+<p>This is a simple idea with a big payoff: it reduces the cost of the first minute.</p>
+<h3 id="the-microcopy">The microcopy</h3><p>The exercise instructions are a masterclass in actionable writing.</p>
+<p>Typical docs:</p>
+<blockquote>
+<p>“Experiment with the expression to observe how <code>outPath</code> behaves.”</p>
+</blockquote>
+<p>Nixmap:</p>
+<blockquote>
+<p>“Change the last line to <code>hello-world.outPath</code>. That’s where the result will land, before anything is built.”</p>
+</blockquote>
+<p>Typical docs:</p>
+<blockquote>
+<p>“Consider modifying the module imports to resolve the issue.”</p>
+</blockquote>
+<p>Nixmap:</p>
+<blockquote>
+<p>“<code>ssh.nix</code> sits next to <code>configuration.nix</code>, but nothing imports it yet. Add <code>./ssh.nix</code> to the end of the <code>imports</code> list.”</p>
+</blockquote>
+<p>The pattern:</p>
+<ol>
+<li>State the current situation.</li>
+<li>Name the exact edit.</li>
+<li>Say what to look for.</li>
+<li>Stop.</li>
+</ol>
+<p>No “try to,” no “explore,” no “you may want to.” Just the action and the observation.</p>
+<h3 id="before-and-after">Before and after</h3><table>
+<thead>
+<tr>
+<th>Typical docs</th>
+<th>Nixmap</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>“Derivations are the fundamental build specification mechanism.”</td>
+<td>“Every package in the store was built from a recipe.”</td>
+</tr>
+<tr>
+<td>“This section covers string interpolation.”</td>
+<td>“But what if your text has a double quote inside?”</td>
+</tr>
+<tr>
+<td>“Experiment with the configuration.”</td>
+<td>“Change <code>gpl3Plus</code> to <code>mit</code>.”</td>
+</tr>
+<tr>
+<td>“Errors may occur if the output path is not created.”</td>
+<td>“Remove <code>&gt; $out</code> from the script, and the build fails, because nothing was left behind.”</td>
+</tr>
+<tr>
+<td>“Refer to the official documentation for more information.”</td>
+<td>“The error even tells you the fix.”</td>
+</tr>
+</tbody></table>
+<p>The difference is not dumbing down. It is choosing the concrete over the abstract, the next action over the complete taxonomy.</p>
+<h3 id="what-not-to-copy">What not to copy</h3><p>The voice works because it is backed by real examples and real outputs. If you copy the jokes without the substance, it becomes annoying.</p>
+<p>Also, the site can afford to be casual because it is a learning environment, not a reference manual. If you are writing API docs, you still need precise, scannable reference pages. Nixmap itself links out to the official NixOS options search when you need the exhaustive list.</p>
+<p>Copy the clarity, not the costume.</p>
+<hr>
+<h2 id="7-the-interaction-design">7. The interaction design</h2><p>Nixmap’s interface is doing more than presenting content. It is modeling the subject.</p>
+<h3 id="the-map">The map</h3><p>The map is a large, zoomable SVG world. Nodes are circles with glyphs. Labels sit underneath. Completed nodes get a checkmark. Hovering or focusing a node reveals its title. Selecting a node opens a side sheet.</p>
+<p>The map supports:</p>
+<ul>
+<li>pan and zoom,</li>
+<li>keyboard focus,</li>
+<li>a search palette,</li>
+<li>route highlighting,</li>
+<li>progress badges.</li>
+</ul>
+<p>The visual language is consistent: the same colors and labels appear in the map, the search results, and the lesson sheet.</p>
+<h3 id="the-sheet">The sheet</h3><p>The lesson opens in a sheet on the right, not a new page. The map stays visible. That preserves context: you can see where the lesson sits in the graph while you read it.</p>
+<p>The sheet header shows:</p>
+<ul>
+<li>the concept title,</li>
+<li>“The way to [goal]” when a route is active,</li>
+<li>a progress count,</li>
+<li>and an “Up next” card.</li>
+</ul>
+<p>This is a small layout decision with a big effect. You never lose the map.</p>
+<h3 id="the-vim-status-bar">The Vim status bar</h3><p>At the bottom of the screen, there is a status bar that looks like Vim:</p>
+<ul>
+<li><code>NORMAL</code> mode tag,</li>
+<li><code>credits</code>,</li>
+<li><code>Discord</code>,</li>
+<li><code>support</code>,</li>
+<li><code>1:0</code> position.</li>
+</ul>
+<p>This is more than a joke. It signals the audience: this site is for people who live in a terminal. It also gives the site a place-like feel. You are not reading a blog; you are in an editor.</p>
+<p>The status bar is a brand asset. It is memorable, it is functional, and it could not belong to a generic docs template.</p>
+<h3 id="the-visual-system">The visual system</h3><p>The palette is Gruvbox dark: warm charcoal backgrounds, cream text, and saturated accents. The body text is a soft cream (<code>#fbf1c7</code>) on a dark brown-gray (<code>#1d2021</code>), not pure white on black. That reduces glare and makes long reading sessions easier.</p>
+<p>The type is Ubuntu Sans for prose and JetBrains Mono for code. The sans is friendly and slightly rounded; the mono is familiar to developers. The combination says “approachable but technical.”</p>
+<p>The components have chunky 2px borders, rounded corners, and a subtle “press” shadow. Buttons look tactile. The map nodes have a soft aura. The overall effect is a warm, hand-built tool, not a corporate docs theme.</p>
+<p>The color-coded branches do double duty: they distinguish domains and make the map scannable.</p>
+<h3 id="the-onboarding-dialogue">The onboarding dialogue</h3><p>The first-run experience is a visual novel, not a modal tour. Vimjoyer appears in different poses (presenting, shrugging, pointing, thinking, thumbs-up, idle) and speaks in short lines. You answer two questions by clicking chips.</p>
+<p>This is a smart way to do onboarding because it is:</p>
+<ul>
+<li><strong>diegetic</strong> — the explanation is part of the world, not a tooltip,</li>
+<li><strong>short</strong> — ten beats, not a five-step carousel,</li>
+<li><strong>personal</strong> — the answers change the examples,</li>
+<li><strong>actionable</strong> — it ends with a real first goal and a real route.</li>
+</ul>
+<p>The dialogue also sets the tone. If the first thing you see is a friendly person saying “Nix is notoriously hard to learn,” you relax. The site has already acknowledged the difficulty.</p>
+<h3 id="the-simulations">The simulations</h3><p>The eight simulations are the most ambitious part of the site. They are browser-based recreations of real workflows:</p>
+<ul>
+<li>install NixOS,</li>
+<li>configure NixOS,</li>
+<li>turn the configuration into a flake,</li>
+<li>put it in Git,</li>
+<li>install Home Manager,</li>
+<li>take your home to an Ubuntu laptop,</li>
+<li>create a devshell,</li>
+<li>package a Node.js project.</li>
+</ul>
+<p>Each simulation has:</p>
+<ul>
+<li>a one-line promise,</li>
+<li>a time estimate,</li>
+<li>a “You’ll” checklist,</li>
+<li>a continuity line (“Continues from X”),</li>
+<li>a sandbox disclaimer (“Nothing gets installed on your computer”),</li>
+<li>a “Start simulation” button.</li>
+</ul>
+<p>The continuity line is the key. The simulations are not isolated demos. They are a spine. You can start at “Install NixOS” and end at “Package your project,” and each step assumes the previous one.</p>
+<p>This is the closest thing the site has to a course, but it is optional. You can ignore the simulations and just read the concepts. The map does not force you down a single path.</p>
+<h3 id="the-micro-interactions">The micro-interactions</h3><p>Small details reinforce the learning loop:</p>
+<ul>
+<li>The task mark rotates from a target to a checkmark when you solve an exercise.</li>
+<li>The REPL result flashes when it matches the expected output.</li>
+<li>The module-merge widget animates the merged configuration.</li>
+<li>The terminal output changes when you edit a command.</li>
+<li><code>prefers-reduced-motion</code> is respected.</li>
+</ul>
+<p>These are not decoration. They are feedback. They tell you, immediately, whether your mental model matches the machine’s.</p>
+<h3 id="the-accessibility-details">The accessibility details</h3><p>The site has:</p>
+<ul>
+<li>a skip link,</li>
+<li>ARIA labels on nodes,</li>
+<li>keyboard focus on the map,</li>
+<li>semantic headings,</li>
+<li>reduced-motion support,</li>
+<li>redundant color encoding (color plus label plus glyph).</li>
+</ul>
+<p>It is not perfect — a map-heavy interface is always a challenge — but the intent is visible.</p>
+<h3 id="the-performance-pattern">The performance pattern</h3><p>The map shell is server-rendered. Lesson bodies are lazy-loaded from JSON when you open a node. The site also uses speculation rules to prefetch pages at moderate eagerness.</p>
+<p>That is the right tradeoff for this product: the map appears quickly, and the heavy lesson content arrives only when you ask for it.</p>
+<hr>
+<h2 id="8-the-content-system-behind-it">8. The content system behind it</h2><p>Nixmap is built with Astro and Solid, with interactive islands for the REPL, terminal, exercises, and simulations. The lesson bodies are JSON payloads fetched on demand. Code highlighting uses tree-sitter grammars compiled to WebAssembly.</p>
+<p>You do not need that stack to copy the pattern. But the stack explains some of the behavior:</p>
+<ul>
+<li><strong>Astro</strong> gives the site a fast, server-rendered shell.</li>
+<li><strong>Solid islands</strong> make the interactive parts feel native without hydrating the whole page.</li>
+<li><strong>JSON lesson payloads</strong> keep the initial map light.</li>
+<li><strong>Tree-sitter</strong> gives accurate highlighting for Nix, Bash, JSON, and YAML.</li>
+</ul>
+<p>The architecture follows the interaction model: a persistent map shell, with content streamed into a sheet.</p>
+<h3 id="the-licensing-choice">The licensing choice</h3><p>The credits page is unusually thorough. It lists:</p>
+<ul>
+<li>the licenses for the site’s software dependencies,</li>
+<li>the licenses for the Nix material,</li>
+<li>the licenses for the NixOS artwork,</li>
+<li>the licenses for the installer and desktop assets.</li>
+</ul>
+<p>The content is licensed CC BY-SA 4.0. The website source code is all rights reserved.</p>
+<p>That is a deliberate split: share the knowledge, keep the product. It is worth noting because it shows the site takes attribution and reuse seriously. That builds trust, especially in a community that cares about licenses.</p>
+<hr>
+<h2 id="9-hands-on-rebuild-the-pattern">9. Hands-on: rebuild the pattern</h2><p>Here is a small, runnable version of the core idea. You can use it as a skeleton for your own docs.</p>
+<h3 id="step-1-model-your-content-as-a-graph">Step 1: model your content as a graph</h3><p>Create <code>graph.json</code>:</p>
+<div class="code" data-lang="json"><span class="lang-tag">json</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;nodes&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;nix&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Nix&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;requires&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;language&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Language&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;requires&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;nix&quot;</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;expressions&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Expressions&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;requires&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;language&quot;</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;strings&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Strings&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;requires&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;expressions&quot;</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;attribute-sets&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Attribute sets&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;requires&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;expressions&quot;</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;configuration&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;configuration.nix&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;requires&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;attribute-sets&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;strings&quot;</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;nixos&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;NixOS&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;requires&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;configuration&quot;</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;install-nixos&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Install NixOS&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;requires&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;nixos&quot;</span><span class="hljs-punctuation">]</span> <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span></code></pre></div><p>The important field is <code>requires</code>. It is not a category. It is a claim about what the reader needs first.</p>
+<h3 id="step-2-compute-a-route">Step 2: compute a route</h3><p>Save this as <code>route.py</code>:</p>
+<div class="code" data-lang="python"><span class="lang-tag">python</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-python"><span class="hljs-keyword">import</span> json
+<span class="hljs-keyword">import</span> heapq
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">load_graph</span>(<span class="hljs-params">path</span>):
+    data = json.load(<span class="hljs-built_in">open</span>(path))
+    <span class="hljs-keyword">return</span> {n[<span class="hljs-string">&quot;id&quot;</span>]: n.get(<span class="hljs-string">&quot;requires&quot;</span>, []) <span class="hljs-keyword">for</span> n <span class="hljs-keyword">in</span> data[<span class="hljs-string">&quot;nodes&quot;</span>]}
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">route</span>(<span class="hljs-params">graph, goal</span>):
+    <span class="hljs-comment"># 1. Collect the goal and all of its ancestors.</span>
+    needed = <span class="hljs-built_in">set</span>()
+    stack = [goal]
+    <span class="hljs-keyword">while</span> stack:
+        node = stack.pop()
+        <span class="hljs-keyword">if</span> node <span class="hljs-keyword">in</span> needed:
+            <span class="hljs-keyword">continue</span>
+        needed.add(node)
+        stack.extend(graph.get(node, []))
+
+    <span class="hljs-comment"># 2. Topologically sort the needed subgraph.</span>
+    indegree = {node: <span class="hljs-number">0</span> <span class="hljs-keyword">for</span> node <span class="hljs-keyword">in</span> needed}
+    <span class="hljs-keyword">for</span> node <span class="hljs-keyword">in</span> needed:
+        <span class="hljs-keyword">for</span> parent <span class="hljs-keyword">in</span> graph.get(node, []):
+            <span class="hljs-keyword">if</span> parent <span class="hljs-keyword">in</span> needed:
+                indegree[node] += <span class="hljs-number">1</span>
+
+    queue = [node <span class="hljs-keyword">for</span> node <span class="hljs-keyword">in</span> needed <span class="hljs-keyword">if</span> indegree[node] == <span class="hljs-number">0</span>]
+    heapq.heapify(queue)
+    order = []
+
+    <span class="hljs-keyword">while</span> queue:
+        node = heapq.heappop(queue)
+        order.append(node)
+        <span class="hljs-keyword">for</span> other <span class="hljs-keyword">in</span> <span class="hljs-built_in">sorted</span>(needed):
+            <span class="hljs-keyword">if</span> node <span class="hljs-keyword">in</span> graph.get(other, []):
+                indegree[other] -= <span class="hljs-number">1</span>
+                <span class="hljs-keyword">if</span> indegree[other] == <span class="hljs-number">0</span>:
+                    heapq.heappush(queue, other)
+
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(order) != <span class="hljs-built_in">len</span>(needed):
+        <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">&quot;cycle detected in prerequisites&quot;</span>)
+
+    <span class="hljs-keyword">return</span> order
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:
+    graph = load_graph(<span class="hljs-string">&quot;graph.json&quot;</span>)
+    <span class="hljs-keyword">for</span> node <span class="hljs-keyword">in</span> route(graph, <span class="hljs-string">&quot;install-nixos&quot;</span>):
+        <span class="hljs-built_in">print</span>(node)</code></pre></div><p>Run it:</p>
+<div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">python3 route.py</code></pre></div><p>Expected output:</p>
+<div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">nix
+language
+expressions
+strings
+attribute-sets
+configuration
+nixos
+install-nixos</code></pre></div><p>The script sorts siblings alphabetically so the output is stable. Every prerequisite appears before the thing that needs it.</p>
+<p>That is the whole “route” feature in about 30 lines. The real Nixmap adds presentation, progress, and a much larger graph, but the core is this simple.</p>
+<h3 id="step-3-write-an-atomic-lesson">Step 3: write an atomic lesson</h3><p>Use this template:</p>
+<div class="code" data-lang="markdown"><span class="lang-tag">markdown</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-markdown"><span class="hljs-section"># <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Concept</span>&gt;</span></span></span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Hook:</span> <span class="hljs-attr">a</span> <span class="hljs-attr">question</span>, <span class="hljs-attr">a</span> <span class="hljs-attr">scenario</span>, <span class="hljs-attr">or</span> <span class="hljs-attr">a</span> <span class="hljs-attr">surprising</span> <span class="hljs-attr">claim.</span>&gt;</span></span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">The</span> <span class="hljs-attr">naive</span> <span class="hljs-attr">approach</span>, <span class="hljs-attr">and</span> <span class="hljs-attr">why</span> <span class="hljs-attr">it</span> <span class="hljs-attr">breaks.</span>&gt;</span></span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">The</span> <span class="hljs-attr">concept</span> <span class="hljs-attr">in</span> <span class="hljs-attr">one</span> <span class="hljs-attr">or</span> <span class="hljs-attr">two</span> <span class="hljs-attr">sentences.</span>&gt;</span></span>
+
+<span class="hljs-code">```nix
+&lt;the smallest example that shows it&gt;
+```</span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Annotate</span> <span class="hljs-attr">the</span> <span class="hljs-attr">example</span> <span class="hljs-attr">line</span> <span class="hljs-attr">by</span> <span class="hljs-attr">line.</span>&gt;</span></span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">One</span> <span class="hljs-attr">variation.</span> <span class="hljs-attr">What</span> <span class="hljs-attr">changes</span>, <span class="hljs-attr">and</span> <span class="hljs-attr">why.</span>&gt;</span></span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">One</span> <span class="hljs-attr">failure.</span> <span class="hljs-attr">Show</span> <span class="hljs-attr">the</span> <span class="hljs-attr">real</span> <span class="hljs-attr">error.</span> <span class="hljs-attr">Explain</span> <span class="hljs-attr">the</span> <span class="hljs-attr">contract.</span>&gt;</span></span>
+
+<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Try</span> <span class="hljs-attr">it:</span> <span class="hljs-attr">change</span> <span class="hljs-attr">one</span> <span class="hljs-attr">thing.</span> <span class="hljs-attr">Say</span> <span class="hljs-attr">what</span> <span class="hljs-attr">to</span> <span class="hljs-attr">look</span> <span class="hljs-attr">for.</span>&gt;</span></span></code></pre></div><p>Keep the whole thing under about 500 words unless the concept genuinely needs more. If it needs more, it is probably two concepts.</p>
+<h3 id="step-4-make-the-ending-verifiable">Step 4: make the ending verifiable</h3><p>Every lesson should end with an action whose result the reader can check.</p>
+<p>Bad:</p>
+<blockquote>
+<p>“Experiment with the different options.”</p>
+</blockquote>
+<p>Good:</p>
+<blockquote>
+<p>“Change <code>gpl3Plus</code> to <code>mit</code>. Watch the license field in the output change.”</p>
+</blockquote>
+<p>The reader should not need you to tell them whether they succeeded. The machine should tell them.</p>
+<h3 id="step-5-add-a-guided-first-run">Step 5: add a guided first run</h3><p>Do not open with a 131-node graph. Open with a short conversation:</p>
+<ol>
+<li>“What are you trying to do?”</li>
+<li>“What do you already know?”</li>
+<li>“Here is the first step. Want me to build the route?”</li>
+</ol>
+<p>Then show the route. That is the entire onboarding.</p>
+<h3 id="step-6-track-progress-locally">Step 6: track progress locally</h3><p>You do not need an account. Store completion in <code>localStorage</code>, show a checkmark, and offer a shareable link that encodes the route and the completed nodes.</p>
+<p>The Nixmap progress link does exactly this. It is a small feature that makes the site feel like a tool rather than an article.</p>
+<h3 id="a-minimum-viable-version">A minimum viable version</h3><p>If you want to test the pattern without rebuilding Nixmap:</p>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Build</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>20 nodes, 5 goals, a static graph, and the route script</td>
+</tr>
+<tr>
+<td>2</td>
+<td>5 atomic lessons with one verifiable exercise each</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Progress checkmarks and a shareable route link</td>
+</tr>
+<tr>
+<td>4</td>
+<td>One simulation or interactive walkthrough</td>
+</tr>
+</tbody></table>
+<p>That is enough to learn whether the pattern works for your subject.</p>
+<hr>
+<h2 id="10-what-i-would-change-and-what-to-watch-out-for">10. What I would change, and what to watch out for</h2><p>Nixmap is impressive, but it is not a universal template. Here are the tradeoffs I would keep in mind.</p>
+<h3 id="the-map-can-overwhelm">The map can overwhelm</h3><p>A 131-node graph is a lot to land on. The onboarding and the route feature mitigate this, but the first impression is still “where am I?”</p>
+<p>If you copy the pattern, make the goal picker the default entry point, not the full map. Let the map be the second view, not the first.</p>
+<h3 id="the-graph-is-expensive-to-maintain">The graph is expensive to maintain</h3><p>Every node needs a title, a branch, a position, a glyph, a lesson, and a set of prerequisites. Every edge is a claim that needs to stay true as the content evolves.</p>
+<p>The real cost of this pattern is not the frontend. It is the editorial work of keeping the dependency graph honest.</p>
+<p>Add a validation step to your build: every <code>requires</code> must point to an existing node, and the graph must be acyclic. Nixmap’s graph is a DAG; yours should be too.</p>
+<h3 id="simulations-are-expensive">Simulations are expensive</h3><p>The eight simulations are probably the highest-effort part of the site. They require UI, state, fake filesystems, and careful scripting.</p>
+<p>Do not start there. Start with one simulation for your most important goal. If it works, add more.</p>
+<h3 id="exact-output-exercises-are-brittle">Exact-output exercises are brittle</h3><p>Nixmap checks exercises against expected output. That is powerful, but it can break when versions change, paths differ, or formatting shifts.</p>
+<p>Pin your examples to a known version, or use a tolerant matcher that normalizes whitespace and paths. Otherwise your exercises will rot.</p>
+<h3 id="the-site-is-javascript-heavy">The site is JavaScript-heavy</h3><p>The map is server-rendered, but the lessons are fetched as JSON and the interactive parts are islands. That is a reasonable tradeoff for this product, but it means you need to think about:</p>
+<ul>
+<li>no-JavaScript fallbacks,</li>
+<li>SEO for lesson content,</li>
+<li>keyboard and screen-reader access,</li>
+<li>performance on low-end devices.</li>
+</ul>
+<p>Nixmap does some of this well. It is still a reminder that “interactive docs” and “simple docs” pull in different directions.</p>
+<h3 id="the-content-is-deliberately-shallow">The content is deliberately shallow</h3><p>Nixmap teaches the model, not the exhaustive API. That is the point. But it means you still need a reference for option names, types, and edge cases.</p>
+<p>The right architecture is a hybrid: Nixmap for the learning path, the official options search for the reference. Do not ask one format to do both jobs.</p>
+<h3 id="the-voice-can-be-a-trap">The voice can be a trap</h3><p>The casual, second-person voice works because the examples are real and the author knows the subject deeply. If you copy the voice without the substance, it reads as forced.</p>
+<p>Copy the principles:</p>
+<ul>
+<li>short sentences,</li>
+<li>concrete examples,</li>
+<li>one idea at a time,</li>
+<li>errors shown honestly,</li>
+<li>the reader treated as capable.</li>
+</ul>
+<p>Do not copy the character unless you have a reason.</p>
+<h3 id="completion-is-not-understanding">Completion is not understanding</h3><p>Checkmarks are motivating, but they can also encourage clicking “Complete” without doing the exercise. Nixmap’s exercises are the antidote: they require an action, not a scroll.</p>
+<p>If you build progress tracking, measure exercise completion and route completion, not just page views.</p>
+<hr>
+<h2 id="11-nixmap-vs-the-usual-formats">11. Nixmap vs. the usual formats</h2><table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Entry point</th>
+<th>Structure</th>
+<th>Practice</th>
+<th>Best for</th>
+<th>Weakness</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Nixmap</strong></td>
+<td>A goal</td>
+<td>Dependency graph plus routes</td>
+<td>REPL, terminal, simulations</td>
+<td>Learning a tool ecosystem</td>
+<td>Expensive to build and maintain</td>
+</tr>
+<tr>
+<td><strong>Traditional docs</strong></td>
+<td>A table of contents or search</td>
+<td>Linear chapters plus reference</td>
+<td>Usually none</td>
+<td>Looking up facts</td>
+<td>Poor at teaching order</td>
+</tr>
+<tr>
+<td><strong>Video course</strong></td>
+<td>A playlist</td>
+<td>Fixed curriculum</td>
+<td>Follow along</td>
+<td>Passive introductions</td>
+<td>Hard to skim, hard to update</td>
+</tr>
+<tr>
+<td><strong>Wiki / forum</strong></td>
+<td>A search box</td>
+<td>Fragmented pages</td>
+<td>None</td>
+<td>Edge cases and community answers</td>
+<td>Inconsistent quality</td>
+</tr>
+<tr>
+<td><strong>Interactive lab</strong></td>
+<td>A scenario</td>
+<td>Fixed exercise</td>
+<td>Sandboxed environment</td>
+<td>Hands-on practice</td>
+<td>Narrow scope, high cost</td>
+</tr>
+</tbody></table>
+<p>Nixmap’s advantage is that it combines the map’s overview, the lesson’s focus, and the exercise’s feedback in one place. Its weakness is that it is a product, not a document. It needs design, engineering, and maintenance.</p>
+<p>That is the tradeoff. You are not choosing a docs theme. You are choosing to build a learning environment.</p>
+<hr>
+<h2 id="12-what-to-steal-in-priority-order">12. What to steal, in priority order</h2><p>If you take nothing else from this teardown, take these.</p>
+<h3 id="1-add-a-goal-route-view">1. Add a goal → route view</h3><p>This is the highest-leverage change. You do not need a map. You need a graph and a route function. Even a simple “What do you want to do?” page that lists prerequisites is a huge improvement over a generic table of contents.</p>
+<h3 id="2-make-every-page-end-with-a-verifiable-action">2. Make every page end with a verifiable action</h3><p>One edit. One observation. One check. This turns reading into practice.</p>
+<h3 id="3-write-the-first-run-dialogue">3. Write the first-run dialogue</h3><p>Ask two questions:</p>
+<ul>
+<li>What do you already know?</li>
+<li>What are you trying to do?</li>
+</ul>
+<p>Then show the first step. That is enough.</p>
+<h3 id="4-keep-lessons-atomic">4. Keep lessons atomic</h3><p>Aim for one concept, one sitting, roughly 350–500 words. If a page needs a “Part 1” and “Part 2,” it is probably two pages.</p>
+<h3 id="5-show-real-errors">5. Show real errors</h3><p>Do not sand off the failure modes. Show the error, explain the contract, and fix it. That is where understanding happens.</p>
+<h3 id="6-use-the-subject-s-native-interface">6. Use the subject’s native interface</h3><p>Nixmap uses a Vim status bar because its audience lives in Vim. A design tool might use a canvas. A database docs site might use a query console. Let the interface teach the subject.</p>
+<h3 id="7-build-one-simulation">7. Build one simulation</h3><p>Pick the goal that matters most. Build a safe, browser-based rehearsal of it. Add a time estimate and a “You’ll” list. See if people finish it.</p>
+<h3 id="8-protect-the-voice">8. Protect the voice</h3><p>Write like a knowledgeable friend. Use short sentences. Prefer the concrete. Treat the reader as capable. Ban “obviously” from your style guide.</p>
+<hr>
+<h2 id="13-the-pattern-in-one-page">13. The pattern in one page</h2><p>If you want a summary you can pin above your desk:</p>
+<ul>
+<li><strong>Model the knowledge as a graph.</strong></li>
+<li><strong>Let the reader choose a goal.</strong></li>
+<li><strong>Compute the route.</strong></li>
+<li><strong>Teach one concept per page.</strong></li>
+<li><strong>Show real examples and real errors.</strong></li>
+<li><strong>End with a verifiable action.</strong></li>
+<li><strong>Track progress, not page views.</strong></li>
+<li><strong>Write like a person.</strong></li>
+</ul>
+<p>That is Nixmap in eight lines.</p>
+<hr>
+<h2 id="wrapping-up-and-next-steps">Wrapping up and next steps</h2><p>Nixmap is worth studying because it takes a hard problem — teaching a famously difficult tool — and solves it with structure rather than volume. The map is the hook, but the real work is in the graph, the atomic lessons, and the voice.</p>
+<p>If you want to go further:</p>
+<ol>
+<li>Open <a href="https://vimjoyer.com/nixmap/" target="_blank" rel="noreferrer">Nixmap</a> and take the onboarding. Notice how quickly it gets you to a first action.</li>
+<li>Pick a goal and watch the route appear. Then open one lesson and count the words. Notice how little it asks of you.</li>
+<li>Read the “Derivations” lesson and look for the error. That is the pattern in miniature.</li>
+<li>Try the route script above on your own docs. Even a 20-node graph will teach you something about your content.</li>
+</ol>
+<p>The big lesson is not “make a map.” It is “respect the reader’s goal, and give them the next step.” The map is just a very good way to do that.</p>
+<p>ok</p>
+</div>
+</div>
+</body>
+</html>

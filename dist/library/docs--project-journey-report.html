@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LDNDRC Project Journey — A Newcomer&#39;s Guide (Visual Report) — LDNDRC library</title>
+<meta name="description" content="Source document: docs/project-journey-report.md">
+<link rel="stylesheet" href="../assets/theme.css">
+
+</head>
+<body class="standalone">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5zM2 9v8l10 5V14zM22 9l-10 5v8l10-5z"/></symbol>
+    <symbol id="i-nodes" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.6"/><circle cx="5" cy="18" r="2.6"/><circle cx="19" cy="18" r="2.6"/><path d="M12 7.6v4M11 12H7L5.6 15.4M13 12h4l1.4 3.4" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><path d="M5 19c0-6 3.5-7 7-7s7-1 7-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="7" r="2.4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 9l3 3-3 3M12.5 15H18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3 8h13l-3.5-3.5M21 16H8l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="10" width="4" height="4" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 11l9 9M16.5 16.5l2-2M19 19l2-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-door" viewBox="0 0 24 24"><path d="M5 3h11v18H5z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="12" r="1.2"/><path d="M19 5v14" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+    <symbol id="i-sim" viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7l9 5 9-5M12 12v10" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-stack" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4.5" rx="1.2"/><rect x="3" y="10.5" width="18" height="4.5" rx="1.2"/><rect x="3" y="17" width="18" height="3.5" rx="1.2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 3v15M15 6v15" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-timeline" viewBox="0 0 24 24"><path d="M2 12h20" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="18" cy="12" r="2.2"/></symbol>
+    <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13l-5-5M18 12l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+<div class="page-doc">
+  <a class="back" href="../index.html#/">← back to the map</a>
+  <div class="eyebrow" style="margin-bottom:10px">source document · docs/project-journey-report.md · 27.7 KB</div>
+<h1 class="page-title">LDNDRC Project Journey — A Newcomer&#39;s Guide (Visual Report)</h1>
+<div class="prose"><h1 id="ldndrc-project-journey-a-newcomer-s-guide-visual-report">LDNDRC Project Journey — A Newcomer&#39;s Guide (Visual Report)</h1><blockquote>
+<p>Companion to <code>docs/roadmap.md</code> (what is left, in build order) and
+<code>local_dev_docs/detailed-project-report.md</code> (technical appendix with proofs).
+This document is the <em>friendly front door</em>: what the finished classroom
+looks like, what works today, what is left, and why we built it this way.
+Mermaid diagrams render on GitHub/GitLab; a plain-text fallback follows each one.</p>
+<p><strong>Last updated:</strong> 2026-10-13 · <code>main@299702f</code> (merges <code>d9d9a28</code> R2/R3/R4 +
+<code>e5fe6cb</code> R6, checkpoints CP01–CP39). Written for a new contributor with
+no prior context. Jargon is explained in (brackets: plain words) on first use.</p>
+</blockquote>
+<h2 id="colour-legend-used-in-every-diagram">Colour legend (used in every diagram)</h2><table>
+<thead>
+<tr>
+<th>Colour</th>
+<th>Meaning (plain words)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Green</td>
+<td>Built and tested on real machines — it works today</td>
+</tr>
+<tr>
+<td>Amber</td>
+<td>Built but half-ready — a demo, a rehearsal, or waiting on real hardware proof</td>
+</tr>
+<tr>
+<td>Red</td>
+<td>Missing — real work left to do</td>
+</tr>
+<tr>
+<td>Grey</td>
+<td>Removed — we tried it, then replaced it with something better</td>
+</tr>
+</tbody></table>
+<h2 id="0-new-here-start-here-2-minutes">0. New here? Start here (2 minutes)</h2><p>LDNDRC turns a room full of laptops into a robotics classroom with no cloud and no server room:</p>
+<ul>
+<li><strong>Hosts (strong laptops that share their power).</strong> A gaming or workstation laptop with a good CPU and ideally an NVIDIA graphics card (GPU: the chip that draws 3D pictures fast). It runs the heavy robot software.</li>
+<li><strong>Guests (weak laptops that just watch and type).</strong> Any old laptop with a browser (Chrome/Firefox). The student writes code and sees the 3D robot world — nothing is installed.</li>
+<li><strong>Master (the first laptop, the organizer).</strong> One laptop starts the cluster (K3s: a lightweight organizer that decides which laptop runs what) and keeps the list of who is allowed in.</li>
+<li><strong>Session (one student&#39;s private robot world).</strong> When a student clicks &quot;Launch&quot;, the Master creates a sealed box for them: their own code editor, their own simulated robot, their own desktop. Two students can both drive a topic called <code>/cmd_vel</code> (the &quot;please move&quot; message) and never interfere — each box hears only itself.</li>
+<li><strong>Control panel (the reception desk).</strong> A small program written in Go (a fast, single-file language) that handles login, creates sessions, checks permissions, and forwards browser clicks to the right box.</li>
+<li><strong>Gateway (the traffic guard).</strong> The part of the control panel that checks &quot;are you logged in?&quot; and then forwards you to your box&#39;s editor, desktop, or simulation view.</li>
+</ul>
+<p>A normal day, end to end: student opens the classroom website → logs in → clicks Launch → waits about 20 seconds while their box starts → writes robot code in the browser editor → watches their TurtleBot3 (a small teaching robot) move in the 3D view → stops the session. A teacher opens the Admin page, sees who has a box running, and approves new laptops that want to share power.</p>
+<h2 id="1-final-dream-vs-what-exists-now-the-comparison">1. Final dream vs what exists now (the comparison)</h2><p>The &quot;final dream&quot; is <code>plan.md</code> (the original design, Phases 1–5) plus R7 (making it safe and sturdy for real classes):</p>
+<ul>
+<li><strong>Final:</strong> many laptops join with one click; every student gets code + 3D sim + desktop in the browser; login is safe (encrypted traffic = TLS, fake-request protection = CSRF); boxes survive restarts; works on Windows too; teachers see dashboards and limits.</li>
+<li><strong>Now (Oct 2026, <code>main</code>):</strong> one real organizer laptop (<code>hari</code>, <code>192.168.1.37:6443</code>) runs everything; students do get code + desktop + sim-data through the browser; login has fake-request protection but no encryption yet; boxes survive small restarts but not big ones; new laptops can ask to join and be approved, but the final automatic &quot;become part of the cluster&quot; step still needs a paired test with two real laptops.</li>
+</ul>
+<div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart LR
+    classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
+    classDef part fill:#6b4e12,stroke:#f5b86c,color:#fff
+    classDef missing fill:#5c1d1d,stroke:#f56c6c,color:#fff
+
+    subgraph FINAL[&quot;Final dream (plan.md + R7)&quot;]
+        F1[&quot;Many laptops share power&lt;br/&gt;(one-click join, Windows too)&quot;]:::missing
+        F2[&quot;Code + 3D sim + desktop&lt;br/&gt;in the browser&quot;]:::missing
+        F3[&quot;Safe login&lt;br/&gt;(encrypted TLS + CSRF)&quot;]:::missing
+        F4[&quot;Survives restarts&lt;br/&gt;(memory on disk)&quot;]:::missing
+        F5[&quot;Teacher view + limits&lt;br/&gt;(dashboards, quotas)&quot;]:::missing
+    end
+
+    subgraph NOW[&quot;Now (Oct 2026, main)&quot;]
+        N1[&quot;One real organizer (hari)&lt;br/&gt;+ browser website live&quot;]:::done
+        N2[&quot;Code 200 + Desktop 200&lt;br/&gt;live (sim data, viewer next)&quot;]:::done
+        N3[&quot;Login + CSRF live&lt;br/&gt;(TLS next)&quot;]:::part
+        N4[&quot;Survives small restarts&lt;br/&gt;(big ones next)&quot;]:::part
+        N5[&quot;Admin cards live&lt;br/&gt;(limits next)&quot;]:::part
+    end
+
+    NOW -.-&gt;|&quot;left to build&quot;| FINAL</code></pre></div><div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">ASCII fallback:
+
+FINAL DREAM: many laptops join easily | code+sim+desktop in browser |
+  safe encrypted login | survives restarts | teacher dashboards and limits.
+NOW: one organizer laptop live | code+desktop live, sim viewer next |
+  login safe-ish (encryption next) | survives small restarts (big next) |
+  admin cards live (limits next).</code></pre></div><table>
+<thead>
+<tr>
+<th>Area (plain words)</th>
+<th>Final dream</th>
+<th>Now</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Joining (adding a laptop&#39;s power)</td>
+<td>Any laptop clicks once and joins, including Windows</td>
+<td>Ask → approve → token works; the final install step needs a two-laptop test</td>
+<td>Partly</td>
+</tr>
+<tr>
+<td>Student website</td>
+<td>Login → Launch → code + 3D picture + desktop</td>
+<td>Login → Launch → code + desktop live; 3D picture shows data, pretty viewer next</td>
+<td>Partly</td>
+</tr>
+<tr>
+<td>Robot world (the sealed box)</td>
+<td>Full ROS 2 (robot brain) + Gazebo (3D physics world) + TurtleBot3 moving</td>
+<td>Live: 10.8GB image, TurtleBot3 <code>empty</code> world moves at full speed on CPU</td>
+<td>Live</td>
+</tr>
+<tr>
+<td>Safety (who can do what)</td>
+<td>Encrypted traffic (TLS: scrambled so Wi-Fi snoopers can&#39;t read) + fake-request tokens (CSRF: proof the click came from our own site)</td>
+<td>CSRF live; TLS missing</td>
+<td>Partly</td>
+</tr>
+<tr>
+<td>Memory (remembering after a restart)</td>
+<td>Boxes and approvals live on disk, nothing lost</td>
+<td>Small restarts lose nothing; big redeploys still lose track (fix queued)</td>
+<td>Partly</td>
+</tr>
+<tr>
+<td>Teacher view</td>
+<td>Who runs what, approve laptops, usage limits</td>
+<td>Approve laptops + see sessions live; limits and dashboards later</td>
+<td>Partly</td>
+</tr>
+</tbody></table>
+<h2 id="2-how-it-fits-together-architecture-with-brackets">2. How it fits together (architecture with brackets)</h2><p>Read the boxes top to bottom: your laptop at the top, the organizer in the middle, the sealed robot boxes at the bottom.</p>
+<div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart TB
+    classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
+    classDef part fill:#6b4e12,stroke:#f5b86c,color:#fff
+    classDef missing fill:#5c1d1d,stroke:#f56c6c,color:#fff
+    classDef gone fill:#2a2d34,stroke:#6b7280,color:#ccc
+
+    Guest([&quot;Guest laptop&lt;br/&gt;(weak laptop, browser only)&lt;br/&gt;✅ Live&quot;]):::done
+    LAN[&quot;Same Wi-Fi + name list&lt;br/&gt;(hosts file: nickname → address)&lt;br/&gt;✅ Live&quot;]:::done
+    Door[&quot;Traefik (the front door)&lt;br/&gt;(reads the web address,&lt;br/&gt;sends you to the right place)&lt;br/&gt;✅ Live&quot;]:::done
+    Desk[&quot;Control panel (the reception desk, Go)&lt;br/&gt;(login + create boxes + guard + find masters)&lt;br/&gt;✅ Live&quot;]:::done
+    Site[&quot;Student website (built into the desk)&lt;br/&gt;(Login / Launch / Workspace / Admin)&lt;br/&gt;✅ Live&quot;]:::done
+    Org[&quot;K3s organizer (real master hari :6443)&lt;br/&gt;(decides which laptop runs what)&lt;br/&gt;✅ Live&quot;]:::done
+    Box[&quot;Sealed box per student&lt;br/&gt;(Deployment: the recipe + Service: the address&lt;br/&gt;+ PVC: the private disk 5Gi)&lt;br/&gt;✅ Live&quot;]:::done
+    World[&quot;Robot world pod (one running box)&lt;br/&gt;(code-server: editor 200 = OK&lt;br/&gt;Selkies: desktop 200 = OK&lt;br/&gt;bridge 404 = data yes, pretty page no)&lt;br/&gt;✅ Live&quot;]:::done
+    View[&quot;Headlamp (the glass wall)&lt;br/&gt;(see everything running, token key)&lt;br/&gt;✅ Live&quot;]:::done
+    Announce[&quot;mDNS announcement&lt;br/&gt;(shouting &#39;classroom here!&#39; on the Wi-Fi)&lt;br/&gt;✅ Live, guest hearing pending&quot;]:::part
+
+    Fix[&quot;Login small fix&lt;br/&gt;(old cookie wrongly blocks login)&lt;br/&gt;🔴 Next&quot;]:::missing
+    Memory[&quot;Full memory (R2-final)&lt;br/&gt;(approvals + boxes on real disk)&lt;br/&gt;🔴 Next&quot;]:::missing
+    Pretty[&quot;Pretty 3D viewer&lt;br/&gt;(today: data in a frame)&lt;br/&gt;🔴 Next&quot;]:::missing
+    Join[&quot;Second laptop fully joins&lt;br/&gt;(install + watcher sees it)&lt;br/&gt;🔴 Needs two laptops&quot;]:::missing
+    Safe[&quot;Full safety (R7)&lt;br/&gt;(encryption + limits + dashboards)&lt;br/&gt;🔴 Later&quot;]:::missing
+
+    Old[&quot;Removed: one shared box&lt;br/&gt;old /code paths, systemd plan&lt;br/&gt;tiny demo image as default, Selkies 1.x&quot;]:::gone
+
+    Guest --&gt; LAN --&gt; Door --&gt; Desk
+    Desk --&gt; Site
+    Desk --&gt; Org --&gt; Box --&gt; World
+    Guest --&gt; View
+    Desk -.-&gt; Announce
+    Desk -.-&gt; Fix
+    Desk -.-&gt; Memory
+    Site -.-&gt; Pretty
+    Desk -.-&gt; Join</code></pre></div><div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">ASCII fallback:
+
+Your laptop --Wi-Fi--&gt; front door (:80) --&gt; reception desk (Go program)
+  --&gt; website (Login/Launch/Workspace/Admin) + organizer (:6443)
+  --&gt; sealed box per student (recipe + address + 5GB disk)
+  --&gt; robot world (editor OK, desktop OK, sim data OK)
+You can also peek through the glass wall (Headlamp).
+Still to build: login small fix, full memory on disk, pretty 3D viewer,
+  second laptop fully joining, full safety (encryption + limits).
+Removed along the way: one shared box, old web paths, systemd plan,
+  tiny demo image as default, Selkies 1.x installer.</code></pre></div><h3 id="bracket-glossary-every-hard-word-in-plain-words">Bracket glossary (every hard word, in plain words)</h3><table>
+<thead>
+<tr>
+<th>Word you will see</th>
+<th>What it means (simple)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>K3s (organizer)</td>
+<td>A lightweight boss program. You tell it &quot;I want one box for student A&quot;, it starts it, watches it, restarts it if it dies.</td>
+</tr>
+<tr>
+<td>Traefik (front door)</td>
+<td>Reads web addresses like <code>editor.ros-platform.local</code> (editor = code, desktop = screen, gazebo = sim data, control = desk) and forwards you. <code>:80</code> is normal web traffic, <code>:443</code> is encrypted web traffic.</td>
+</tr>
+<tr>
+<td>Control panel / reception desk</td>
+<td>Our Go program. Handles login, creates boxes, checks tickets, serves the website, guards the doors.</td>
+</tr>
+<tr>
+<td>Session / sealed box</td>
+<td>One student&#39;s private world. Three Kubernetes objects: Deployment (the recipe: which picture + how much CPU), Service (the address + doors 7682/8080/9002), PVC (the private 5GB disk that keeps homework).</td>
+</tr>
+<tr>
+<td>Pod (running box)</td>
+<td>The recipe actually running. Has an ID (name), an owner (student), a status (starting → ready → stopped), and a ROS domain number (a channel so boxes can&#39;t hear each other).</td>
+</tr>
+<tr>
+<td>code-server (editor, door 7682)</td>
+<td>Real VS Code in the browser. <code>200</code> means &quot;OK, here is the editor&quot;. <code>302 → 200</code> means &quot;one quick redirect, then the editor&quot;.</td>
+</tr>
+<tr>
+<td>Selkies (desktop stream, door 8080)</td>
+<td>Live screen sharing in the browser (click, type, terminal). <code>200</code> = picture arrives. Old <code>502</code> meant &quot;nothing listening yet&quot; — that era is over.</td>
+</tr>
+<tr>
+<td>Gazebo bridge (sim data, door 9002)</td>
+<td>The robot world&#39;s data pipe (positions, laser scans, clock). <code>404</code> here means &quot;pipe alive, but no pretty page at <code>/</code>&quot; — data yes, viewer next.</td>
+</tr>
+<tr>
+<td>ROS 2 Jazzy + Gazebo Harmonic</td>
+<td>The robot brain (Jazzy) and the 3D physics world (Harmonic). TurtleBot3 is a small teaching robot we drive in the <code>empty</code> practice world.</td>
+</tr>
+<tr>
+<td>Headlamp (glass wall, <code>:8080</code>)</td>
+<td>A dashboard to see everything running. Needs a token (a temporary key).</td>
+</tr>
+<tr>
+<td>mDNS announcement</td>
+<td>The organizer shouting &quot;classroom here!&quot; on the Wi-Fi so new laptops can find it without typing addresses. Guest laptops hearing it is still pending.</td>
+</tr>
+<tr>
+<td>Bootstrap token (join ticket)</td>
+<td>A one-time password the organizer mints (valid 15 minutes) so a new laptop can join. Second ask gets &quot;status only&quot; — the ticket is given once.</td>
+</tr>
+<tr>
+<td>CSRF token (proof the click is ours)</td>
+<td>A secret stamp the login gives the website. Every change (create/stop/approve) must show it, so a bad website can&#39;t trick your browser into clicking. <code>403</code> = &quot;no valid stamp, blocked&quot;. <code>401</code> = &quot;not logged in&quot;.</td>
+</tr>
+<tr>
+<td><code>sessions.json</code> (the notebook)</td>
+<td>A small file where the desk writes down every box. On restart it re-reads the notebook: box still there → adopt (keep it); box gone → mark <code>stopped</code> (never silently delete).</td>
+</tr>
+<tr>
+<td><code>SESSION_IMAGE</code> (which picture)</td>
+<td>Which sealed-box picture to use. Today <code>ldndrc/ros2-gz:jazzy-harmonic-10f1f10c</code> (10.8GB, the real world). The tiny demo picture is retired.</td>
+</tr>
+<tr>
+<td>hostNetwork + delete-old-first</td>
+<td>The desk runs directly on the organizer&#39;s network (so it can shout mDNS). Only one fits on door <code>:8082</code>, so updates must delete the old copy first — never plain restart.</td>
+</tr>
+</tbody></table>
+<p>Live snapshot behind this map (real master <code>hari</code>, CP33/CP35/CP37): box <code>ready</code> in ~20 seconds (picture pre-loaded, no download wait); editor shows the IDE; desktop shows the Selkies page; sim pipe answers with data; wrong or missing login correctly blocked; Admin page shows user/session/laptop cards and approve/deny works. Update rule: delete the old desk copy first, picture tarball (2.4GB packed, 10.8GB unpacked) lives in <code>$HOME</code> because <code>/tmp</code> is too small and wiped on reboot.</p>
+<h2 id="3-mind-map-what-is-built-vs-what-is-left-the-journey-order">3. Mind-map: what is built vs what is left (+ the journey order)</h2><h3 id="3a-mind-map-the-what-good-for-orienting">3a. Mind-map (the &quot;what&quot; — good for orienting)</h3><blockquote>
+<p>Drawn as a hub-and-spoke flowchart (same mind-map idea, but renders on
+every viewer). The native <code>mindmap</code> keyword was tried first and broke:
+it cannot handle <code>(</code> <code>)</code> or <code>&lt;br/&gt;</code> inside labels.</p>
+</blockquote>
+<div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart TB
+    classDef root fill:#0b0e14,stroke:#7c6cf5,color:#fff,stroke-width:3px
+    classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
+    classDef half fill:#6b4e12,stroke:#f5b86c,color:#fff
+    classDef next fill:#5c1d1d,stroke:#f56c6c,color:#fff
+
+    ROOT([&quot;LDNDRC classroom cluster&lt;br/&gt;(hub = what is built vs left)&quot;]):::root
+
+    EXP[&quot;Student experience ✅&lt;br/&gt;(mostly live)&quot;]:::done
+    JOIN[&quot;Cluster and joining 🟡&lt;br/&gt;(half done)&quot;]:::half
+    WORLD[&quot;Robot world ✅&lt;br/&gt;(live)&quot;]:::done
+    SAFE[&quot;Safety and memory 🟡&lt;br/&gt;(half done)&quot;]:::half
+    VIEW[&quot;Teacher view 🟡&lt;br/&gt;(half done)&quot;]:::half
+
+    ROOT --&gt; EXP &amp; JOIN &amp; WORLD &amp; SAFE &amp; VIEW
+
+    EXP --&gt; E1[&quot;Login ✅ live&quot;]:::done
+    EXP --&gt; E2[&quot;Launch button ✅ live&quot;]:::done
+    EXP --&gt; E3[&quot;Code editor ✅ live&quot;]:::done
+    EXP --&gt; E4[&quot;Desktop screen ✅ live&quot;]:::done
+    EXP --&gt; E5[&quot;Sim data ✅ live&quot;]:::done
+    EXP --&gt; E6[&quot;Pretty 3D viewer 🔴 next&quot;]:::next
+
+    JOIN --&gt; J1[&quot;Ask to join ✅ live&quot;]:::done
+    JOIN --&gt; J2[&quot;Approve laptops ✅ live&quot;]:::done
+    JOIN --&gt; J3[&quot;One-time ticket ✅ live&quot;]:::done
+    JOIN --&gt; J4[&quot;Wi-Fi announce 🟡&lt;br/&gt;(shouting live, hearing pending)&quot;]:::half
+    JOIN --&gt; J5[&quot;Second laptop install 🔴&lt;br/&gt;(needs two laptops)&quot;]:::next
+
+    WORLD --&gt; W1[&quot;Real 10.8GB picture ✅ live&quot;]:::done
+    WORLD --&gt; W2[&quot;TurtleBot3 moves ✅ live&quot;]:::done
+    WORLD --&gt; W3[&quot;Offline models ✅ live&quot;]:::done
+    WORLD --&gt; W4[&quot;GPU sharing 🔴 later&quot;]:::next
+
+    SAFE --&gt; F1[&quot;Click protection ✅ live&quot;]:::done
+    SAFE --&gt; F2[&quot;Login small fix 🔴 next&quot;]:::next
+    SAFE --&gt; F3[&quot;Small-restart memory ✅ live&quot;]:::done
+    SAFE --&gt; F4[&quot;Full-disk memory 🔴 next&quot;]:::next
+    SAFE --&gt; F5[&quot;Encryption and limits 🔴 later (R7)&quot;]:::next
+
+    VIEW --&gt; V1[&quot;See sessions ✅ live&quot;]:::done
+    VIEW --&gt; V2[&quot;Approve laptops ✅ live&quot;]:::done
+    VIEW --&gt; V3[&quot;Dashboards 🔴 later&quot;]:::next</code></pre></div><div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">ASCII fallback (mind-map):
+
+LDNDRC
+├── Student experience ✅ (login, launch, editor, desktop, sim data live; pretty viewer next)
+├── Cluster+joining 🟡 (ask/approve/ticket live; announce half; install needs two laptops)
+├── Robot world ✅ (real picture, TurtleBot moves, offline models; GPU later)
+├── Safety+memory 🟡 (click-protection + small-restart live; login fix + full memory + encryption next)
+└── Teacher view 🟡 (see + approve live; dashboards later)</code></pre></div><h3 id="3b-journey-flowchart-the-in-what-order-good-for-history">3b. Journey flowchart (the &quot;in what order&quot; — good for history)</h3><div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart LR
+    classDef done fill:#1d5c2e,stroke:#3ecf8e,color:#fff
+    classDef prov fill:#6b4e12,stroke:#f5b86c,color:#fff
+    classDef missing fill:#5c1d1d,stroke:#f56c6c,color:#fff
+    classDef gone fill:#2a2d34,stroke:#6b7280,color:#ccc
+
+    GEN[&quot;Start&lt;br/&gt;idea + first scripts&quot;]:::done
+    FND[&quot;Foundation CP01–04&lt;br/&gt;(join check, desk skeleton,&lt;br/&gt;recipes, design)&quot;]:::done
+    SES[&quot;One box per student CP05–06&lt;br/&gt;(recipe + address + disk)&quot;]:::done
+    GATE[&quot;Doors CP07 + R1&lt;br/&gt;(login guard + names,&lt;br/&gt;old paths deleted)&quot;]:::done
+    PROOF[&quot;Proof CP08–10&lt;br/&gt;(tests + live + glass wall)&quot;]:::done
+    DEMO[&quot;Demo CP11–12&lt;br/&gt;(GPU optional + tiny picture)&quot;]:::done
+    JOIN[&quot;Welcoming CP14–19&lt;br/&gt;(ask/approve/ticket&lt;br/&gt;+ pocket tool + releases)&quot;]:::done
+    REAL[&quot;Real organizer CP20&lt;br/&gt;(k3d demo → real hari&lt;br/&gt;+ 2 real bug fixes)&quot;]:::done
+    SAFE[&quot;Safe + memory CP21&lt;br/&gt;(R3 click-guard + R2 notebook)&quot;]:::done
+    SITE[&quot;Website CP22–26&lt;br/&gt;(R4 Login/Launch/&lt;br/&gt;Workspace/Admin)&quot;]:::done
+    WORLD[&quot;Real world CP27–38&lt;br/&gt;(10.8GB + desktop 200&lt;br/&gt;+ sim at full speed)&quot;]:::done
+    ONE[&quot;One line CP39&lt;br/&gt;(both tracks merged)&quot;]:::done
+    YOU[&quot;YOU ARE HERE&lt;br/&gt;Oct 2026 main ✅&quot;]:::prov
+    NEXT[&quot;Next: login fix&lt;br/&gt;full memory, viewer&quot;]:::missing
+    TWOLAP[&quot;Two-laptop join&lt;br/&gt;(R5)&quot;]:::missing
+    STURDY[&quot;Sturdy (R7)&lt;br/&gt;+ Windows + docs&quot;]:::missing
+    OLD[&quot;Replaced: shared box,&lt;br/&gt;old paths, systemd,&lt;br/&gt;tiny default, Selkies 1.x&quot;]:::gone
+
+    GEN --&gt; FND --&gt; SES --&gt; GATE --&gt; PROOF --&gt; DEMO --&gt; JOIN --&gt; REAL --&gt; SAFE --&gt; SITE --&gt; WORLD --&gt; ONE --&gt; YOU --&gt; NEXT --&gt; TWOLAP --&gt; STURDY</code></pre></div><div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">ASCII fallback (order):
+
+idea → foundation → one-box-per-student → doors → proof → demo
+  → welcoming → real organizer → safe+memory → website → real world
+  → one line =&gt; YOU ARE HERE =&gt; login fix/memory/viewer =&gt; two-laptop join =&gt; sturdy
+Replaced: shared box, old paths, systemd, tiny default, Selkies 1.x.</code></pre></div><h3 id="journey-chapters-in-plain-english-the-story-7-chapters">Journey chapters in plain English (the story, 7 chapters)</h3><ol>
+<li><strong>Getting started (idea + first scripts).</strong> We wrote the classroom plan, a script that checks a laptop&#39;s muscles (CPU = thinking cores, RAM = short-term memory, GPU = picture chip), and tests that fake strong/weak laptops to prove the check works.</li>
+<li><strong>One box per student (the big fix).</strong> First we planned one shared room; we replaced it with sealed boxes. Each student gets recipe + address + private disk, a unique channel number, and localhost-only robot chatter (robots talk inside their own box, never across boxes).</li>
+<li><strong>Opening the doors (guard + names).</strong> The desk learned to check login cookies (a wristband after login) and web-address names (<code>editor.</code> vs <code>desktop.</code> vs <code>gazebo.</code>). Old hallway paths (<code>/code</code>, <code>/sim</code>) were demolished after live proof.</li>
+<li><strong>Seeing what runs (proof + glass wall).</strong> Automatic tests, then live tests on a demo cluster, then Headlamp so teachers can watch boxes from a second laptop over the Wi-Fi.</li>
+<li><strong>Welcoming new laptops (ask → approve → ticket).</strong> A joining laptop says &quot;here are my muscles&quot; → teacher approves → organizer mints a 15-minute ticket (given once) → pocket tool (<code>ldndrc-join</code>: a small program with a friendly text screen) installs. Proven laptop-to-organizer over real Wi-Fi; full install waits for two laptops together.</li>
+<li><strong>Real organizer + website (no more demo).</strong> We moved from a pretend cluster (k3d: cluster-in-a-box for practice) to a real K3s on <code>hari</code>, fixed two real bugs found only there (Wi-Fi wildcard DNS eating our addresses → trailing-dot fix; update deadlock → delete-old-first rule), added click-protection + the notebook that remembers boxes, and built the student website (Login → Launch stepper → Workspace with Code/Sim/Split + Desktop + Admin cards).</li>
+<li><strong>Real robot world (the heavy lifting).</strong> Built the 8.25GB base, then the 10.2GB world (Selkies broken upstream → shipped editor+sim first), proved it boots, froze it with version tags, flipped the live cluster to it, then added Selkies 2.0 (desktop picture live) and pre-packed the two 3D models (Ground Plane + Sun) so the robot moves even with no internet — full speed on plain CPU. Recorded the packing math (2.4GB to send, 10.8GB on disk). Merged both tracks into one <code>main</code>.</li>
+</ol>
+<h2 id="4-joining-flow-how-a-laptop-is-welcomed-step-by-step">4. Joining flow (how a laptop is welcomed, step by step)</h2><div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">sequenceDiagram
+    participant L as New laptop (pocket tool)
+    participant D as Front door (:80)
+    participant Desk as Reception desk
+    participant T as Teacher (human)
+    participant Org as Organizer (K3s)
+    L-&gt;&gt;D: Ask to join (here are my muscles)
+    D-&gt;&gt;Desk: pass along
+    Desk--&gt;&gt;L: waiting + your number
+    T-&gt;&gt;Desk: Approve (website card or command)
+    L-&gt;&gt;Desk: Am I approved yet? (every 5s)
+    Desk-&gt;&gt;Org: Make a 15-minute ticket
+    Desk--&gt;&gt;L: Yes + ticket + address (once only)
+    L-&gt;&gt;Desk: Am I approved yet? (again)
+    Desk--&gt;&gt;L: status only (ticket already given)
+    Note over L,Org: Ask/approve/ticket proven over real Wi-Fi + real master.&lt;br/&gt;Final install + organizer noticing the new laptop: needs two laptops together.</code></pre></div><div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">ASCII fallback:
+
+laptop --ask--&gt; desk (waiting + number) | teacher approves
+  | laptop polls --&gt; desk makes 15-min ticket --&gt; ticket once
+  | later polls --&gt; status only.
+Proven on real Wi-Fi; final install awaits the paired run.</code></pre></div><p>Today: ask/approve/ticket/cleanup all work, including from the Admin cards. The pocket tool&#39;s screens are built and tested; the final step (actually installing the agent software and the organizer marking it <code>joined</code>) is red — it needs two physical laptops in one room.</p>
+<h2 id="5-decision-graph-why-we-built-it-this-way-tech-method-rejected">5. Decision graph (why we built it this way — tech + method + rejected)</h2><p>How to read: each block is <code>Need → Chosen (tech + how we proved it) → Rejected (what we dropped and why)</code>. This is the branch-by-branch map you asked for.</p>
+<div class="code" data-lang="mermaid"><span class="lang-tag">mermaid</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-mermaid">flowchart TB
+    classDef need fill:#3a3f4b,stroke:#8b93a7,color:#fff
+    classDef chose fill:#1d5c2e,stroke:#3ecf8e,color:#fff
+    classDef rej fill:#2a2d34,stroke:#6b7280,color:#ccc
+
+    N1[&quot;Need: desk language&quot;]:::need
+    C1[&quot;Chosen: Go, one static file&lt;br/&gt;(method: unit + live on cluster)&quot;]:::chose
+    R1[&quot;Rejected: NestJS/Node&lt;br/&gt;(needs a runtime, heavier)&quot;]:::rej
+    N1 --&gt; C1 --&gt; R1
+
+    N2[&quot;Need: one world per student&quot;]:::need
+    C2[&quot;Chosen: Deployment+Service+PVC per student&lt;br/&gt;(method: two-user live test, 403s)&quot;]:::chose
+    R2[&quot;Rejected: fixed StatefulSet + shared Service&lt;br/&gt;(not flexible, demolished R1)&quot;]:::rej
+    N2 --&gt; C2 --&gt; R2
+
+    N3[&quot;Need: browser doors&quot;]:::need
+    C3[&quot;Chosen: cookie wristband + web-address names&lt;br/&gt;(method: live 200/401/404 matrix)&quot;]:::chose
+    R3[&quot;Rejected: path routing /code /sim&lt;br/&gt;(collides, removed)&quot;]:::rej
+    N3 --&gt; C3 --&gt; R3
+
+    N4[&quot;Need: run the desk&quot;]:::need
+    C4[&quot;Chosen: in-cluster Deployment + client-go&lt;br/&gt;(method: live rollout, RBAC probes)&quot;]:::chose
+    R4[&quot;Rejected: root systemd unit&lt;br/&gt;(outside the cluster, amended)&quot;]:::rej
+    N4 --&gt; C4 --&gt; R4
+
+    N5[&quot;Need: join tickets&quot;]:::need
+    C5[&quot;Chosen: bootstrap Secrets, 15-min, once-only&lt;br/&gt;(method: Wi-Fi live mint + cleanup)&quot;]:::chose
+    R5[&quot;Rejected: CLI-minted tokens&lt;br/&gt;(manual, less safe)&quot;]:::rej
+    N5 --&gt; C5 --&gt; R5
+
+    N6[&quot;Need: weak demo machines&quot;]:::need
+    C6[&quot;Chosen: GPU optional flag (0 = skip)&lt;br/&gt;(method: scheduler refusal + schedule proofs)&quot;]:::chose
+    R6[&quot;Rejected: faking GPU capacity&lt;br/&gt;(lies to the scheduler)&quot;]:::rej
+    N6 --&gt; C6 --&gt; R6
+
+    N7[&quot;Need: prove plumbing fast&quot;]:::need
+    C7[&quot;Chosen: tiny 82MB stand-in first, real image later&lt;br/&gt;(method: stand-in 200s, then R6 flip)&quot;]:::chose
+    R7[&quot;Rejected: big-bang 10GB on day one&lt;br/&gt;(blocks everyone)&quot;]:::rej
+    N7 --&gt; C7 --&gt; R7
+
+    N8[&quot;Need: pocket join tool UI&quot;]:::need
+    C8[&quot;Chosen: Bubble Tea text screens&lt;br/&gt;(method: keypress matrix + 3-OS builds)&quot;]:::chose
+    R8[&quot;Rejected: Fyne/Electron apps&lt;br/&gt;(signing + budget pain)&quot;]:::rej
+    N8 --&gt; C8 --&gt; R8
+
+    N9[&quot;Need: fake-click safety (R3)&quot;]:::need
+    C9[&quot;Chosen: HMAC stamp over login, checked on changes&lt;br/&gt;(method: 7 guard + 5 binding tests + live 403s)&quot;]:::chose
+    R9[&quot;Rejected: nothing (rely on Bearer only)&lt;br/&gt;(SPA needs cookie safety)&quot;]:::rej
+    N9 --&gt; C9 --&gt; R9
+
+    N10[&quot;Need: remember boxes (R2)&quot;]:::need
+    C10[&quot;Chosen: sessions.json notebook + adopt/mark-stopped&lt;br/&gt;(method: kill-restart, zero orphans)&quot;]:::chose
+    R10[&quot;Rejected: silent-delete or silent-rebuild&lt;br/&gt;(hides loss)&quot;]:::rej
+    N10 --&gt; C10 --&gt; R10
+
+    N11[&quot;Need: student website (R4)&quot;]:::need
+    C11[&quot;Chosen: Vite+React built INTO the Go file&lt;br/&gt;(method: webbuild stage, live bundle 200s)&quot;]:::chose
+    R11[&quot;Rejected: sidecar web server&lt;br/&gt;(second thing to deploy)&quot;]:::rej
+    N11 --&gt; C11 --&gt; R11
+
+    N12[&quot;Need: desktop picture&quot;]:::need
+    C12[&quot;Chosen: Selkies 2.0 pure-Python behind a flag&lt;br/&gt;(method: local 200 + live 200)&quot;]:::chose
+    R12[&quot;Rejected: Selkies 1.6.2 installer&lt;br/&gt;(upstream deleted the files, 404)&quot;]:::rej
+    N12 --&gt; C12 --&gt; R12
+
+    N13[&quot;Need: sim works offline&quot;]:::need
+    C13[&quot;Chosen: pre-pack 2 models (68K) into the picture&lt;br/&gt;(method: no-network container + live RTF)&quot;]:::chose
+    R13[&quot;Rejected: download at start&lt;br/&gt;(Wi-Fi wildcard DNS eats it)&quot;]:::rej
+    N13 --&gt; C13 --&gt; R13
+
+    N14[&quot;Need: ship 10GB pictures&quot;]:::need
+    C14[&quot;Chosen: version tags + 2.4GB tarball in $HOME&lt;br/&gt;(method: import 164s→28s, ~4.5x)&quot;]:::chose
+    R14[&quot;Rejected: :latest + /tmp&lt;br/&gt;(untracked + too small + wiped)&quot;]:::rej
+    N14 --&gt; C14 --&gt; R14</code></pre></div><div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">ASCII fallback (decisions, need → chosen → rejected):
+
+1 desk language → Go one-file (tested live) → not Node (heavy).
+2 one world each → per-student recipe+address+disk (two-user proof) → not shared box.
+3 doors → cookie + names (live matrix) → not /code paths.
+4 run desk → inside cluster (live rollout) → not systemd.
+5 tickets → 15-min once-only Secrets (Wi-Fi proof) → not manual CLI.
+6 weak machines → GPU-optional flag → not faked capacity.
+7 fast proof → tiny picture first, real later → not 10GB day one.
+8 pocket tool → text screens (3-OS builds) → not heavy apps.
+9 click safety → HMAC stamp on changes (live 403s) → not nothing.
+10 memory → notebook + adopt/mark-stopped (zero orphans) → not silent delete.
+11 website → built into Go file → not sidecar server.
+12 desktop → Selkies 2.0 behind flag (200 live) → not dead 1.6.2.
+13 offline sim → pre-pack 2 models (full speed) → not download at start.
+14 shipping → version tags + $HOME tarball → not latest + /tmp.</code></pre></div><h2 id="6-what-is-left-in-order-pick-the-top-row">6. What is left (in order — pick the top row)</h2><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Task (plain words)</th>
+<th>What &quot;done&quot; looks like</th>
+<th>Size</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Login small fix: old cookie wrongly blocks login (<code>guardCSRF</code> must skip the login door)</td>
+<td>Login works with and without old cookies; live proof; tidy the stale Selkies comment in the same change</td>
+<td>&lt; half a day</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Full memory (R2-final): approvals + boxes onto a real disk; desk updates without deadlock (<code>maxUnavailable: 1</code>)</td>
+<td>Big redeploy loses nothing; no lost boxes in <code>kubectl get</code></td>
+<td>0.5–2 days</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Pretty 3D viewer: put the <code>sim-web-app/</code> gzweb picture into the website (replaces the data frame); try <code>world</code>/<code>house</code> robots</td>
+<td>Moving 3D TurtleBot3 in the browser</td>
+<td>half a day</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Two-laptop join (R5): second laptop asks → approve → ticket → install → organizer sees it → box runs on it; plus hear the Wi-Fi shout</td>
+<td>Needs two physical laptops; run <code>acceptance-second-laptop.sh</code> (needs <code>MASTER_IP</code>, never hardcode — Wi-Fi addresses move)</td>
+<td>days</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Windows/WSL2 proof + tidy docs (P5/P6): retire <code>join-cluster.sh</code> (old bash path), refresh <code>plan.md</code></td>
+<td>Windows laptop joins; old script sunset</td>
+<td>days</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Sturdy for classes (R7): encrypted traffic (TLS), per-box walls (NetworkPolicy), per-student limits (quotas), watch screens (Prometheus/Grafana)</td>
+<td>Safe beyond one trusted Wi-Fi room</td>
+<td>ongoing</td>
+</tr>
+<tr>
+<td>∥</td>
+<td>Picture follow-ups (parallel): share via a local picture shelf (registry mirror, worth it at <del>5 laptops), wake-up pre-load, optional slimming (</del>1–1.5GB), GPU sharing on real NVIDIA hardware</td>
+<td>Faster new-laptop setup</td>
+<td>half a day each</td>
+</tr>
+</tbody></table>
+<p>How to contribute: take the top unfinished row → read its checkpoints in <code>local_dev_docs/</code> (CP39 → backwards) → build → prove with the listed check → write a new <code>checkpoint-NN-*.md</code> in the CP style → move the YOU-ARE-HERE marker. Never plain-restart the desk on the organizer (delete the old copy first — door <code>:8082</code> fits only one).</p>
+<p>Related: <code>docs/roadmap.md</code> (build-order tracker), <code>local_dev_docs/</code> (CP01–CP39 stories), <code>docs/local-cluster-headlamp.md</code> (runbook: start/stop, tokens, fixes).</p>
+</div>
+</div>
+</body>
+</html>

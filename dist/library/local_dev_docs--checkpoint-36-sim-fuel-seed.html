@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkpoint 36 — Sim Smoke: Fuel Seeding + Offline Proof (detailed) — LDNDRC library</title>
+<meta name="description" content="Source document: local_dev_docs/checkpoint-36-sim-fuel-seed.md">
+<link rel="stylesheet" href="../assets/theme.css">
+
+</head>
+<body class="standalone">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5zM2 9v8l10 5V14zM22 9l-10 5v8l10-5z"/></symbol>
+    <symbol id="i-nodes" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.6"/><circle cx="5" cy="18" r="2.6"/><circle cx="19" cy="18" r="2.6"/><path d="M12 7.6v4M11 12H7L5.6 15.4M13 12h4l1.4 3.4" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><path d="M5 19c0-6 3.5-7 7-7s7-1 7-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="7" r="2.4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 9l3 3-3 3M12.5 15H18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3 8h13l-3.5-3.5M21 16H8l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="10" width="4" height="4" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 11l9 9M16.5 16.5l2-2M19 19l2-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-door" viewBox="0 0 24 24"><path d="M5 3h11v18H5z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="12" r="1.2"/><path d="M19 5v14" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+    <symbol id="i-sim" viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7l9 5 9-5M12 12v10" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-stack" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4.5" rx="1.2"/><rect x="3" y="10.5" width="18" height="4.5" rx="1.2"/><rect x="3" y="17" width="18" height="3.5" rx="1.2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 3v15M15 6v15" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-timeline" viewBox="0 0 24 24"><path d="M2 12h20" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="18" cy="12" r="2.2"/></symbol>
+    <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13l-5-5M18 12l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+<div class="page-doc">
+  <a class="back" href="../index.html#/">← back to the map</a>
+  <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-36-sim-fuel-seed.md · 2.3 KB</div>
+<h1 class="page-title">Checkpoint 36 — Sim Smoke: Fuel Seeding + Offline Proof (detailed)</h1>
+<div class="prose"><h1 id="checkpoint-36-sim-smoke-fuel-seeding-offline-proof-detailed">Checkpoint 36 — Sim Smoke: Fuel Seeding + Offline Proof (detailed)</h1><h2 id="context">Context</h2><p>R6 sim chunk on <code>feat/r6-workspace-image</code>: launch a TurtleBot3
+world and prove topics flow on CPU-only. First attempt failed for a
+real, diagnosable reason; fixed by seeding; proven offline
+(<code>--network none</code>). No Dockerfile change needed.</p>
+<h2 id="failure-diagnosis">Failure → diagnosis</h2><ul>
+<li>Live session <code>f6d4c988a688</code> ready; <code>turtlebot3-sim empty</code> in-pod
+died: <code>Unable to find uri[https://fuel.gazebosim.org/...Ground Plane]</code> + <code>[Sun]</code>, <code>REST response code: 0</code>, gazebo exited, launch
+tore down.</li>
+<li>Pod probe: <code>fuel.gazebosim.org</code> resolves to <code>185.38.109.x</code> parking
+IPs — the LAN wildcard-DNS trap (checkpoint-20 §5 class), now in
+session-pod DNS. Connection impossible, not just slow.</li>
+<li>Decision: <strong>pre-seed models into the image</strong> (offline-safe,
+faster launches, classroom-proof) instead of chasing LAN DNS.</li>
+</ul>
+<h2 id="seed-observed">Seed (observed)</h2><ul>
+<li>Enumerated Fuel URIs across all turtlebot3_gazebo worlds: exactly
+2 (Ground Plane v5, Sun v3).</li>
+<li><code>gz fuel download -u &lt;url&gt;</code> in a base-image container → 68K cache.</li>
+<li>Copied to <code>images/workspace/home-seed/.gz/fuel/...</code> (64K):
+<code>init-student-home</code>&#39;s existing <code>cp -rn</code> seeds it into
+<code>$HOME/.gz</code> on first boot (image and pod paths — no script
+changes; the Dockerfile <code>chown</code> already covers the dir).</li>
+<li>Rebuilt workspace green (cache-hot, seconds).</li>
+</ul>
+<h2 id="offline-proof-observed-network-none-container">Offline proof (observed, <code>--network none</code> container)</h2><ul>
+<li><code>turtlebot3-sim empty</code>: gz sim alive, all bridges created
+(clock, joint_states, odom, tf, cmd_vel, imu, scan).</li>
+<li><code>gz topic -l</code>: full bus (<code>/clock</code>, <code>/stats</code>, world/model topics).</li>
+<li>ROS side: <code>/clock</code> <strong>158.882 → 159.930</strong> across consecutive
+echoes ≈ real-time for the empty world on llvmpipe; gz sim ~90%
+of one core.</li>
+<li>Test container removed; live session stopped (<code>stopped</code>).</li>
+</ul>
+<h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>New: <code>images/workspace/home-seed/.gz/</code> (seed data) + this report
+(staged for commit). The 8 join/nodes files + <code>join-cluster.sh</code>
+untouched/unstaged; untracked junk left alone.</p>
+<h2 id="next">Next</h2><p>New immutable tag + <code>docker save</code> → operator <code>sudo k3s ctr images import</code> → live re-run (<code>empty</code> world in-pod, same proofs) →
+checkpoint. The seed set covers <code>world</code>/<code>house</code> too (same 2 URIs).
+Still queued: sim viewer UI (SPA, other branch), merge, R2-final,
+pre-warm/registry, GPU follow-up.</p>
+</div>
+</div>
+</body>
+</html>

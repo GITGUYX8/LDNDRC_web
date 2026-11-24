@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkpoint 4 — The Private Pod, The Sticky Door, The Front Door Sign, and the Design Sketch — LDNDRC library</title>
+<meta name="description" content="Source document: local_dev_docs/checkpoint-04-manifests-and-uiux-design.md">
+<link rel="stylesheet" href="../assets/theme.css">
+
+</head>
+<body class="standalone">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5zM2 9v8l10 5V14zM22 9l-10 5v8l10-5z"/></symbol>
+    <symbol id="i-nodes" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.6"/><circle cx="5" cy="18" r="2.6"/><circle cx="19" cy="18" r="2.6"/><path d="M12 7.6v4M11 12H7L5.6 15.4M13 12h4l1.4 3.4" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><path d="M5 19c0-6 3.5-7 7-7s7-1 7-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="7" r="2.4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 9l3 3-3 3M12.5 15H18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3 8h13l-3.5-3.5M21 16H8l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="10" width="4" height="4" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 11l9 9M16.5 16.5l2-2M19 19l2-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-door" viewBox="0 0 24 24"><path d="M5 3h11v18H5z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="12" r="1.2"/><path d="M19 5v14" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+    <symbol id="i-sim" viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7l9 5 9-5M12 12v10" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-stack" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4.5" rx="1.2"/><rect x="3" y="10.5" width="18" height="4.5" rx="1.2"/><rect x="3" y="17" width="18" height="3.5" rx="1.2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 3v15M15 6v15" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-timeline" viewBox="0 0 24 24"><path d="M2 12h20" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="18" cy="12" r="2.2"/></symbol>
+    <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13l-5-5M18 12l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+<div class="page-doc">
+  <a class="back" href="../index.html#/">← back to the map</a>
+  <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-04-manifests-and-uiux-design.md · 6.2 KB</div>
+<h1 class="page-title">Checkpoint 4 — The Private Pod, The Sticky Door, The Front Door Sign, and the Design Sketch</h1>
+<div class="prose"><h1 id="checkpoint-4-the-private-pod-the-sticky-door-the-front-door-sign-and-the-design-sketch">Checkpoint 4 — The Private Pod, The Sticky Door, The Front Door Sign, and the Design Sketch</h1><h2 id="the-big-picture-first">The big picture first</h2><p>The platform&#39;s heart — the workspace image — was already built and proven in
+previous checkpoints. What was missing was the <em>wiring</em>: a way for the cluster
+to run one private workspace per student, keep each student stuck to their own
+workspace, and let a browser reach it. This checkpoint wrote all three pieces of
+that wiring and — separately — drew the first real design sketch for what
+students will actually <em>see</em> when they open their browser. Nothing was deployed
+yet; the wiring is written and checked, ready to be tested for real once the
+workspace image is built.</p>
+<h2 id="what-got-built">What got built</h2><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Friendly name</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>manifests/ros2-platform.yaml</code></td>
+<td>The Private Pod</td>
+<td>Tells the cluster to run 3 private workspaces, one per pod, each on its own private radio channel</td>
+</tr>
+<tr>
+<td><code>manifests/ros2-service.yaml</code></td>
+<td>The Sticky Door</td>
+<td>Gives the pods one stable address that remembers which browser belongs to which pod</td>
+</tr>
+<tr>
+<td><code>manifests/ros2-ingress.yaml</code></td>
+<td>The Front Door Sign</td>
+<td>The address book that points browser paths (<code>/code</code>, <code>/stream</code>, <code>/sim</code>) at the right door</td>
+</tr>
+<tr>
+<td><code>uiux-design.md</code></td>
+<td>The Design Sketch</td>
+<td>The first plan for what the student-facing screens look and feel like</td>
+</tr>
+</tbody></table>
+<h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-private-pod-manifests-ros2-platform-yaml">The Private Pod — <code>manifests/ros2-platform.yaml</code></h3><p>Think of it as an apartment block with one tenant per unit. The block manager
+(the StatefulSet) names each unit <code>ros2-platform-0</code>, <code>ros2-platform-1</code>,
+<code>ros2-platform-2</code> — and that number is the whole trick. The workspace image&#39;s
+entrypoint reads that number and sets its radio channel to <code>100 + number</code>, so
+pod 0 hears only channel 100, pod 1 only channel 101, and so on. Two robots in
+different pods can never accidentally talk to each other, because they&#39;re
+literally on different channels and DDS traffic is pinned to the local
+machine only.</p>
+<p>The pod also wears a name badge that only Host laptops recognize (a
+<code>nodeSelector</code> — a rule that says &quot;only put me on a laptop wearing the Host
+badge&quot;), so these heavy workspaces always land on the GPU/performance machine.
+Each pod watches itself with a readiness check: it pokes its own editor port
+every 10 seconds, and only claims &quot;I&#39;m ready&quot; once the editor answers.</p>
+<h3 id="the-sticky-door-manifests-ros2-service-yaml">The Sticky Door — <code>manifests/ros2-service.yaml</code></h3><p>This is the &quot;mailbox&quot; that gives all three pods a single stable address. The
+clever bit is the sticky part: once a browser first knocks, the door remembers
+which browser came in (by remembering their IP address for an hour) and keeps
+sending that browser&#39;s traffic to the same pod every time. That matters because
+a student&#39;s editor, simulation, and desktop are all running on <em>their own</em> pod —
+if the door randomly shuffled traffic between pods, you&#39;d lose your work mid-task.</p>
+<h3 id="the-front-door-sign-manifests-ros2-ingress-yaml">The Front Door Sign — <code>manifests/ros2-ingress.yaml</code></h3><p>The address book on the building&#39;s front entrance. It reads the URL a guest
+types in (<code>ros-platform.local/code</code>) and sends it to the right door: <code>/code</code>
+goes to the editor, <code>/stream</code> to the desktop stream, <code>/sim</code> to the simulation
+websocket. The sign itself is a copy of the smaller test sign we already proved
+works in Checkpoint 1 — same style, same host name, just pointing at the real
+apartments instead of the test room.</p>
+<h3 id="the-design-sketch-uiux-design-md">The Design Sketch — <code>uiux-design.md</code></h3><p>Before this checkpoint, students would have faced three unrelated websites with
+no obvious connection. This document plans the fix: one branded, dark-themed
+&quot;mission control&quot; look, a login page, a launch page that shows live progress as
+the workspace boots, and a workspace screen where Code and Sim sit side by side.
+It deliberately drops the reference project&#39;s floating-window gimmick in favor
+of one focused stage you can switch between — because students should be
+learning ROS, not arranging windows. This is a <em>plan</em>, not code yet; the
+implementation comes in a later phase.</p>
+<h2 id="how-it-all-connects">How it all connects</h2><ol>
+<li>A student opens the browser → hits the Front Door Sign (<code>ros2-ingress.yaml</code>).</li>
+<li>The sign reads the path (<code>/code</code>, <code>/stream</code>, or <code>/sim</code>).</li>
+<li>The Sticky Door (<code>ros2-service.yaml</code>) remembers which pod that browser belongs to.</li>
+<li>Traffic lands in the student&#39;s Private Pod (<code>ros2-platform.yaml</code>).</li>
+<li>Inside the pod, the entrypoint has already assigned that pod its own private
+channel (ROS_DOMAIN_ID = 100 + pod number), so their ROS nodes are isolated
+from every other student.</li>
+<li>The Design Sketch shows how all of this is presented to the student as one
+clean, friendly product instead of three raw tools.</li>
+</ol>
+<h2 id="proof-it-works">Proof it works</h2><p>The three wiring files were checked twice against the live cluster — once
+locally and once against the real Kubernetes API — and both times the cluster
+accepted them without a single complaint:</p>
+<div class="code term" data-lang=""><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs">statefulset.apps/ros2-platform created (dry run)      # client-side check
+service/ros2-platform-svc created (dry run)
+ingress.networking.k8s.io/ros2-platform-ingress created (dry run)
+# ...and the server-side re-check passed with the same three &quot;created (dry run)&quot; lines</code></pre></div><p>The actual deployment has <strong>not</strong> happened yet — that needs the workspace image
+to be built first (next task). One thing to watch for when we do deploy: the
+small test sign from Checkpoint 1 already claims the <code>/sim</code> path, so it will
+need to be removed first to make room for the real one.</p>
+<h2 id="the-one-liner-version">The one-liner version</h2><table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>One-liner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>manifests/ros2-platform.yaml</code></td>
+<td>The apartment block that gives each student their own isolated, numbered workspace pod</td>
+</tr>
+<tr>
+<td><code>manifests/ros2-service.yaml</code></td>
+<td>The sticky door that keeps each browser glued to its own pod</td>
+</tr>
+<tr>
+<td><code>manifests/ros2-ingress.yaml</code></td>
+<td>The address book that routes <code>/code</code>, <code>/stream</code>, and <code>/sim</code> to the right place</td>
+</tr>
+<tr>
+<td><code>uiux-design.md</code></td>
+<td>The first plan for turning three raw tools into one friendly, dark-themed product</td>
+</tr>
+</tbody></table>
+<h2 id="what-s-next">What&#39;s next</h2><ul>
+<li><input disabled="" type="checkbox"> Task 6: update <code>tech-enhancement-report.md</code> so it matches the decisions already made in <code>plan.md</code> (code-server, Go control panel, corrected websocket config)</li>
+<li><input disabled="" type="checkbox"> Task 7: build the workspace image — check disk space first, then build base → workspace</li>
+<li><input disabled="" type="checkbox"> Task 8: deploy on k3d, remove the old test sign, rehearse all three routes, then write the next checkpoint</li>
+</ul>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkpoint 21 — R3 CSRF + R2 Session Persistence (detailed) — LDNDRC library</title>
+<meta name="description" content="Source document: local_dev_docs/checkpoint-21-r3-r2.md">
+<link rel="stylesheet" href="../assets/theme.css">
+
+</head>
+<body class="standalone">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5zM2 9v8l10 5V14zM22 9l-10 5v8l10-5z"/></symbol>
+    <symbol id="i-nodes" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.6"/><circle cx="5" cy="18" r="2.6"/><circle cx="19" cy="18" r="2.6"/><path d="M12 7.6v4M11 12H7L5.6 15.4M13 12h4l1.4 3.4" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><path d="M5 19c0-6 3.5-7 7-7s7-1 7-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="7" r="2.4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 9l3 3-3 3M12.5 15H18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3 8h13l-3.5-3.5M21 16H8l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="10" width="4" height="4" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 11l9 9M16.5 16.5l2-2M19 19l2-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-door" viewBox="0 0 24 24"><path d="M5 3h11v18H5z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="12" r="1.2"/><path d="M19 5v14" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+    <symbol id="i-sim" viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7l9 5 9-5M12 12v10" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-stack" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4.5" rx="1.2"/><rect x="3" y="10.5" width="18" height="4.5" rx="1.2"/><rect x="3" y="17" width="18" height="3.5" rx="1.2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 3v15M15 6v15" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-timeline" viewBox="0 0 24 24"><path d="M2 12h20" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="18" cy="12" r="2.2"/></symbol>
+    <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13l-5-5M18 12l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+<div class="page-doc">
+  <a class="back" href="../index.html#/">← back to the map</a>
+  <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-21-r3-r2.md · 4.3 KB</div>
+<h1 class="page-title">Checkpoint 21 — R3 CSRF + R2 Session Persistence (detailed)</h1>
+<div class="prose"><h1 id="checkpoint-21-r3-csrf-r2-session-persistence-detailed">Checkpoint 21 — R3 CSRF + R2 Session Persistence (detailed)</h1><h2 id="context">Context</h2><p>Two roadmap items landed on the real master (<code>hari</code>), on branch
+<code>feat/r3-csrf</code> (from <code>main@a404617</code>), each committed alone. No push.
+R3 closed a reference-parity gap before the R4 SPA makes cookie-authed
+mutations real; R2 ended the restart-orphan tax observed in
+CP09/CP11/checkpoint-20. Guest agent join remains deferred.</p>
+<h2 id="r3-csrf-protection">R3 — CSRF protection</h2><h3 id="scope-correction-found-in-code-not-assumed">Scope correction (found in code, not assumed)</h3><p>The planned premise — &quot;cookie auth on mutating routes&quot; — did not exist:
+all mutating API routes require the <code>Authorization: Bearer</code> header
+(<code>bearerClaims</code>), which browsers never attach cross-site. The session
+cookie (<code>ldndrc_session</code>, <code>SameSite=Lax</code>) is consumed only by the
+gateway&#39;s GET navigation. Classic CSRF was already neutered by
+architecture; R3 is defense-in-depth plus the precondition for R4.</p>
+<h3 id="what-shipped-473441f">What shipped (<code>473441f</code>)</h3><ul>
+<li><code>IssueCSRF</code>/<code>VerifyCSRF</code> (<code>internal/auth</code>): <code>HMAC(JWT_SECRET, &quot;csrf:&quot;+jwt)</code>, hex, constant-time compare. Stateless, unforgeable
+without the secret, rotates with re-login. Token travels in JS memory
+as <code>X-CSRF-Token</code>, never a cookie.</li>
+<li><code>guardCSRF</code> middleware (<code>internal/httpapi/csrf.go</code>): cookie present +
+mutating method + missing/invalid token → <strong>403</strong> before any handler.
+Bearer-only requests and safe methods pass through; gateway GET
+navigation untouched (R4 iframe compat).</li>
+<li>Login returns <code>csrf_token</code> alongside JWT + cookie.</li>
+<li><code>POST /api/nodes/register</code> stays exempt: pre-auth by design,
+rate-limited (10/min/IP). Diagnostics/polls carry no cookie.</li>
+</ul>
+<h3 id="proofs">Proofs</h3><ul>
+<li>Unit: 7 guard cases on real routes (403/403/401-fallthrough/foreign
+rejection/Bearer-202/GET-pass/register-open) + 5 token-binding cases.
+Full <code>go test ./...</code> green (7 packages), <code>gofmt</code>/<code>vet</code> clean.</li>
+<li>Live (rebuilt image, user <code>ctr import</code>, preempted hostNetwork rollout
+deadlock via delete-old-first): login shape OK; cookie POST no
+token → 403, bad token → 403, valid token w/o bearer → 401 (guard
+passed, handler auth), Bearer → 202; gateway editor-200 regression
+holds under the R3 image.</li>
+</ul>
+<h2 id="r2-session-persistence">R2 — Session persistence</h2><h3 id="what-shipped-6241549">What shipped (<code>6241549</code>)</h3><ul>
+<li><code>sessions.json</code> beside <code>nodes.json</code> (<code>SESSIONS_DB</code>, default
+<code>/var/lib/ldndrc/sessions.json</code>, emptyDir limits documented inline).
+Every mutation saves under lock; Create rolls back the map on save
+failure; corrupt file is a hard error (never silently start empty).</li>
+<li>Boot reconcile (<code>main.go</code>, after provisioner wiring): loaded
+non-terminal records checked via <code>WorkloadExists</code> (fail-open on API
+errors) → existing <strong>adopted</strong> (readiness re-probes lazily on next
+gateway visit), missing <strong>tombstoned to <code>stopped</code></strong> with
+<code>&quot;workload gone at restart&quot;</code> (never silent-delete, never
+auto-reprovision). Counts logged.</li>
+<li>Nodes DB stays on emptyDir (PVC/DB path = R2-final follow-up).</li>
+<li>Manifest gains explicit <code>SESSIONS_DB</code> env for symmetry with NODES_DB.</li>
+</ul>
+<h3 id="proofs">Proofs</h3><ul>
+<li>Unit: save/load round-trip + <code>Current</code> after reload, corrupt-file
+fails fast, adopt/tombstone + tombstone-persists-across-reload,
+terminal records ignored.</li>
+<li>Live restart proof (in-place container kill via <code>crictl stop</code>, same
+pod <code>restarts=0</code> → <code>1</code>, emptyDir intact): session <code>20c8e08984b1</code>
+listed with the <strong>same id</strong> post-restart (user-confirmed, then
+re-verified), <code>provisioning</code> → <code>ready</code> on gateway visit,
+editor-200 first try, zero orphans. This is the first restart in
+project history that lost nothing.</li>
+</ul>
+<h2 id="data-layer-clarification-asked-mid-run">Data-layer clarification (asked mid-run)</h2><p>Two layers, one touched: session <strong>records</strong> (JSON pointers + status,
+hundreds of bytes — persisted + reconciled) vs workspace <strong>home data</strong>
+(5Gi PVCs, K8s-native — always survived; the bug was forgotten
+pointers, now fixed). Login tokens were never at risk (secret in a K8s
+Secret). Node approvals still emptyDir-only (deferred).</p>
+<h2 id="follow-ups">Follow-ups</h2><ul>
+<li>R4: step 0 locate <code>uiux-design.md</code> (absent from <code>docs/</code>), then
+scaffold + phased UI-1..3.</li>
+<li>R2-final: nodes + sessions to PVC or DB when leaving demo stage.</li>
+<li>Panel Deployment: <code>maxUnavailable:1</code> (or Recreate) so single-node
+hostNetwork rollouts never deadlock (worked around twice now).</li>
+<li>Uncommitted join-file modifications in the tree (<code>cmd/join/main.go</code>,
+<code>internal/join/*</code>) are NOT part of R3/R2 — origin unknown, flagged
+to the operator, left untouched.</li>
+</ul>
+</div>
+</div>
+</body>
+</html>

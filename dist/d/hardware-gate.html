@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The hardware gate — LDNDRC</title>
+<meta name="description" content="Eight cores, sixteen gigabytes, and an NVIDIA GPU decide what a laptop becomes.">
+<link rel="stylesheet" href="../assets/theme.css">
+
+</head>
+<body class="standalone">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5zM2 9v8l10 5V14zM22 9l-10 5v8l10-5z"/></symbol>
+    <symbol id="i-nodes" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.6"/><circle cx="5" cy="18" r="2.6"/><circle cx="19" cy="18" r="2.6"/><path d="M12 7.6v4M11 12H7L5.6 15.4M13 12h4l1.4 3.4" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><path d="M5 19c0-6 3.5-7 7-7s7-1 7-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="7" r="2.4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 9l3 3-3 3M12.5 15H18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3 8h13l-3.5-3.5M21 16H8l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="10" width="4" height="4" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 11l9 9M16.5 16.5l2-2M19 19l2-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-door" viewBox="0 0 24 24"><path d="M5 3h11v18H5z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="12" r="1.2"/><path d="M19 5v14" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+    <symbol id="i-sim" viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7l9 5 9-5M12 12v10" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-stack" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4.5" rx="1.2"/><rect x="3" y="10.5" width="18" height="4.5" rx="1.2"/><rect x="3" y="17" width="18" height="3.5" rx="1.2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 3v15M15 6v15" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-timeline" viewBox="0 0 24 24"><path d="M2 12h20" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="18" cy="12" r="2.2"/></symbol>
+    <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13l-5-5M18 12l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+<div class="page-doc">
+  <a class="back" href="../index.html#/">← back to the map</a>
+  <div class="meta" style="display:flex;gap:10px;align-items:center;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint);margin-bottom:12px">
+      <span style="color:#8ec07c">Compute</span>
+      <span class="chip shipped">shipped</span>
+      <span>4 min</span>
+    </div>
+    <h1 class="page-title">The hardware gate</h1>
+    <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Eight cores, sixteen gigabytes, and an NVIDIA GPU decide what a laptop becomes.</p>
+    <div class="prose"><p>Not every laptop should become a Host. The gate is a deterministic check run before anything is installed, so a weak machine is never offered a K3s agent it cannot carry.</p>
+<h2 id="the-bar">The bar</h2><table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Minimum</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CPU cores</td>
+<td>8</td>
+<td>A session pod runs an editor, a desktop, Gazebo, and ROS</td>
+</tr>
+<tr>
+<td>RAM</td>
+<td>16 GB</td>
+<td>Gazebo plus DDS plus the browser tooling</td>
+</tr>
+<tr>
+<td>GPU</td>
+<td>NVIDIA</td>
+<td>The workspace image requests <code>nvidia.com/gpu: 1</code></td>
+</tr>
+<tr>
+<td>Disk</td>
+<td>~25 GB free</td>
+<td>The image is roughly 10 GB, imported per node</td>
+</tr>
+</tbody></table>
+<h2 id="the-verdicts">The verdicts</h2><div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">High-end laptop detected. Joining as HOST.
+Low-end laptop detected. Staying a Guest — use the browser.</code></pre></div><p>There is no third option and no manual override in the normal path. That is intentional: a Host that cannot carry a session makes the whole workshop worse for one student, silently.</p>
+<h2 id="testing-the-gate-without-hardware">Testing the gate without hardware</h2><p>The detection logic is separated from the install so it can be exercised in two seconds:</p>
+<div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">./test-join.sh
+TEST_CPU=12 TEST_RAM=16 TEST_GPU=nvidia ./join-cluster.sh</code></pre></div><p><code>TEST_*</code> overrides exist because CI and developer machines rarely look like workshop laptops. They change only the input to the decision, not the decision itself.</p>
+<h2 id="the-real-lesson">The real lesson</h2><p>The gate is deliberately conservative. A laptop with 15 GB of RAM is a Guest even though it would probably cope. Being wrong in that direction costs one unused machine. Being wrong in the other direction costs a student their session in the middle of a lesson.</p>
+<h2 id="how-it-connects">How it connects</h2><ul>
+<li>The gate decides whether a laptop can even reach <a href="nodes-api.html" class="topic-link">Register, approve, poll</a>&#39;s approval step as a Host.</li>
+<li>It is why the join binary can say &quot;you cannot join&quot; before downloading anything — see <a href="join-binary.html" class="topic-link">The join binary</a>.</li>
+<li>GPU capacity is then shared with <a href="gpu-timeslicing.html" class="topic-link">Time-slicing one GPU</a>.</li>
+</ul>
+<h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">TEST_CPU=12 TEST_RAM=16 TEST_GPU=nvidia ./join-cluster.sh
+<span class="hljs-comment"># High-end laptop detected. Joining as HOST.</span></code></pre></div></div>
+    <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>
+<div class="code term"><pre><code class="hljs">TEST_CPU=12 TEST_RAM=16 TEST_GPU=nvidia ./join-cluster.sh</code></pre></div></div><div class="source-list"><span class="eyebrow">Sources</span><a href="../library/README.html">README.md</a><a href="../library/raw-join-cluster-sh.html">join-cluster.sh</a><a href="../library/local_dev_docs--checkpoint-01-join-logic-and-k3d-tests.html">local_dev_docs/checkpoint-01-join-logic-and-k3d-tests.md</a></div>
+</div>
+</body>
+</html>

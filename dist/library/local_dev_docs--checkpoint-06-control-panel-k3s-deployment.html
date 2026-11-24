@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkpoint 6 — Putting the Control Panel Inside K3s — LDNDRC library</title>
+<meta name="description" content="Source document: local_dev_docs/checkpoint-06-control-panel-k3s-deployment.md">
+<link rel="stylesheet" href="../assets/theme.css">
+
+</head>
+<body class="standalone">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5zM2 9v8l10 5V14zM22 9l-10 5v8l10-5z"/></symbol>
+    <symbol id="i-nodes" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.6"/><circle cx="5" cy="18" r="2.6"/><circle cx="19" cy="18" r="2.6"/><path d="M12 7.6v4M11 12H7L5.6 15.4M13 12h4l1.4 3.4" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><path d="M5 19c0-6 3.5-7 7-7s7-1 7-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="7" r="2.4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 9l3 3-3 3M12.5 15H18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3 8h13l-3.5-3.5M21 16H8l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="10" width="4" height="4" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 11l9 9M16.5 16.5l2-2M19 19l2-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-door" viewBox="0 0 24 24"><path d="M5 3h11v18H5z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="12" r="1.2"/><path d="M19 5v14" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+    <symbol id="i-sim" viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7l9 5 9-5M12 12v10" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-stack" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4.5" rx="1.2"/><rect x="3" y="10.5" width="18" height="4.5" rx="1.2"/><rect x="3" y="17" width="18" height="3.5" rx="1.2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 3v15M15 6v15" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-timeline" viewBox="0 0 24 24"><path d="M2 12h20" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="18" cy="12" r="2.2"/></symbol>
+    <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13l-5-5M18 12l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+<div class="page-doc">
+  <a class="back" href="../index.html#/">← back to the map</a>
+  <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-06-control-panel-k3s-deployment.md · 5.8 KB</div>
+<h1 class="page-title">Checkpoint 6 — Putting the Control Panel Inside K3s</h1>
+<div class="prose"><h1 id="checkpoint-6-putting-the-control-panel-inside-k3s">Checkpoint 6 — Putting the Control Panel Inside K3s</h1><h2 id="the-big-picture-first">The big picture first</h2><p>The session builder could now describe and create a student workspace, but the
+control panel itself still had no K3s home. This checkpoint gave it a small,
+locked-down apartment inside the cluster and documented how to put it there.</p>
+<p>The new deployment uses K3s&#39;s normal Kubernetes API. It does not need cluster
+administrator access: it can manage only the session resources in the <code>ldndrc</code>
+namespace.</p>
+<h2 id="what-got-built">What got built</h2><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Friendly name</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>control-panel/Dockerfile</code></td>
+<td>The Packing Box</td>
+<td>Builds the Go control panel into a small static runtime image.</td>
+</tr>
+<tr>
+<td><code>manifests/control-panel-rbac.yaml</code></td>
+<td>The Key Ring</td>
+<td>Creates the namespace, ServiceAccount, and narrowly scoped permissions.</td>
+</tr>
+<tr>
+<td><code>manifests/control-panel-deployment.yaml</code></td>
+<td>The Control Room</td>
+<td>Runs one authenticated control-panel replica inside K3s.</td>
+</tr>
+<tr>
+<td><code>manifests/control-panel-service.yaml</code></td>
+<td>The Reception Desk</td>
+<td>Gives the control panel a stable internal address on port 8082.</td>
+</tr>
+<tr>
+<td><code>manifests/control-panel-secret.example.yaml</code></td>
+<td>The Secret Recipe</td>
+<td>Shows the shape of the JWT Secret without committing a real secret.</td>
+</tr>
+<tr>
+<td><code>control-panel/README.md</code></td>
+<td>The Setup Card</td>
+<td>Explains image building, secret creation, deployment, and checks.</td>
+</tr>
+<tr>
+<td><code>.gitignore</code></td>
+<td>The Vault Lock</td>
+<td>Keeps the real local control-panel Secret out of git.</td>
+</tr>
+</tbody></table>
+<h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-packing-box-control-panel-dockerfile">The Packing Box — <code>control-panel/Dockerfile</code></h3><p>Think of this as packing the control panel for travel. A Go build stage compiles
+the server into one static Linux binary, then a minimal distroless image carries
+only that binary into K3s.</p>
+<p>The runtime exposes port 8082 and runs as the non-root <code>nonroot</code> user. The image
+expects the project image <code>ldndrc/control-panel:dev</code> by default in the K3s
+Deployment.</p>
+<h3 id="the-key-ring-manifests-control-panel-rbac-yaml">The Key Ring — <code>manifests/control-panel-rbac.yaml</code></h3><p>This is the control panel&#39;s carefully sized key ring. It creates the <code>ldndrc</code>
+namespace and a dedicated ServiceAccount, then allows that account to create,
+inspect, update, and remove only Deployments, Services, PVCs, and Pods in that
+namespace.</p>
+<p>It does not grant cluster-admin access. That matters because the control panel
+creates student workspaces, but should not be able to alter the whole K3s farm.</p>
+<h3 id="the-control-room-manifests-control-panel-deployment-yaml">The Control Room — <code>manifests/control-panel-deployment.yaml</code></h3><p>This is the small office where the control panel works. It receives the JWT
+secret from Kubernetes, turns on in-cluster mode, and points session creation at
+the <code>ldndrc</code> namespace and the Jazzy/Harmonic workspace image.</p>
+<p>It checks <code>/healthz</code> before claiming to be ready and keeps checking afterward.
+It also runs with a read-only filesystem, no privilege escalation, dropped
+capabilities, and a RuntimeDefault seccomp profile.</p>
+<h3 id="the-reception-desk-manifests-control-panel-service-yaml">The Reception Desk — <code>manifests/control-panel-service.yaml</code></h3><p>Think of this as the building directory. It gives the control panel a stable
+ClusterIP address named <code>ldndrc-control-panel</code> on port 8082, so the future
+gateway and frontend do not need to know which pod is currently running it.</p>
+<h3 id="the-secret-recipe-manifests-control-panel-secret-example-yaml">The Secret Recipe — <code>manifests/control-panel-secret.example.yaml</code></h3><p>This is an empty recipe card, not a real password. It documents the Secret
+format for people who prefer applying YAML, while the README gives a safer
+command that generates a random value locally.</p>
+<h3 id="the-vault-lock-gitignore">The Vault Lock — <code>.gitignore</code></h3><p>The real file <code>manifests/control-panel-secret.yaml</code> is now ignored. This makes
+it possible to keep a local Secret manifest without accidentally adding the JWT
+signing key to the repository.</p>
+<h3 id="the-setup-card-control-panel-readme-md">The Setup Card — <code>control-panel/README.md</code></h3><p>This is the runbook for the checkpoint. It covers building the image, importing
+it into a k3d cluster, creating the JWT Secret, applying the manifests, checking
+rollout status, and confirming the ServiceAccount can create session resources.</p>
+<h2 id="how-it-all-connects">How it all connects</h2><ol>
+<li>Build <code>ldndrc/control-panel:dev</code> from the Go control-panel directory.</li>
+<li>Import the image into the K3s or k3d nodes.</li>
+<li>Create the JWT Secret locally, without committing it.</li>
+<li>Apply the namespace and RBAC rules.</li>
+<li>K3s starts the control-panel Deployment with its ServiceAccount.</li>
+<li>The control panel talks to the K3s API and creates one Deployment, Service,
+and PVC for each student session.</li>
+<li>The stable control-panel Service becomes the internal destination for the
+gateway work that comes next.</li>
+</ol>
+<h2 id="proof-it-works">Proof it works</h2><ul>
+<li>All four new YAML files passed Ruby YAML parsing.</li>
+<li><code>git diff --check</code> passed.</li>
+<li>The existing hardware regression test still passed all 4 scenarios.</li>
+<li>Dockerfile validation could not run because access to the Docker daemon was
+denied.</li>
+<li>Go compilation and tests remain unverified because <code>go</code> and <code>gofmt</code> are not
+installed in this environment.</li>
+<li>A real K3s rollout and RBAC check are not verified yet because <code>kubectl</code> is
+not installed and no cluster is connected here.</li>
+</ul>
+<h2 id="the-one-liner-version">The one-liner version</h2><table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>One-liner</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>control-panel/Dockerfile</code></td>
+<td>Packs the Go server into a small non-root container.</td>
+</tr>
+<tr>
+<td><code>control-panel-rbac.yaml</code></td>
+<td>Gives the server only the K3s keys it needs.</td>
+</tr>
+<tr>
+<td><code>control-panel-deployment.yaml</code></td>
+<td>Runs the server inside K3s with health checks and secret wiring.</td>
+</tr>
+<tr>
+<td><code>control-panel-service.yaml</code></td>
+<td>Gives the server a stable internal address.</td>
+</tr>
+<tr>
+<td><code>control-panel/README.md</code></td>
+<td>Explains how to build, deploy, and verify the control panel.</td>
+</tr>
+</tbody></table>
+<h2 id="what-s-next">What&#39;s next</h2><ul>
+<li><input disabled="" type="checkbox"> Install the Go and kubectl toolchains and run formatting, dependency, and
+compilation checks.</li>
+<li><input disabled="" type="checkbox"> Build/import the control-panel and workspace images into K3s.</li>
+<li><input disabled="" type="checkbox"> Apply the manifests on a real K3s cluster and verify the ServiceAccount
+permissions.</li>
+<li><input disabled="" type="checkbox"> Connect the gateway to each session&#39;s private Service.</li>
+<li><input disabled="" type="checkbox"> Add readiness reconciliation so sessions move from <code>provisioning</code> to
+<code>ready</code> after their workspace is actually available.</li>
+</ul>
+</div>
+</div>
+</body>
+</html>

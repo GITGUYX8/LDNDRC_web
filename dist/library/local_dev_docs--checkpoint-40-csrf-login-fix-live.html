@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkpoint 40 — CSRF login-lockout fix live (detailed) — LDNDRC library</title>
+<meta name="description" content="Source document: local_dev_docs/checkpoint-40-csrf-login-fix-live.md">
+<link rel="stylesheet" href="../assets/theme.css">
+
+</head>
+<body class="standalone">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5zM2 9v8l10 5V14zM22 9l-10 5v8l10-5z"/></symbol>
+    <symbol id="i-nodes" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.6"/><circle cx="5" cy="18" r="2.6"/><circle cx="19" cy="18" r="2.6"/><path d="M12 7.6v4M11 12H7L5.6 15.4M13 12h4l1.4 3.4" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><path d="M5 19c0-6 3.5-7 7-7s7-1 7-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="7" r="2.4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 9l3 3-3 3M12.5 15H18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3 8h13l-3.5-3.5M21 16H8l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="10" width="4" height="4" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 11l9 9M16.5 16.5l2-2M19 19l2-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-door" viewBox="0 0 24 24"><path d="M5 3h11v18H5z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="12" r="1.2"/><path d="M19 5v14" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+    <symbol id="i-sim" viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7l9 5 9-5M12 12v10" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-stack" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4.5" rx="1.2"/><rect x="3" y="10.5" width="18" height="4.5" rx="1.2"/><rect x="3" y="17" width="18" height="3.5" rx="1.2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 3v15M15 6v15" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-timeline" viewBox="0 0 24 24"><path d="M2 12h20" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="18" cy="12" r="2.2"/></symbol>
+    <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13l-5-5M18 12l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+<div class="page-doc">
+  <a class="back" href="../index.html#/">← back to the map</a>
+  <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-40-csrf-login-fix-live.md · 3.9 KB</div>
+<h1 class="page-title">Checkpoint 40 — CSRF login-lockout fix live (detailed)</h1>
+<div class="prose"><h1 id="checkpoint-40-csrf-login-lockout-fix-live-detailed">Checkpoint 40 — CSRF login-lockout fix live (detailed)</h1><h2 id="the-bug">The bug</h2><p>Re-login from a browser holding a stale <code>ldndrc_session</code> cookie →
+<code>403 &quot;csrf token missing or invalid&quot;</code>, login handler never reached.
+<code>guardCSRF</code> required a CSRF header on <em>every</em> cookie-carrying POST,
+but login is the endpoint that <em>issues</em> tokens — it can never require
+one. Chicken-and-egg lockout.</p>
+<h2 id="the-fix-on-main-uncommitted-until-this-checkpoint">The fix (on main, uncommitted until this checkpoint)</h2><ul>
+<li><code>internal/httpapi/csrf.go</code>: early-return the guard for
+<code>POST /api/auth/login</code> (before the method switch), with comment
+explaining why. Header comment updated (was: &quot;pre-auth endpoints
+carry no cookie&quot; — wrong; login carries stale cookies).</li>
+<li><code>internal/httpapi/csrf_test.go</code>: regression case in <code>TestCSRFGuard</code>
+— login POST + stale cookie + no header → 200 (the helper
+<code>loginTokens</code> was always cookieless, which is why the suite never
+caught the bug).</li>
+<li><code>manifests/control-panel-deployment.yaml</code>: stale comment refresh —
+Selkies 2.0.0 is live (CP-34/35), not &quot;deferred / 502-by-design&quot;.</li>
+</ul>
+<h2 id="proofs-before-deploy">Proofs before deploy</h2><ul>
+<li><code>gofmt</code>/<code>go vet</code> clean; full <code>go test -count=1 ./...</code> green (all 7
+packages; join 10.3s).</li>
+<li>Docker image <code>ldndrc/control-panel:dev</code> rebuilt + smoke-tested in a
+throwaway container: stale-cookie login → 200; cookie-POST without
+header → 403.</li>
+</ul>
+<h2 id="deploy-observed">Deploy (observed)</h2><ul>
+<li>First import attempt failed: tarball had been saved to <code>/tmp</code>
+(tmpfs, wiped) — re-saved to <code>~/ldndrc-panel-csrffix.tar</code> (14M).
+Lesson repeated: import tarballs live in <code>$HOME</code>, never <code>/tmp</code>.</li>
+<li>Scratch-pod import check: a probe pod with the image returned
+<code>StartError: exec &quot;sh&quot; not found</code> — that error itself proves the
+image is present in containerd (missing image would be
+<code>ImagePullBackOff</code>). The panel image is distroless: no shell.</li>
+<li>Rollout: delete-old-first (<code>kubectl delete pod -l app.kubernetes.io/name=ldndrc-control-panel</code>), new pod <code>vm7c9</code>
+Running/ready in ~13s, 0 restarts. (Plain <code>rollout restart</code> stays
+forbidden — hostNetwork <code>:8082</code> deadlock, CP-20 §6.)</li>
+</ul>
+<h2 id="live-proof-matrix-through-8082-host-control-ros-platform-local">Live proof matrix (through :8082, Host=control.ros-platform.local)</h2><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Scenario</th>
+<th>Observed</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Stale-cookie login POST</td>
+<td><strong>200</strong>, token+csrf issued</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Garbage cookie POST /api/sessions, no header</td>
+<td><strong>403</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>No cookie, Bearer + CSRF header</td>
+<td><strong>202</strong> (session created)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Valid cookie + matching header</td>
+<td><strong>409</strong> — guard passed; handler&#39;s one-session-per-user conflict</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Valid cookie + wrong header</td>
+<td><strong>403</strong> — pairing enforced</td>
+</tr>
+</tbody></table>
+<p>Notes on test #3/#4 mechanics (cost me a round-trip each):</p>
+<ul>
+<li>Login sets the cookie itself (<code>router.go:71 SetSessionCookie</code>), but
+with <code>COOKIE_DOMAIN=.ros-platform.local</code> curl on 127.0.0.1 won&#39;t
+store it → looked like &quot;no cookie&quot;. Use <code>--resolve control.ros-platform.local:8082:127.0.0.1</code> to test the real path.</li>
+<li>The wrong-header &quot;negative&quot; without a cookie isn&#39;t a guard test at
+all: no cookie → guard skipped → handler (409 conflict).</li>
+<li>CSRF pairing model: <code>VerifyCSRF(cookie.Value, header)</code> — the header
+token is verified against the <em>cookie&#39;s</em> JWT.</li>
+</ul>
+<h2 id="environment-incident-discovered-mid-proof">Environment incident discovered mid-proof</h2><p>The laptop&#39;s WiFi IP drifted <code>192.168.1.37</code> → <code>192.168.1.65</code> (DHCP).
+Consequences observed:</p>
+<ul>
+<li><code>/etc/hosts</code> entries (line 5) still point at <code>.37</code> → every
+<code>*.ros-platform.local</code> URL dead from the browser, even though the
+panel is healthy (<code>127.0.0.1:8082</code> → 200). User needs the sudo
+hosts fix again.</li>
+<li><code>manifests/control-panel-deployment.yaml</code> line 81 hardcodes
+<code>https://192.168.1.37:6443</code> (join/kubeconfig path). Debt: make the
+IP configurable or drift-proof (DHCP reservation is the cheap fix).</li>
+</ul>
+<p>Nothing live depends on the stale IP for this proof (used 127.0.0.1),
+but browser-facing UI is unreachable until <code>/etc/hosts</code> is corrected.</p>
+<h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>Committed in this chunk: <code>csrf.go</code>, <code>csrf_test.go</code>,
+<code>control-panel-deployment.yaml</code> (comment), this report. The 5
+untracked junk files left alone. No push.</p>
+</div>
+</div>
+</body>
+</html>
