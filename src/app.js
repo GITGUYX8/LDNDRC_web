@@ -925,7 +925,7 @@
         (previousId ? "" : ' disabled aria-disabled="true"') + '><svg aria-hidden="true" style="transform:rotate(180deg)"><use href="#i-arrow"/></svg></button>' +
         '<button class="btn ' + (done.has(id) ? "" : "primary") + '" id="mark-done">' +
         '<svg aria-hidden="true"><use href="#i-check"/></svg>' +
-        (done.has(id) ? " Read" : " Mark as read") + "</button>" +
+         (done.has(id) ? " Done" : " Mark as read") + "</button>" +
         '<button class="btn icon next-btn" id="next-topic" title="Next chapter" aria-label="Next chapter">' +
         '<svg aria-hidden="true"><use href="#i-arrow"/></svg></button>' +
         '<a class="btn icon" href="d/' + id + '.html" title="Open as a full page" aria-label="Open as a full page">' +
