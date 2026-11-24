@@ -1,4 +1,4 @@
-# LDNDRC — 100 Interview Questions & Answers
+# LDNDRC — FAQs
 
 **Format:** basic → advanced, written the way an interviewer would actually ask them. Each answer is spoken-style, explains the term instead of assuming it, and several questions include a follow-up cross-question so you can practise defending the design.
 

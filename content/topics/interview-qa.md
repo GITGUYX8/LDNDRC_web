@@ -1,4 +1,4 @@
-The project explained through a hundred questions, grouped the way an interviewer would ask them.
+Frequently asked questions about LDNDRC, grouped around the problems, architecture, operations, and trade-offs.
 
 ## The five clusters
 

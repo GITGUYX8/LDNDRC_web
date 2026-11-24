@@ -749,13 +749,13 @@
     },
     {
       "id": "interview-qa",
-      "title": "100 interview questions",
+      "title": "FAQs",
       "domain": "direction",
       "status": "shipped",
       "spine": false,
       "minutes": 8,
       "glyph": "book",
-      "summary": "The project explained through the questions an interviewer would actually ask.",
+      "summary": "Frequently asked questions about the platform, architecture, failure modes, and trade-offs.",
       "requires": [
         "tech-stack"
       ],
