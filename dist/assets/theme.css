@@ -375,6 +375,8 @@ code, pre, kbd, samp { font-family: var(--font-mono); font-variant-ligatures: no
 .sheet-foot .step-note { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-faint); flex: 1; min-width: 0; }
 .sheet-foot .step-note b { color: var(--text-soft); }
 .sheet-foot .next-btn { color: var(--yellow); }
+.sheet-foot .previous-btn { color: var(--blue); }
+.sheet-foot .btn:disabled { opacity: .35; cursor: not-allowed; transform: none; box-shadow: none; }
 
 /* ---------- route ---------- */
 

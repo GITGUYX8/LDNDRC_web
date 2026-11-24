@@ -722,6 +722,17 @@
     return ordered[index + 1] ? ordered[index + 1].id : null;
   }
 
+  function previousReadingId(id) {
+    var ordered = G.topics.slice().sort(function (a, b) {
+      return (a.rank || 0) - (b.rank || 0) || (a.y || 0) - (b.y || 0);
+    });
+    var index = ordered.findIndex(function (t) { return t.id === id; });
+    for (var i = index - 1; i >= 0; i--) {
+      if (!done.has(ordered[i].id)) return ordered[i].id;
+    }
+    return ordered[index - 1] ? ordered[index - 1].id : null;
+  }
+
   function goNext(id) {
     if (state.route) {
       var i = state.route.ids.indexOf(id);
@@ -741,6 +752,14 @@
     }
     var nextId = nextReadingId(id);
     if (nextId) openTopic(nextId);
+  }
+
+  function goPrev(id) {
+    var ordered = state.route ? state.route.ids : G.topics.slice().sort(function (a, b) {
+      return (a.rank || 0) - (b.rank || 0) || (a.y || 0) - (b.y || 0);
+    }).map(function (t) { return t.id; });
+    var i = ordered.indexOf(id);
+    if (i > 0) openTopic(ordered[i - 1]);
   }
 
   document.getElementById("route-banner-clear").addEventListener("click", clearRoute);
@@ -859,7 +878,7 @@
       var lesson = document.getElementById("lesson");
       if (!lesson) return;
       var cta = "";
-      if (!t.spine || true) {
+       if (!state.route) {
         cta = '<div class="route-cta"><span class="eyebrow">Build a route</span>' +
           "<p>See every concept you need before this one, in order.</p>" +
           '<button class="btn" id="route-to-here"><svg aria-hidden="true"><use href="#i-route"/></svg>' +
@@ -899,7 +918,11 @@
         }
       }
       sheetFoot.hidden = false;
-      sheetFoot.innerHTML = (stepNote || '<span class="step-note"></span>') +
+       var routeIndex = state.route ? state.route.ids.indexOf(id) : -1;
+    var previousId = routeIndex > 0 ? state.route.ids[routeIndex - 1] : (!state.route ? previousReadingId(id) : null);
+       sheetFoot.innerHTML = (stepNote || '<span class="step-note"></span>') +
+        '<button class="btn icon previous-btn" id="previous-topic" title="Previous chapter" aria-label="Previous chapter"' +
+        (previousId ? "" : ' disabled aria-disabled="true"') + '><svg aria-hidden="true" style="transform:rotate(180deg)"><use href="#i-arrow"/></svg></button>' +
         '<button class="btn ' + (done.has(id) ? "" : "primary") + '" id="mark-done">' +
         '<svg aria-hidden="true"><use href="#i-check"/></svg>' +
         (done.has(id) ? " Read" : " Mark as read") + "</button>" +
@@ -908,7 +931,8 @@
         '<a class="btn icon" href="d/' + id + '.html" title="Open as a full page" aria-label="Open as a full page">' +
         '<svg aria-hidden="true"><use href="#i-fit"/></svg></a>';
 
-      document.getElementById("mark-done").addEventListener("click", function () { toggleDone(id); });
+       document.getElementById("mark-done").addEventListener("click", function () { toggleDone(id); });
+       document.getElementById("previous-topic").addEventListener("click", function () { if (previousId) goPrev(id); });
       document.getElementById("next-topic").addEventListener("click", function () { goNext(id); });
     });
   }
