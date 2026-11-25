@@ -1169,15 +1169,42 @@
   var brandSub = brand && brand.querySelector(".brand-sub");
 
   if (brand && brandSub) {
-    var setBrandSub = function (text) { brandSub.textContent = text; };
+    var fullName = "LOCAL DYNAMIC NODE DISCOVERY ROS CLUSTER";
+    var defaultName = "CONCEPT MAP";
+    var frame = 0;
+    var glyphs = "░▒▓█#%&@01<>/\\\\";
+    var decode = function (target) {
+      if (frame) cancelAnimationFrame(frame);
+      var started = performance.now();
+      var run = function (now) {
+        var progress = Math.min(1, (now - started) / 680);
+        var locked = Math.floor(progress * target.length);
+        var output = "";
+        for (var i = 0; i < target.length; i++) {
+          output += i < locked ? target[i] : glyphs[(i * 11 + Math.floor(now / 42)) % glyphs.length];
+        }
+        brandSub.textContent = output;
+        if (progress < 1) frame = requestAnimationFrame(run);
+        else brandSub.textContent = target;
+      };
+      frame = requestAnimationFrame(run);
+    };
     brand.addEventListener("pointerenter", function () {
-      setBrandSub("LOCAL DYNAMIC NODE DISCOVERY ROS CLUSTER");
+      decode(fullName);
+      brand.classList.add("decoding");
     });
-    brand.addEventListener("pointerleave", function () { setBrandSub("CONCEPT MAP"); });
+    brand.addEventListener("pointerleave", function () {
+      decode(defaultName);
+      brand.classList.remove("decoding");
+    });
     brand.addEventListener("focus", function () {
-      setBrandSub("LOCAL DYNAMIC NODE DISCOVERY ROS CLUSTER");
+      decode(fullName);
+      brand.classList.add("decoding");
     });
-    brand.addEventListener("blur", function () { setBrandSub("CONCEPT MAP"); });
+    brand.addEventListener("blur", function () {
+      decode(defaultName);
+      brand.classList.remove("decoding");
+    });
   }
 
   computeLayouts();

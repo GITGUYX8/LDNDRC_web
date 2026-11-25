@@ -186,8 +186,16 @@ code, pre, kbd, samp { font-family: var(--font-mono); font-variant-ligatures: no
   margin-top: 3px;
 }
 .brand:hover, .brand:focus-visible { max-width: 430px; background: var(--surface-raised); }
+.brand.decoding .brand-name { animation: ascii-tear .68s steps(2, end) 1; }
+@keyframes ascii-tear {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(2px); text-shadow: 1px 0 var(--red); }
+  50% { transform: translateX(-1px); text-shadow: -1px 0 var(--blue); }
+  75% { transform: translateX(1px); text-shadow: 1px 0 var(--aqua); }
+}
 @media (prefers-reduced-motion: reduce) {
   .brand { transition: none; }
+  .brand.decoding .brand-name { animation: none; }
 }
 
 .top-actions { display: flex; gap: 8px; align-items: center; }
