@@ -569,6 +569,7 @@
   document.getElementById("fit").addEventListener("click", function () { fit(true); });
 
   window.addEventListener("resize", function () {
+    renderSheetWidth();
     if (state.route) { frameRoute(); return; }
     // keep scale, re-centre only if the user has not zoomed away from the fit
     if (Math.abs(state.z.k - state.fit.k) < 0.001) fit(false);
@@ -795,19 +796,91 @@
   }
 
   document.getElementById("sheet-close").addEventListener("click", closeSheet);
-  function toggleSheetMax() {
-    sheet.classList.toggle("maximized");
-    var expanded = sheet.classList.contains("maximized");
-    document.querySelectorAll(".sheet-expand").forEach(function (button) {
-      button.textContent = expanded ? "›" : (button.classList.contains("sheet-expand-left") ? "‹" : "›");
-      button.setAttribute("aria-label", expanded ? "Restore document panel" : "Expand document panel");
-      button.setAttribute("title", expanded ? "Restore document panel" : "Expand document panel");
-    });
+
+  /* ---------- sheet size: drag + maximize ---------- */
+
+  var sheetMinW = 380;
+  var sheetMaxW = 1400;
+  var savedSheetW = parseFloat(localStorage.getItem("ldndrc.docs.sheetw") || "");
+  var sheetWidth = isFinite(savedSheetW) ? savedSheetW : 560;
+  var sheetMaximized = false;
+  var resizeGrip = document.getElementById("sheet-resize");
+  var gripDrag = null;
+
+  function sheetWidthLimit() {
+    return Math.max(sheetMinW, Math.min(sheetMaxW, window.innerWidth - 24));
+  }
+
+  function reframeStage() {
     if (state.route) frameRoute();
     else if (state.topic) frameIds([state.topic].concat((byId[state.topic] || {}).requires || []));
   }
+
+  function updateSheetControls() {
+    var expanded = sheetMaximized;
+    document.querySelectorAll(".sheet-expand").forEach(function (button) {
+      button.textContent = expanded ? "›" : "‹";
+      button.setAttribute("aria-label", expanded ? "Restore document panel" : "Expand document panel");
+      button.setAttribute("title", expanded ? "Restore document panel" : "Expand document panel");
+    });
+  }
+
+  function saveSheetWidth() {
+    try { localStorage.setItem("ldndrc.docs.sheetw", String(Math.round(sheetWidth))); } catch (e) {}
+  }
+
+  function renderSheetWidth() {
+    var limit = sheetWidthLimit();
+    sheetWidth = Math.max(sheetMinW, Math.min(limit, sheetWidth));
+    if (window.innerWidth <= 720) sheet.style.width = "";
+    else sheet.style.width = (sheetMaximized ? limit : sheetWidth) + "px";
+    sheet.classList.toggle("maximized", sheetMaximized && window.innerWidth > 720);
+    updateSheetControls();
+  }
+
+  function setSheetWidth(width, persist) {
+    sheetWidth = width;
+    renderSheetWidth();
+    if (persist) saveSheetWidth();
+  }
+
+  function toggleSheetMax() {
+    sheetMaximized = !sheetMaximized;
+    renderSheetWidth();
+    saveSheetWidth();
+    reframeStage();
+  }
+
   document.getElementById("sheet-expand-left").addEventListener("click", toggleSheetMax);
   document.getElementById("sheet-expand-right").addEventListener("click", toggleSheetMax);
+
+  function endGripDrag() {
+    if (!gripDrag) return;
+    gripDrag = null;
+    sheet.classList.remove("resizing");
+    document.body.classList.remove("sheet-resizing");
+    saveSheetWidth();
+    reframeStage();
+  }
+
+  resizeGrip.addEventListener("pointerdown", function (e) {
+    if (e.button !== undefined && e.button !== 0) return;
+    gripDrag = { x: e.clientX, w: sheet.getBoundingClientRect().width };
+    sheetMaximized = false;
+    resizeGrip.setPointerCapture(e.pointerId);
+    sheet.classList.add("resizing");
+    document.body.classList.add("sheet-resizing");
+    e.preventDefault();
+  });
+  resizeGrip.addEventListener("pointermove", function (e) {
+    if (!gripDrag) return;
+    setSheetWidth(gripDrag.w + (gripDrag.x - e.clientX), false);
+  });
+  resizeGrip.addEventListener("pointerup", endGripDrag);
+  resizeGrip.addEventListener("pointercancel", endGripDrag);
+  resizeGrip.addEventListener("dblclick", toggleSheetMax);
+
+  renderSheetWidth();
 
   function metaLine(t) {
     var dom = domById[t.domain] || { name: "Topic" };
@@ -1204,15 +1277,12 @@
     };
     brand.addEventListener("pointerenter", function () {
       decode(fullName);
-      brand.classList.add("decoding");
     });
     brand.addEventListener("pointerleave", function () {
       decode(defaultName);
-      brand.classList.remove("decoding");
     });
     brand.addEventListener("focus", function () {
       decode(fullName);
-      brand.classList.add("decoding");
     });
     brand.addEventListener("blur", function () {
       decode(defaultName);
