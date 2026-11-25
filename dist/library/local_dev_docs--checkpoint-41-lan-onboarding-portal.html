@@ -6,6 +6,8 @@
 <title>Checkpoint 41 — LAN onboarding portal + download counter — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-41-lan-onboarding-portal.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -47,9 +49,9 @@
 <h1 class="page-title">Checkpoint 41 — LAN onboarding portal + download counter</h1>
 <div class="prose"><h2 id="what-landed">What landed</h2><p>The &quot;LAN Connection Approval Gate&quot;: a captive-style onboarding portal inside the
 control panel binary, reachable pre-approval, with a live served-download counter and
-two enrollment scripts. Soft-portal flow only — gateway enforcement is a designed
+two enrollment scripts. Soft-portal flow only — <span class="term" data-term="gateway" tabindex="0">gateway</span> enforcement is a designed
 follow-up (contract documented, not implemented), per the architecture decision:
-master laptop hosts the onboarding AP + portal, the separate cluster router carries all
+master laptop <span class="term" data-term="host" tabindex="0">hosts</span> the onboarding AP + portal, the separate cluster router carries all
 cluster traffic.</p>
 <h2 id="files">Files</h2><table>
 <thead>
@@ -67,7 +69,7 @@ cluster traffic.</p>
 <tr>
 <td><code>internal/portal/handler.go</code> (new)</td>
 <td>The Turnstile</td>
-<td>Portal page, script downloads (request-vs-served counting), public count + JWT-gated stats. <code>countWriter</code> verifies the full body actually reached the wire.</td>
+<td>Portal page, script downloads (request-vs-served counting), public count + <span class="term" data-term="jwt" tabindex="0">JWT</span>-gated stats. <code>countWriter</code> verifies the full body actually reached the wire.</td>
 </tr>
 <tr>
 <td><code>internal/portal/assets/</code> (new)</td>
@@ -77,17 +79,17 @@ cluster traffic.</p>
 <tr>
 <td><code>internal/httpapi/router.go</code></td>
 <td>The Front Desk, extended</td>
-<td>New <code>portalH *portal.Handler</code> param; portal routes registered before the SPA fallback; <code>/api/downloads/stats</code> JWT-gated via the existing <code>bearerClaims</code>.</td>
+<td>New <code>portalH *portal.Handler</code> param; portal routes registered before the SPA fallback; <code>/api/downloads/stats</code> <span class="term" data-term="jwt" tabindex="0">JWT</span>-gated via the existing <code>bearerClaims</code>.</td>
 </tr>
 <tr>
 <td><code>cmd/server/main.go</code></td>
 <td>The Wiring</td>
-<td>Builds the portal store+handler; <strong>degrades gracefully</strong> — an unreadable downloads DB only disables the portal, it does not log.Fatal (unlike JWT/nodes).</td>
+<td>Builds the portal store+handler; <strong>degrades gracefully</strong> — an unreadable downloads DB only disables the portal, it does not log.Fatal (unlike <span class="term" data-term="jwt" tabindex="0">JWT</span>/<span class="term" data-term="node" tabindex="0">nodes</span>).</td>
 </tr>
 <tr>
 <td><code>internal/nodes/store.go</code></td>
 <td>The Token Maker</td>
-<td><code>newID()</code> 4 → 16 random bytes. Node ID is now the enrollment bearer capability (128-bit), satisfying &quot;secure enrollment tokens, not IP/MAC identity&quot; with zero API churn.</td>
+<td><code>newID()</code> 4 → 16 random bytes. <span class="term" data-term="node" tabindex="0">Node</span> ID is now the enrollment bearer capability (128-bit), satisfying &quot;secure enrollment tokens, not IP/MAC identity&quot; with zero API churn.</td>
 </tr>
 <tr>
 <td><code>internal/httpapi/portal_test.go</code> (new)</td>
@@ -117,7 +119,7 @@ cluster traffic.</p>
 <tr>
 <td><code>docs/lan-onboarding-portal.md</code> (new)</td>
 <td></td>
-<td>Full design: layout, sequence, counter semantics/caveats, privacy, AP setup, gateway-enforcement contract.</td>
+<td>Full design: layout, sequence, counter semantics/caveats, privacy, AP setup, <span class="term" data-term="gateway" tabindex="0">gateway</span>-enforcement contract.</td>
 </tr>
 <tr>
 <td><code>README.md</code></td>
@@ -145,22 +147,22 @@ used; raw values are never stored or served.</li>
 <h2 id="why-the-scripts-live-in-internal-portal-assets-not-repo-root">Why the scripts live in <code>internal/portal/assets</code> (not repo root)</h2><p><code>go:embed</code> needs a compile-time-stable path, and a root copy would drift from the
 served one. <code>join-cluster.sh</code> (the legacy gatekeeper) stays untouched at the root;
 <code>joining-cluster.sh</code> is the new portal enrollment agent and has a different job:
-register → poll approval → switch Wi-Fi → (Hosts, optional) k3s agent install with a
+register → poll approval → switch Wi-Fi → (<span class="term" data-term="host" tabindex="0">Hosts</span>, optional) <span class="term" data-term="k3s" tabindex="0">k3s</span> agent install with a
 confirm prompt.</p>
 <h2 id="proofs">Proofs</h2><ul>
 <li><code>gofmt</code> clean; <code>go build ./...</code> OK; <code>go vet</code> OK; <code>go test -count=1 ./...</code> green
 (all packages; join 10s).</li>
-<li><code>bash -n joining-cluster.sh</code> clean; <code>--detect-only</code> exercised with Host (12/16/nvidia),
-Guest (4/8/none), boundary RAM=15 → Guest, and the real machine.</li>
+<li><code>bash -n joining-cluster.sh</code> clean; <code>--detect-only</code> exercised with <span class="term" data-term="host" tabindex="0">Host</span> (12/16/nvidia),
+<span class="term" data-term="guest" tabindex="0">Guest</span> (4/8/none), boundary RAM=15 → <span class="term" data-term="guest" tabindex="0">Guest</span>, and the real machine.</li>
 <li><code>test-joining.sh</code>: 5/5 pass.</li>
 <li><code>npm run build</code>: tsc + vite clean, dist rebuilt with the two new metric tiles.</li>
 <li>Portal routes verified through the router test suite: page wins over the SPA
-fallback, <code>/portal/</code> variant works, count/stats behave, stats requires JWT.</li>
+fallback, <code>/portal/</code> variant works, count/stats behave, stats requires <span class="term" data-term="jwt" tabindex="0">JWT</span>.</li>
 <li><strong>Live end-to-end (panel binary + real script + real approval):</strong><ul>
 <li>Portal page, script download (correct <code>Content-Type</code> +
 <code>Content-Disposition: attachment</code>), HEAD + Range probes counted as requests
 only (<code>requests=4, downloads=2</code> after 2 GETs + HEAD + 0-20 probe), public
-count aggregate-only, stats 401 unauthenticated / full detail with JWT,
+count aggregate-only, stats 401 unauthenticated / full detail with <span class="term" data-term="jwt" tabindex="0">JWT</span>,
 <code>downloads.json</code> persisted with salt + one hashed device.</li>
 <li><strong>Approval path</strong>: script registered (32-char ID), instructor approved via
 <code>POST /api/nodes/{id}/approve</code>, script observed approval within one poll
@@ -169,8 +171,8 @@ cadence, printed the Wi-Fi manual step, exit 0.</li>
 reported <code>DENIED by the instructor: laptop does not qualify</code>, exit 1.</li>
 <li><strong>JOIN_KEY path</strong>: panel with <code>JOIN_KEY</code> → script without the key →
 <code>join key rejected</code> immediately.</li>
-<li><strong>Idempotency</strong>: two consecutive script runs registered the same node id
-(server-side fingerprint dedupe), node count stayed 1.</li>
+<li><strong>Idempotency</strong>: two consecutive script runs registered the same <span class="term" data-term="node" tabindex="0">node</span> id
+(server-side fingerprint dedupe), <span class="term" data-term="node" tabindex="0">node</span> count stayed 1.</li>
 </ul>
 </li>
 </ul>
@@ -182,26 +184,26 @@ time. Globals line removed.</li>
 substitution (<code>body=$(...)</code>), so diagnostics vanished and poll bodies got
 polluted with log lines. Both functions now hand results back via
 <code>REG_BODY</code>/<code>POLL_BODY</code> globals and log to stdout.</li>
-<li>The poll used <code>curl -f</code>, so the approved-node <code>503 join service unavailable</code> (no minter outside the cluster / <code>K3S_JOIN_URL</code> unset) was
+<li>The poll used <code>curl -f</code>, so the approved-<span class="term" data-term="node" tabindex="0">node</span> <code>503 join service unavailable</code> (no minter outside the cluster / <code>K3S_JOIN_URL</code> unset) was
 swallowed as a transport failure — approval was never observed. The poll
 now parses every response; those two 503 bodies are recognized as
 &quot;approved, token not mintable yet&quot; and the flow proceeds with a clear
 caveat. The same 503 semantics are documented in <code>control-panel/README.md</code>
 (pre-existing behavior).</li>
-<li>The &quot;Registered as node …&quot; line hardcoded <code>pending</code>; it now reports the
+<li>The &quot;Registered as <span class="term" data-term="node" tabindex="0">node</span> …&quot; line hardcoded <code>pending</code>; it now reports the
 server&#39;s actual status (matters on re-registration of approved/denied
-nodes).</li>
+<span class="term" data-term="node" tabindex="0">nodes</span>).</li>
 <li>Added <code>TEST_HOSTNAME</code> override (alongside <code>TEST_*</code> hardware overrides) so a
 second laptop&#39;s fingerprint — and therefore the deny path — is testable on
 one machine.</li>
 </ol>
 <h2 id="not-done-here-deliberate">Not done here (deliberate)</h2><ul>
-<li>Gateway/firewall enforcement: contract only (<code>GET /api/gateway/devices</code> sketch in the
-design doc). Enforcement stays at the gateway/router; approval state and enforcement
+<li><span class="term" data-term="gateway" tabindex="0">Gateway</span>/firewall enforcement: contract only (<code>GET /api/gateway/devices</code> sketch in the
+design doc). Enforcement stays at the <span class="term" data-term="gateway" tabindex="0">gateway</span>/router; approval state and enforcement
 remain decoupled so any router integration bolts on without touching the core.</li>
 <li>Redirect/interception of arbitrary client HTTP: soft portal by design; the AP&#39;s
 dnsmasq wildcard-DNS trick (documented) covers most browser attempts.</li>
-<li>Node records don&#39;t store MAC/last-IP yet — needed only when a gateway integration
+<li><span class="term" data-term="node" tabindex="0">Node</span> records don&#39;t store MAC/last-IP yet — needed only when a <span class="term" data-term="gateway" tabindex="0">gateway</span> integration
 lands; the design doc notes where they&#39;d go.</li>
 </ul>
 </div>

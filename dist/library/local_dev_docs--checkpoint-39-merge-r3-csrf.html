@@ -6,6 +6,8 @@
 <title>Checkpoint 39 — Merge r3-csrf into main (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-39-merge-r3-csrf.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -47,7 +49,7 @@
 <h1 class="page-title">Checkpoint 39 — Merge r3-csrf into main (detailed)</h1>
 <div class="prose"><h2 id="context">Context</h2><p><code>main</code> had two finished lines: the join fix (<code>4eeffea</code>) + R6 image
 track (<code>e5fe6cb</code>, CP-27…CP-38). <code>feat/r3-csrf</code> held R2/R3/R4
-(CP-21…CP-26), local-only. Merged r3-csrf → main (single merge,
+(CP-21…CP-26), local-only. Merged r3-<span class="term" data-term="csrf" tabindex="0">csrf</span> → main (single merge,
 <code>d9d9a28</code>) so <code>main</code> is the one line; remaining work (login fix,
 R2-final, viewer) continues on <code>main</code>. No push; branch kept until
 the merged line proves itself in a deploy.</p>
@@ -65,11 +67,11 @@ wipe (standing discipline).</li>
 <h2 id="proofs-on-the-merge-result">Proofs on the merge result</h2><ul>
 <li><code>gofmt -l</code> clean, <code>go vet ./...</code> clean.</li>
 <li><code>go test -count=1 ./...</code>: all 7 packages ok (auth, discovery,
-gateway, httpapi, join 10.2s, nodes, sessions).</li>
+<span class="term" data-term="gateway" tabindex="0">gateway</span>, httpapi, join 10.2s, <span class="term" data-term="node" tabindex="0">nodes</span>, <span class="term" data-term="session" tabindex="0">sessions</span>).</li>
 <li><code>npm run build</code>: 47 modules, cards bundle <code>index-lFfXNHjr.js</code>
 intact (UI-3 survived the merge byte-identical).</li>
 </ul>
-<h2 id="known-arrival">Known arrival</h2><p>The CSRF login lockout (stale-cookie POST to <code>/api/auth/login</code>
+<h2 id="known-arrival">Known arrival</h2><p>The <span class="term" data-term="csrf" tabindex="0">CSRF</span> login lockout (stale-<span class="term" data-term="cookie" tabindex="0">cookie</span> POST to <code>/api/auth/login</code>
 → 403) lands on <code>main</code> with this merge — it lives in the merged
 R3 code. Fix is next, directly on <code>main</code>: exempt the login route
 in <code>guardCSRF</code> + test + rebuild + rollout + live proof.</p>

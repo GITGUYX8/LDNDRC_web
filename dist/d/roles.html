@@ -6,6 +6,8 @@
 <title>Hosts, Guests, Operators — LDNDRC</title>
 <meta name="description" content="Three roles split by hardware, not by permission.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,20 +52,20 @@
     </div>
     <h1 class="page-title">Hosts, Guests, Operators</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Three roles split by hardware, not by permission.</p>
-    <div class="prose"><p>There are three roles, and the interesting part is that they are assigned by <strong>hardware</strong>, not by a permission table. A laptop does not choose to be a Host. It either clears the bar or it does not.</p>
-<h2 id="host">Host</h2><p>A gaming or workstation laptop: at least 8 CPU cores, at least 16 GB of RAM, and an NVIDIA GPU. It runs <code>./join-cluster.sh</code>, installs the K3s agent, and gets labelled <code>node-role.kubernetes.io/role=host</code>. From then on it is a scheduling target for student pods. It should stay plugged in.</p>
-<h2 id="guest">Guest</h2><p>Any laptop with Chrome or Firefox and WebGL. It installs nothing, joins no cluster, and holds no credentials beyond a browser cookie. It consumes a session that is scheduled on somebody else&#39;s Host.</p>
-<h2 id="operator">Operator</h2><p>The master laptop, with a static LAN IP and sleep disabled. It runs the K3s server, the control panel, the ingress, and the approval console. There is exactly one, and it is the only machine a student never thinks about.</p>
+    <div class="prose"><p>There are three roles, and the interesting part is that they are assigned by <strong>hardware</strong>, not by a permission table. A laptop does not choose to be a <span class="term" data-term="host" tabindex="0">Host</span>. It either clears the bar or it does not.</p>
+<h2 id="host">Host</h2><p>A gaming or workstation laptop: at least 8 CPU cores, at least 16 GB of RAM, and an NVIDIA GPU. It runs <code>./join-cluster.sh</code>, installs the <span class="term" data-term="k3s" tabindex="0">K3s</span> agent, and gets labelled <code>node-role.kubernetes.io/role=host</code>. From then on it is a scheduling target for student <span class="term" data-term="pod" tabindex="0">pods</span>. It should stay plugged in.</p>
+<h2 id="guest">Guest</h2><p>Any laptop with Chrome or Firefox and WebGL. It installs nothing, joins no cluster, and holds no credentials beyond a browser <span class="term" data-term="cookie" tabindex="0">cookie</span>. It consumes a <span class="term" data-term="session" tabindex="0">session</span> that is scheduled on somebody else&#39;s <span class="term" data-term="host" tabindex="0">Host</span>.</p>
+<h2 id="operator">Operator</h2><p>The master laptop, with a static LAN IP and sleep disabled. It runs the <span class="term" data-term="k3s" tabindex="0">K3s</span> server, the control panel, the <span class="term" data-term="ingress" tabindex="0">ingress</span>, and the approval console. There is exactly one, and it is the only machine a student never thinks about.</p>
 <h2 id="why-this-split-works">Why this split works</h2><p>The three roles map cleanly onto three threat and failure models:</p>
 <ul>
-<li>A <strong>Guest</strong> can be compromised without touching anyone else&#39;s data — every session is its own pod with its own home volume.</li>
-<li>A <strong>Host</strong> only ever contributes capacity. It runs other people&#39;s pods but has no panel credentials.</li>
-<li>The <strong>Operator</strong> holds the JWT secret and the K3s token. Losing a Host is an inconvenience; losing the Operator is a rebuild.</li>
+<li>A <strong><span class="term" data-term="guest" tabindex="0">Guest</span></strong> can be compromised without touching anyone else&#39;s data — every <span class="term" data-term="session" tabindex="0">session</span> is its own <span class="term" data-term="pod" tabindex="0">pod</span> with its own home volume.</li>
+<li>A <strong><span class="term" data-term="host" tabindex="0">Host</span></strong> only ever contributes capacity. It runs other people&#39;s <span class="term" data-term="pod" tabindex="0">pods</span> but has no panel credentials.</li>
+<li>The <strong><span class="term" data-term="operator" tabindex="0">Operator</span></strong> holds the <span class="term" data-term="jwt" tabindex="0">JWT</span> secret and the <span class="term" data-term="k3s" tabindex="0">K3s</span> token. Losing a <span class="term" data-term="host" tabindex="0">Host</span> is an inconvenience; losing the <span class="term" data-term="operator" tabindex="0">Operator</span> is a rebuild.</li>
 </ul>
-<p>This is also why onboarding is operator-gated: a laptop that clears the hardware bar still cannot become a Host until a human approves it. See <a href="nodes-api.html" class="topic-link">Register, approve, poll</a>.</p>
+<p>This is also why onboarding is <span class="term" data-term="operator" tabindex="0">operator</span>-gated: a laptop that clears the hardware bar still cannot become a <span class="term" data-term="host" tabindex="0">Host</span> until a human approves it. See <a href="nodes-api.html" class="topic-link">Register, approve, poll</a>.</p>
 <h2 id="where-the-boundary-actually-sits">Where the boundary actually sits</h2><div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">Guest browser ──cookie──▶ control panel ──JWT──▶ session pod on a Host
                                 │
-                                └─ K3s token ─▶ Host agent (approved once)</code></pre></div><p>A Guest never talks to a Host directly. All traffic is HTTP, WebSocket, or WebRTC through the panel&#39;s gateway — which is the next idea, <a href="dds-isolation.html" class="topic-link">Why DDS never leaves the pod</a>.</p>
+                                └─ K3s token ─▶ Host agent (approved once)</code></pre></div><p>A <span class="term" data-term="guest" tabindex="0">Guest</span> never talks to a <span class="term" data-term="host" tabindex="0">Host</span> directly. All traffic is HTTP, <span class="term" data-term="websocket" tabindex="0">WebSocket</span>, or WebRTC through the panel&#39;s <span class="term" data-term="gateway" tabindex="0">gateway</span> — which is the next idea, <a href="dds-isolation.html" class="topic-link">Why DDS never leaves the pod</a>.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl get nodes -L node-role.kubernetes.io/role</code></pre></div><p>The <code>ROLE</code> column is the whole role model in one line.</p></div>
     <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>
 <div class="code term"><pre><code class="hljs">kubectl get nodes -L node-role.kubernetes.io/role</code></pre></div></div><div class="source-list"><span class="eyebrow">Sources</span><a href="../library/README.html">README.md</a><a href="../library/docs--project-journey-report.html">docs/project-journey-report.md</a></div>

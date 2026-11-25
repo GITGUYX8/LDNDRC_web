@@ -6,6 +6,8 @@
 <title>FAQs — LDNDRC</title>
 <meta name="description" content="Frequently asked questions about the platform, architecture, failure modes, and trade-offs.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -53,13 +55,13 @@
     <div class="prose"><p>Frequently asked questions about LDNDRC, grouped around the problems, architecture, operations, and trade-offs.</p>
 <h2 id="the-five-clusters">The five clusters</h2><ol>
 <li><strong>Why</strong> — the problem, the LAN constraint, the economics of donated compute.</li>
-<li><strong>Architecture</strong> — pods, namespaces, sessions, gateway, isolation.</li>
-<li><strong>Kubernetes specifics</strong> — RBAC scope, PVCs, probes, rollouts, scheduling.</li>
+<li><strong>Architecture</strong> — <span class="term" data-term="pod" tabindex="0">pods</span>, <span class="term" data-term="namespace" tabindex="0">namespaces</span>, <span class="term" data-term="session" tabindex="0">sessions</span>, <span class="term" data-term="gateway" tabindex="0">gateway</span>, isolation.</li>
+<li><strong><span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> specifics</strong> — <span class="term" data-term="rbac" tabindex="0">RBAC</span> scope, <span class="term" data-term="pvc" tabindex="0">PVCs</span>, probes, rollouts, scheduling.</li>
 <li><strong>Failure modes</strong> — what breaks, how you would know, what you would do.</li>
 <li><strong>Trade-offs</strong> — what was rejected and why.</li>
 </ol>
 <h2 id="how-to-use-it">How to use it</h2><p>Read the question, answer it out loud in three sentences, then check the source. If you cannot name the failure mode, you do not know the feature — a rule that comes straight from <a href="dev-timeline.html" class="topic-link">How it was built, in order</a>&#39;s verify-everything habit.</p>
-<h2 id="the-one-question-that-covers-the-most-ground">The one question that covers the most ground</h2><p><em>&quot;Why can two students run the same ROS topic name without interfering?&quot;</em> A good answer touches the pod network namespace, Flannel&#39;s traffic profile, the domain ID, and the fact that teardown removes the namespace — that is <a href="dds-isolation.html" class="topic-link">Why DDS never leaves the pod</a> in one breath.</p></div>
+<h2 id="the-one-question-that-covers-the-most-ground">The one question that covers the most ground</h2><p><em>&quot;Why can two students run the same ROS topic name without interfering?&quot;</em> A good answer touches the <span class="term" data-term="pod" tabindex="0">pod</span> network <span class="term" data-term="namespace" tabindex="0">namespace</span>, <span class="term" data-term="flannel" tabindex="0">Flannel</span>&#39;s traffic profile, the <span class="term" data-term="domain-id" tabindex="0">domain ID</span>, and the fact that teardown removes the <span class="term" data-term="namespace" tabindex="0">namespace</span> — that is <a href="dds-isolation.html" class="topic-link">Why DDS never leaves the pod</a> in one breath.</p></div>
     <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>
 <div class="code term"><pre><code class="hljs">echo ok</code></pre></div></div><div class="source-list"><span class="eyebrow">Sources</span><a href="../library/more_queries.html">more_queries.md</a></div>
 </div>

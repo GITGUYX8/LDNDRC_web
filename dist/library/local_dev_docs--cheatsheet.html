@@ -6,6 +6,8 @@
 <title>LDNDRC — Commands, Logs &amp; Debugging Cheatsheet — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/cheatsheet.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -47,11 +49,11 @@
 <h1 class="page-title">LDNDRC — Commands, Logs &amp; Debugging Cheatsheet</h1>
 <div class="prose"><blockquote>
 <p>Everything in one place: daily status, logs, API probing, frontend/backend
-builds, image rollout, session/node debugging, mDNS, Headlamp, secrets,
+builds, image rollout, <span class="term" data-term="session" tabindex="0">session</span>/<span class="term" data-term="node" tabindex="0">node</span> debugging, <span class="term" data-term="mdns" tabindex="0">mDNS</span>, <span class="term" data-term="headlamp" tabindex="0">Headlamp</span>, secrets,
 cleanup, and &quot;if X then run Y&quot; recipes. Verified against the live master
-(<code>hari</code>, <code>192.168.1.37</code>, K3s <code>v1.36.4+k3s1</code>) on 2026-09-29.</p>
-<p>Conventions: <code>K=~/.kube/k3s-real.yaml</code> (real master), namespace <code>ldndrc</code>,
-panel <code>:8082</code>, Traefik <code>:80</code>. <code>sudo</code> needs your password (no NOPASSWD).</p>
+(<code>hari</code>, <code>192.168.1.37</code>, <span class="term" data-term="k3s" tabindex="0">K3s</span> <code>v1.36.4+k3s1</code>) on 2026-09-29.</p>
+<p>Conventions: <code>K=~/.kube/k3s-real.yaml</code> (real master), <span class="term" data-term="namespace" tabindex="0">namespace</span> <code>ldndrc</code>,
+panel <code>:8082</code>, <span class="term" data-term="traefik" tabindex="0">Traefik</span> <code>:80</code>. <code>sudo</code> needs your password (no NOPASSWD).</p>
 </blockquote>
 <h2 id="0-shell-setup-run-first-saves-90-of-confusion">0. Shell setup (run first — saves 90% of confusion)</h2><p>The <code>mise</code> shims for <code>go</code>/<code>kubectl</code> fail in non-interactive shells
 (&quot;No version is set&quot;). Use the direct binaries:</p>
@@ -71,11 +73,11 @@ kubectl get nodes -o wide                 <span class="hljs-comment"># expect: h
 </thead>
 <tbody><tr>
 <td><code>~/.kube/k3s-real.yaml</code></td>
-<td><strong>Real K3s master</strong> (<code>https://127.0.0.1:6443</code>). Use for everything live.</td>
+<td><strong>Real <span class="term" data-term="k3s" tabindex="0">K3s</span> master</strong> (<code>https://127.0.0.1:6443</code>). Use for everything live.</td>
 </tr>
 <tr>
 <td><code>~/.kube/config</code></td>
-<td>Default; currently points at stale <code>k3d-ldndrc</code> (connection refused unless k3d is running).</td>
+<td>Default; currently points at stale <code>k3d-ldndrc</code> (connection refused unless <span class="term" data-term="k3d" tabindex="0">k3d</span> is running).</td>
 </tr>
 </tbody></table>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl config get-contexts                          <span class="hljs-comment"># list all contexts</span>
@@ -92,11 +94,11 @@ krn rollout status deploy/ldndrc-control-panel     <span class="hljs-comment"># 
 curl -s http://192.168.1.37:8082/healthz           <span class="hljs-comment"># direct to panel (hostNetwork port)</span>
 <span class="hljs-comment"># {&quot;status&quot;:&quot;ok&quot;}</span>
 curl -s -o /dev/null -w <span class="hljs-string">&quot;%{http_code}\n&quot;</span> http://control.ros-platform.local/healthz
-<span class="hljs-comment"># 200 (needs /etc/hosts entries — §9)</span></code></pre></div><p>Ingress hosts (Traefik, ADDRESS <code>192.168.1.37</code>, port 80):</p>
+<span class="hljs-comment"># 200 (needs /etc/hosts entries — §9)</span></code></pre></div><p><span class="term" data-term="ingress" tabindex="0">Ingress</span> <span class="term" data-term="host" tabindex="0">hosts</span> (<span class="term" data-term="traefik" tabindex="0">Traefik</span>, ADDRESS <code>192.168.1.37</code>, port 80):</p>
 <table>
 <thead>
 <tr>
-<th>Host</th>
+<th><span class="term" data-term="host" tabindex="0">Host</span></th>
 <th>Serves</th>
 </tr>
 </thead>
@@ -106,11 +108,11 @@ curl -s -o /dev/null -w <span class="hljs-string">&quot;%{http_code}\n&quot;</sp
 </tr>
 <tr>
 <td><code>editor.ros-platform.local</code></td>
-<td>code-server <code>:7682</code> of your session (cookie-authed gateway)</td>
+<td><span class="term" data-term="code-server" tabindex="0">code-server</span> <code>:7682</code> of your <span class="term" data-term="session" tabindex="0">session</span> (<span class="term" data-term="cookie" tabindex="0">cookie</span>-authed <span class="term" data-term="gateway" tabindex="0">gateway</span>)</td>
 </tr>
 <tr>
 <td><code>gazebo.ros-platform.local</code></td>
-<td>sim <code>:9002</code> (cookie-authed gateway)</td>
+<td>sim <code>:9002</code> (<span class="term" data-term="cookie" tabindex="0">cookie</span>-authed <span class="term" data-term="gateway" tabindex="0">gateway</span>)</td>
 </tr>
 <tr>
 <td><code>desktop.ros-platform.local</code></td>
@@ -135,15 +137,15 @@ krn logs deploy/ldndrc-control-panel --<span class="hljs-built_in">tail</span>=1
 </tr>
 <tr>
 <td><code>sessions reconcile: N adopted, M tombstoned</code></td>
-<td>boot reconcile vs K8s Deployments (R2). <code>0 adopted</code> after a pod delete = session records wiped, workloads orphaned</td>
+<td>boot reconcile vs <span class="term" data-term="kubernetes" tabindex="0">K8s</span> <span class="term" data-term="deployment" tabindex="0">Deployments</span> (R2). <code>0 adopted</code> after a <span class="term" data-term="pod" tabindex="0">pod</span> delete = <span class="term" data-term="session" tabindex="0">session</span> records wiped, workloads orphaned</td>
 </tr>
 <tr>
 <td><code>discovery: advertising _ldndrc-master._tcp on hari:8082</code></td>
-<td>mDNS live — joining laptops can discover</td>
+<td><span class="term" data-term="mdns" tabindex="0">mDNS</span> live — joining laptops can discover</td>
 </tr>
 <tr>
 <td><code>discovery: advertise unavailable…</code></td>
-<td>mDNS failed (expected in <code>docker run</code>, fine on hostNetwork)</td>
+<td><span class="term" data-term="mdns" tabindex="0">mDNS</span> failed (expected in <code>docker run</code>, fine on hostNetwork)</td>
 </tr>
 <tr>
 <td><code>GET /healthz</code>, <code>POST /api/auth/login</code>, …</td>
@@ -151,34 +153,34 @@ krn logs deploy/ldndrc-control-panel --<span class="hljs-built_in">tail</span>=1
 </tr>
 <tr>
 <td><code>provision failed for &lt;user&gt;: …</code></td>
-<td>session Create blew up — read the error</td>
+<td><span class="term" data-term="session" tabindex="0">session</span> Create blew up — read the error</td>
 </tr>
 <tr>
 <td><code>token mint failed for …</code></td>
-<td>node approve → K3s token mint failed</td>
+<td><span class="term" data-term="node" tabindex="0">node</span> approve → <span class="term" data-term="k3s" tabindex="0">K3s</span> token mint failed</td>
 </tr>
 <tr>
 <td><code>node register failed / diagnostics save failed</code></td>
-<td>nodes API trouble</td>
+<td><span class="term" data-term="node" tabindex="0">nodes</span> API trouble</td>
 </tr>
 </tbody></table>
 <h3 id="2-2-session-workloads-stand-in-or-real-workspace">2.2 Session workloads (stand-in or real workspace)</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">SID=2e15dafa61c3   <span class="hljs-comment"># your session id (from /launch or API)</span>
 krn logs deploy/ros2-session-<span class="hljs-variable">$SID</span> --<span class="hljs-built_in">tail</span>=80        <span class="hljs-comment"># aggregative over pod replicas</span>
 krn logs deploy/ros2-session-<span class="hljs-variable">$SID</span> -c &lt;container&gt;   <span class="hljs-comment"># if multi-container later</span>
 krn logs -l app=ldndrc-session --<span class="hljs-built_in">tail</span>=20           <span class="hljs-comment"># all sessions at once (label selector)</span>
-krn get pods -l app=ldndrc-session -o wide         <span class="hljs-comment"># which node each session sits on</span></code></pre></div><p>Pod not starting? Describe beats logs:</p>
+krn get pods -l app=ldndrc-session -o wide         <span class="hljs-comment"># which node each session sits on</span></code></pre></div><p><span class="term" data-term="pod" tabindex="0">Pod</span> not starting? Describe beats logs:</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">krn describe pod -l app.kubernetes.io/name=ldndrc-control-panel  <span class="hljs-comment"># panel itself</span>
 krn describe deploy/ros2-session-<span class="hljs-variable">$SID</span>
 krn get events -n ldndrc --sort-by=.lastTimestamp | <span class="hljs-built_in">tail</span> -n 30    <span class="hljs-comment"># cluster truth, newest last</span>
 krn get events -n ldndrc --field-selector reason=FailedScheduling <span class="hljs-comment"># scheduling failures only</span></code></pre></div><p>Classic: <code>0/1 nodes available: didn&#39;t match Pod&#39;s node affinity/selector</code>
-→ fresh node missing the label (fix §10.1).</p>
+→ fresh <span class="term" data-term="node" tabindex="0">node</span> missing the label (fix §10.1).</p>
 <h3 id="2-3-headlamp-traefik">2.3 Headlamp + Traefik</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">krn logs deploy/ldndrc-headlamp --<span class="hljs-built_in">tail</span>=30
 kubectl -n kube-system logs -l app.kubernetes.io/name=traefik --<span class="hljs-built_in">tail</span>=50  <span class="hljs-comment"># ingress routing issues</span></code></pre></div><h3 id="2-4-host-level-container-runtime-on-the-master">2.4 Host-level (container runtime on the master)</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-built_in">sudo</span> k3s ctr images list | grep -E <span class="hljs-string">&#x27;control|standin&#x27;</span>  <span class="hljs-comment"># what k3s actually runs</span>
 <span class="hljs-built_in">sudo</span> k3s crictl pods --namespace ldndrc               <span class="hljs-comment"># runtime view (vs kubectl view)</span>
 <span class="hljs-built_in">sudo</span> k3s crictl ps -a | <span class="hljs-built_in">head</span> -n 20
 <span class="hljs-built_in">sudo</span> journalctl -u k3s --since <span class="hljs-string">&#x27;30 min ago&#x27;</span> | <span class="hljs-built_in">tail</span> -n 50  <span class="hljs-comment"># K3s service itself</span></code></pre></div><h2 id="3-panel-api-via-curl-auth-sessions-nodes">3. Panel API via curl (auth → sessions → nodes)</h2><p>Login works with <strong>any non-empty</strong> username/password (no user table yet).
-Cookie domain is <code>.ros-platform.local</code>, so go through the hostname —
-<code>127.0.0.1</code> logins get their cookie rejected by the jar (harness
+<span class="term" data-term="cookie" tabindex="0">Cookie</span> domain is <code>.ros-platform.local</code>, so go through the hostname —
+<code>127.0.0.1</code> logins get their <span class="term" data-term="cookie" tabindex="0">cookie</span> rejected by the jar (harness
 artifact, not a bug). Without <code>/etc/hosts</code>, pin with <code>--resolve</code>.</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">R=<span class="hljs-string">&quot;--resolve control.ros-platform.local:80:192.168.1.37 --resolve editor.ros-platform.local:80:192.168.1.37 --resolve gazebo.ros-platform.local:80:192.168.1.37 --resolve desktop.ros-platform.local:80:192.168.1.37&quot;</span>
 <span class="hljs-built_in">rm</span> -f /tmp/cj.txt   <span class="hljs-comment"># fresh cookie jar</span>
@@ -230,18 +232,18 @@ curl -s <span class="hljs-variable">$R</span> http://control.ros-platform.local/
 </thead>
 <tbody><tr>
 <td>login (any user/pass)</td>
-<td>200, <code>token</code> + <code>csrf_token</code> + cookie</td>
+<td>200, <code>token</code> + <code>csrf_token</code> + <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 </tr>
 <tr>
 <td><code>GET /api/sessions</code> no bearer</td>
 <td>401</td>
 </tr>
 <tr>
-<td><code>POST /api/sessions</code> + CSRF</td>
+<td><code>POST /api/sessions</code> + <span class="term" data-term="csrf" tabindex="0">CSRF</span></td>
 <td>202 → <code>provisioning</code> → <code>ready</code></td>
 </tr>
 <tr>
-<td>cookie POST <strong>without</strong> <code>X-CSRF-Token</code></td>
+<td><span class="term" data-term="cookie" tabindex="0">cookie</span> POST <strong>without</strong> <code>X-CSRF-Token</code></td>
 <td>403</td>
 </tr>
 <tr>
@@ -249,8 +251,8 @@ curl -s <span class="hljs-variable">$R</span> http://control.ros-platform.local/
 <td>401</td>
 </tr>
 </tbody></table>
-<h2 id="4-gateway-checks-the-money-path">4. Gateway checks (the money path)</h2><p>Gateway = cookie-authed reverse proxy to your session Service.
-<code>?session=&lt;id&gt;</code> selects the session; first visit flips <code>Current()</code>.</p>
+<h2 id="4-gateway-checks-the-money-path">4. Gateway checks (the money path)</h2><p><span class="term" data-term="gateway" tabindex="0">Gateway</span> = <span class="term" data-term="cookie" tabindex="0">cookie</span>-authed reverse proxy to your <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="service" tabindex="0">Service</span>.
+<code>?session=&lt;id&gt;</code> selects the <span class="term" data-term="session" tabindex="0">session</span>; first visit flips <code>Current()</code>.</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">curl -s <span class="hljs-variable">$R</span> -b /tmp/cj.txt -o /dev/null -w <span class="hljs-string">&quot;editor+cookie:%{http_code}\n&quot;</span> <span class="hljs-string">&quot;http://editor.ros-platform.local/?session=<span class="hljs-variable">$SID</span>&quot;</span>
 <span class="hljs-comment"># 200 + stand-in body (&quot;ldndrc-demo-standin… Traefik -&gt; cookie auth -&gt; session Service routing works&quot;)</span>
 curl -s <span class="hljs-variable">$R</span> -b /tmp/cj.txt <span class="hljs-string">&quot;http://editor.ros-platform.local/?session=<span class="hljs-variable">$SID</span>&quot;</span> | <span class="hljs-built_in">head</span> -c 300
@@ -260,13 +262,13 @@ curl -s <span class="hljs-variable">$R</span> -o /dev/null -w <span class="hljs-
 <span class="hljs-comment"># 401</span></code></pre></div><table>
 <thead>
 <tr>
-<th>Gateway result</th>
+<th><span class="term" data-term="gateway" tabindex="0">Gateway</span> result</th>
 <th>Meaning</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>editor 200 + stand-in body</td>
-<td>full path Traefik → cookie auth → Service works</td>
+<td>full path <span class="term" data-term="traefik" tabindex="0">Traefik</span> → <span class="term" data-term="cookie" tabindex="0">cookie</span> auth → <span class="term" data-term="service" tabindex="0">Service</span> works</td>
 </tr>
 <tr>
 <td>desktop 502</td>
@@ -274,19 +276,19 @@ curl -s <span class="hljs-variable">$R</span> -o /dev/null -w <span class="hljs-
 </tr>
 <tr>
 <td>401</td>
-<td>no/invalid cookie — log in via <code>control.ros-platform.local</code> first</td>
+<td>no/invalid <span class="term" data-term="cookie" tabindex="0">cookie</span> — log in via <code>control.ros-platform.local</code> first</td>
 </tr>
 <tr>
 <td>404</td>
-<td>unknown session id</td>
+<td>unknown <span class="term" data-term="session" tabindex="0">session</span> id</td>
 </tr>
 <tr>
 <td>503</td>
-<td>session Service not ready yet — wait for <code>ready</code></td>
+<td><span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="service" tabindex="0">Service</span> not ready yet — wait for <code>ready</code></td>
 </tr>
 <tr>
 <td>502 on editor</td>
-<td>upstream dial failed — check session pod Running + the wildcard-DNS trap (§9)</td>
+<td>upstream dial failed — check <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span> Running + the wildcard-DNS trap (§9)</td>
 </tr>
 </tbody></table>
 <h2 id="5-frontend-control-panel-web-vite-react-18-ts">5. Frontend (control-panel/web — Vite + React 18 + TS)</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">npm run build     <span class="hljs-comment"># tsc + vite → web/dist/ (gitignored by design; source is committed, output reproducible)</span>
@@ -294,7 +296,7 @@ npm run dev       <span class="hljs-comment"># local dev server, proxies /api + 
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">curl -s http://control.ros-platform.local/ | grep -o <span class="hljs-string">&#x27;src=&quot;/assets/[^&quot;]*&quot;&#x27;</span>  <span class="hljs-comment"># which bundle is LIVE?</span>
 <span class="hljs-comment"># index-Bdyr3u-x.js = UI-1/UI-2 · index-CjnCO27K.js = UI-3 tables · index-lFfXNHjr.js = UI-3 cards</span></code></pre></div><p>Browser state keys (DevTools → Application): <code>ldndrc.token</code>, <code>ldndrc.csrf</code>,
 <code>ldndrc.user</code> (sessionStorage), <code>ldndrc.splitRatio</code>, <code>ldndrc.desktopHintDismissed</code>
-(localStorage). &quot;Weird auth state&quot; → clear sessionStorage + cookie, re-login.</p>
+(localStorage). &quot;Weird auth state&quot; → clear sessionStorage + <span class="term" data-term="cookie" tabindex="0">cookie</span>, re-login.</p>
 <p>Vite wipes <code>web/dist/.gitkeep</code> on every build (<code>emptyOutDir</code>) — restore it, it is tracked:</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">git checkout -- control-panel/web/dist/.gitkeep</code></pre></div><h2 id="6-backend-control-panel-go">6. Backend (control-panel — Go)</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-built_in">export</span> PATH=<span class="hljs-string">&quot;<span class="hljs-variable">$HOME</span>/.local/share/mise/installs/go/1.27.1/bin:<span class="hljs-variable">$PATH</span>&quot;</span>
 gofmt -l .            <span class="hljs-comment"># must print nothing</span>
@@ -316,7 +318,7 @@ CONTROL_PANEL_PORT=18082 go run ./cmd/server
 <tbody><tr>
 <td><code>JWT_SECRET</code></td>
 <td>secret <code>ldndrc-control-panel</code></td>
-<td>all operator tokens die if rotated</td>
+<td>all <span class="term" data-term="operator" tabindex="0">operator</span> tokens die if rotated</td>
 </tr>
 <tr>
 <td><code>COOKIE_DOMAIN</code></td>
@@ -326,7 +328,7 @@ CONTROL_PANEL_PORT=18082 go run ./cmd/server
 <tr>
 <td><code>GATEWAY_HOST_SUFFIX</code></td>
 <td><code>ros-platform.local</code></td>
-<td>gateway host derivation</td>
+<td><span class="term" data-term="gateway" tabindex="0">gateway</span> <span class="term" data-term="host" tabindex="0">host</span> derivation</td>
 </tr>
 <tr>
 <td><code>SESSION_IMAGE</code></td>
@@ -336,17 +338,17 @@ CONTROL_PANEL_PORT=18082 go run ./cmd/server
 <tr>
 <td><code>SESSION_HOME_STORAGE</code></td>
 <td><code>5Gi</code></td>
-<td>per-session PVC (<code>local-path</code>)</td>
+<td>per-<span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pvc" tabindex="0">PVC</span> (<code>local-path</code>)</td>
 </tr>
 <tr>
 <td><code>SESSION_GPU_LIMIT</code></td>
 <td><code>0</code></td>
-<td>prod hosts: <code>1</code></td>
+<td>prod <span class="term" data-term="host" tabindex="0">hosts</span>: <code>1</code></td>
 </tr>
 <tr>
 <td><code>NODES_DB</code> / <code>SESSIONS_DB</code></td>
 <td><code>/var/lib/ldndrc/*.json</code></td>
-<td><code>emptyDir</code> — survives container restarts, NOT pod deletes</td>
+<td><code>emptyDir</code> — survives container restarts, NOT <span class="term" data-term="pod" tabindex="0">pod</span> deletes</td>
 </tr>
 <tr>
 <td><code>K3S_JOIN_URL</code></td>
@@ -356,7 +358,7 @@ CONTROL_PANEL_PORT=18082 go run ./cmd/server
 <tr>
 <td><code>ADVERTISE_MDNS</code></td>
 <td><code>true</code></td>
-<td>hostNetwork required for multicast escape</td>
+<td>hostNetwork required for <span class="term" data-term="multicast" tabindex="0">multicast</span> escape</td>
 </tr>
 <tr>
 <td><code>CONTROL_PANEL_PORT</code></td>
@@ -388,25 +390,25 @@ curl -s http://127.0.0.1:18082/ | grep -o <span class="hljs-string">&#x27;src=&q
 curl -s -o /dev/null -w <span class="hljs-string">&quot;/login:%{http_code} /healthz:%{http_code}\n&quot;</span> \
   http://127.0.0.1:18082/login http://127.0.0.1:18082/healthz
 <span class="hljs-built_in">kill</span> %1</code></pre></div><h2 id="8-gotchas-that-have-bitten-us-read-before-debugging-anything">8. Gotchas that have bitten us (read before debugging anything)</h2><ol>
-<li><strong>HostNetwork <code>:8082</code> deadlock.</strong> Panel runs <code>hostNetwork:true</code> (for mDNS).
-One node + <code>maxUnavailable:0</code> → <code>rollout restart</code> deadlocks (new pod Pending:
+<li><strong>HostNetwork <code>:8082</code> deadlock.</strong> Panel runs <code>hostNetwork:true</code> (for <span class="term" data-term="mdns" tabindex="0">mDNS</span>).
+One <span class="term" data-term="node" tabindex="0">node</span> + <code>maxUnavailable:0</code> → <code>rollout restart</code> deadlocks (new <span class="term" data-term="pod" tabindex="0">pod</span> Pending:
 no free ports). Fix is ALWAYS delete-old-first (§7.3). Permanent fix queued:
-<code>maxUnavailable: 1</code> on the Deployment.</li>
-<li><strong>Pod delete wipes sessions.</strong> <code>NODES_DB</code>/<code>SESSIONS_DB</code> live on <code>emptyDir</code>.
-Every rollout orphans the K8s workloads (<code>0 adopted</code> in logs) — they keep
-Running but the panel forgot them. Hand-delete orphans; R2-final (PVC/DB)
+<code>maxUnavailable: 1</code> on the <span class="term" data-term="deployment" tabindex="0">Deployment</span>.</li>
+<li><strong><span class="term" data-term="pod" tabindex="0">Pod</span> delete wipes <span class="term" data-term="session" tabindex="0">sessions</span>.</strong> <code>NODES_DB</code>/<code>SESSIONS_DB</code> live on <code>emptyDir</code>.
+Every rollout orphans the <span class="term" data-term="kubernetes" tabindex="0">K8s</span> workloads (<code>0 adopted</code> in logs) — they keep
+Running but the panel forgot them. Hand-delete orphans; R2-final (<span class="term" data-term="pvc" tabindex="0">PVC</span>/DB)
 fixes it for good.</li>
 <li><strong>LAN wildcard DNS trap.</strong> Local DHCP suffix makes short names resolve to
-<code>185.38.109.20x</code> parking IPs. Symptoms: ingress returns <code>301</code> parking page,
-or in-cluster dials hit the wildcard instead of CoreDNS. Defenses: FQDN with
+<code>185.38.109.20x</code> parking IPs. Symptoms: <span class="term" data-term="ingress" tabindex="0">ingress</span> returns <code>301</code> parking page,
+or in-cluster dials hit the wildcard instead of <span class="term" data-term="coredns" tabindex="0">CoreDNS</span>. Defenses: FQDN with
 trailing dot in-cluster (already in <code>session_gateway.go</code>), <code>/etc/hosts</code>
 entries + <code>curl --resolve</code> on clients.</li>
-<li><strong>Cookie domain.</strong> <code>Domain=.ros-platform.local</code> is rejected for <code>127.0.0.1</code>
-logins by cookie jars. Always test through <code>control.ros-platform.local</code>.</li>
-<li><strong>Live Deployment drift.</strong> The live manifest predates <code>SESSIONS_DB</code> env and
+<li><strong><span class="term" data-term="cookie" tabindex="0">Cookie</span> domain.</strong> <code>Domain=.ros-platform.local</code> is rejected for <code>127.0.0.1</code>
+logins by <span class="term" data-term="cookie" tabindex="0">cookie</span> jars. Always test through <code>control.ros-platform.local</code>.</li>
+<li><strong>Live <span class="term" data-term="deployment" tabindex="0">Deployment</span> drift.</strong> The live manifest predates <code>SESSIONS_DB</code> env and
 <code>maxUnavailable:1</code> — <code>kubectl get deploy -o yaml</code> is truth, the file is intent.</li>
 <li><strong><code>/tmp</code> is tmpfs.</strong> Saved tarballs vanish on reboot — re-<code>docker save</code>.</li>
-<li><strong>k3d context is stale.</strong> Default kubeconfig points at dead <code>k3d-ldndrc</code>.
+<li><strong><span class="term" data-term="k3d" tabindex="0">k3d</span> context is stale.</strong> Default <span class="term" data-term="kubeconfig" tabindex="0">kubeconfig</span> points at dead <code>k3d-ldndrc</code>.
 Always <code>KUBECONFIG=~/.kube/k3s-real.yaml</code>.</li>
 <li><strong>Backgrounded <code>mise exec</code> hangs.</strong> Use direct kubectl binary + <code>setsid nohup … &amp;</code>
 for port-forwards (see §11).</li>
@@ -430,8 +432,8 @@ krn delete deploy,svc,pvc -l &lt;session-label-selector&gt;
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">./join-cluster.sh                 <span class="hljs-comment"># operator entrypoint (dirty-worktree file — leave unstaged)</span>
 go run ./cmd/join                 <span class="hljs-comment"># run TUI from source</span>
 ./test-join.sh                    <span class="hljs-comment"># automated join test</span>
-./acceptance-second-laptop.sh     <span class="hljs-comment"># full paired-run acceptance</span></code></pre></div><p>mDNS (master must log <code>advertising _ldndrc-master._tcp</code>):</p>
-<div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">avahi-browse -r _ldndrc-master._tcp     <span class="hljs-comment"># from the SECOND laptop — first real sighting still pending</span></code></pre></div><p>Join lifecycle: <code>register</code> (pending) → instructor <strong>Approve</strong> (<code>/admin</code> Hosts
+./acceptance-second-laptop.sh     <span class="hljs-comment"># full paired-run acceptance</span></code></pre></div><p><span class="term" data-term="mdns" tabindex="0">mDNS</span> (master must log <code>advertising _ldndrc-master._tcp</code>):</p>
+<div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">avahi-browse -r _ldndrc-master._tcp     <span class="hljs-comment"># from the SECOND laptop — first real sighting still pending</span></code></pre></div><p>Join lifecycle: <code>register</code> (pending) → instructor <strong>Approve</strong> (<code>/admin</code> <span class="term" data-term="host" tabindex="0">Hosts</span>
 or API §3) → laptop polls <code>GET /api/nodes/{id}</code> → <code>approved</code> + <code>k3s_url</code> +
 short-lived (15 min) <code>k3s_token</code> → real <code>k3s agent</code> install → watcher promotes
 to <code>joined</code>. Token IDs only are persisted, never tokens.</p>
@@ -471,32 +473,32 @@ git add &lt;only-your-files&gt; &amp;&amp; git commit -m <span class="hljs-strin
 <td>§0 PATH export, direct binaries</td>
 </tr>
 <tr>
-<td>Ingress returns parking page / <code>301</code></td>
+<td><span class="term" data-term="ingress" tabindex="0">Ingress</span> returns parking page / <code>301</code></td>
 <td><code>getent hosts control.ros-platform.local</code> → fix <code>/etc/hosts</code> (§8) or use <code>--resolve</code></td>
 </tr>
 <tr>
-<td>Login &quot;works&quot; but gateway 401</td>
-<td>log in via hostname (not IP); check cookie jar has <code>ldndrc_session</code></td>
+<td>Login &quot;works&quot; but <span class="term" data-term="gateway" tabindex="0">gateway</span> 401</td>
+<td>log in via hostname (not IP); check <span class="term" data-term="cookie" tabindex="0">cookie</span> jar has <code>ldndrc_session</code></td>
 </tr>
 <tr>
-<td>Cookie POST → 403</td>
+<td><span class="term" data-term="cookie" tabindex="0">Cookie</span> POST → 403</td>
 <td>add <code>X-CSRF-Token</code> header (use fresh <code>csrf_token</code> from login)</td>
 </tr>
 <tr>
-<td>Session stuck provisioning</td>
-<td>§9.1 (node label → PVC → events)</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> stuck provisioning</td>
+<td>§9.1 (<span class="term" data-term="node" tabindex="0">node</span> label → <span class="term" data-term="pvc" tabindex="0">PVC</span> → events)</td>
 </tr>
 <tr>
 <td>Editor 502, ClusterIP 200</td>
-<td>gateway/dial issue; check pod endpoints + cookie + DNS trap</td>
+<td><span class="term" data-term="gateway" tabindex="0">gateway</span>/dial issue; check <span class="term" data-term="pod" tabindex="0">pod</span> endpoints + <span class="term" data-term="cookie" tabindex="0">cookie</span> + DNS trap</td>
 </tr>
 <tr>
 <td>Desktop 502</td>
 <td>by design on stand-in — not a bug</td>
 </tr>
 <tr>
-<td>Rollout hangs (new pod Pending)</td>
-<td>you used <code>rollout restart</code> — delete old pod (§7.3)</td>
+<td>Rollout hangs (new <span class="term" data-term="pod" tabindex="0">pod</span> Pending)</td>
+<td>you used <code>rollout restart</code> — delete old <span class="term" data-term="pod" tabindex="0">pod</span> (§7.3)</td>
 </tr>
 <tr>
 <td>Panel logs <code>0 adopted</code></td>
@@ -504,7 +506,7 @@ git add &lt;only-your-files&gt; &amp;&amp; git commit -m <span class="hljs-strin
 </tr>
 <tr>
 <td>Join TUI locked / no <code>:6443</code></td>
-<td>master not advertising — panel logs must show mDNS line</td>
+<td>master not advertising — panel logs must show <span class="term" data-term="mdns" tabindex="0">mDNS</span> line</td>
 </tr>
 <tr>
 <td>Port-forward dead</td>

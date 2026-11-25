@@ -6,6 +6,8 @@
 <title>The stack, layer by layer — LDNDRC</title>
 <meta name="description" content="Every technology in the system and the one job it is allowed to do.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -61,42 +63,42 @@
 </thead>
 <tbody><tr>
 <td>Orchestration</td>
-<td>K3s</td>
-<td>Schedule pods on laptops, restart them, hold volumes</td>
+<td><span class="term" data-term="k3s" tabindex="0">K3s</span></td>
+<td>Schedule <span class="term" data-term="pod" tabindex="0">pods</span> on laptops, restart them, hold volumes</td>
 </tr>
 <tr>
 <td>Runtime</td>
-<td>containerd</td>
-<td>Run containers (bundled with K3s)</td>
+<td><span class="term" data-term="containerd" tabindex="0">containerd</span></td>
+<td>Run containers (bundled with <span class="term" data-term="k3s" tabindex="0">K3s</span>)</td>
 </tr>
 <tr>
-<td>CNI</td>
-<td>Flannel</td>
-<td>Pod networking, deliberately no DDS</td>
+<td><span class="term" data-term="cni" tabindex="0">CNI</span></td>
+<td><span class="term" data-term="flannel" tabindex="0">Flannel</span></td>
+<td><span class="term" data-term="pod" tabindex="0">Pod</span> networking, deliberately no <span class="term" data-term="dds" tabindex="0">DDS</span></td>
 </tr>
 <tr>
-<td>Ingress</td>
-<td>Traefik</td>
+<td><span class="term" data-term="ingress" tabindex="0">Ingress</span></td>
+<td><span class="term" data-term="traefik" tabindex="0">Traefik</span></td>
 <td>Route four hostnames to the panel</td>
 </tr>
 <tr>
 <td>GPU</td>
-<td>NVIDIA GPU Operator</td>
-<td>Driver + time-slicing on consumer cards</td>
+<td>NVIDIA GPU <span class="term" data-term="operator" tabindex="0">Operator</span></td>
+<td>Driver + <span class="term" data-term="gpu-timeslicing" tabindex="0">time-slicing</span> on consumer cards</td>
 </tr>
 <tr>
 <td>Robotics</td>
-<td>ROS 2 Jazzy</td>
-<td>Per-session middleware</td>
+<td><span class="term" data-term="ros2" tabindex="0">ROS 2</span> Jazzy</td>
+<td>Per-<span class="term" data-term="session" tabindex="0">session</span> middleware</td>
 </tr>
 <tr>
 <td>Simulation</td>
-<td>Gazebo Harmonic</td>
+<td><span class="term" data-term="gazebo" tabindex="0">Gazebo</span> Harmonic</td>
 <td>Headless physics</td>
 </tr>
 <tr>
 <td>Scene stream</td>
-<td><code>gazebo-web</code> + gzweb/Three.js</td>
+<td><code>gazebo-web</code> + <span class="term" data-term="gzweb" tabindex="0">gzweb</span>/Three.js</td>
 <td>Publish and render the world</td>
 </tr>
 <tr>
@@ -106,13 +108,13 @@
 </tr>
 <tr>
 <td>Editor</td>
-<td>code-server</td>
+<td><span class="term" data-term="code-server" tabindex="0">code-server</span></td>
 <td>VS Code + terminals in a tab</td>
 </tr>
 <tr>
-<td>Control plane</td>
-<td>Go (<code>client-go</code>, JWT, <code>net/http</code>)</td>
-<td>Auth, sessions, onboarding, gateway</td>
+<td><span class="term" data-term="control-plane" tabindex="0">Control plane</span></td>
+<td>Go (<code>client-go</code>, <span class="term" data-term="jwt" tabindex="0">JWT</span>, <code>net/http</code>)</td>
+<td>Auth, <span class="term" data-term="session" tabindex="0">sessions</span>, onboarding, <span class="term" data-term="gateway" tabindex="0">gateway</span></td>
 </tr>
 <tr>
 <td>Student UI</td>
@@ -122,16 +124,16 @@
 <tr>
 <td>Persistence</td>
 <td>JSON on a volume</td>
-<td>Sessions and node approvals</td>
+<td><span class="term" data-term="session" tabindex="0">Sessions</span> and <span class="term" data-term="node" tabindex="0">node</span> approvals</td>
 </tr>
 </tbody></table>
 <h2 id="the-omissions-are-choices">The omissions are choices</h2><ul>
-<li><strong>No service mesh.</strong> Nothing needs mTLS between pods; isolation is a namespace property.</li>
+<li><strong>No <span class="term" data-term="service" tabindex="0">service</span> mesh.</strong> Nothing needs mTLS between <span class="term" data-term="pod" tabindex="0">pods</span>; isolation is a <span class="term" data-term="namespace" tabindex="0">namespace</span> property.</li>
 <li><strong>No external database.</strong> The panel&#39;s state is small, and a database would add a failure mode to a workshop.</li>
 <li><strong>No registry.</strong> Images are imported directly on the demo and pulled from a local registry on a real LAN.</li>
 <li><strong>No cloud identity.</strong> Login must work with the uplink down — see <a href="lan-first.html" class="topic-link">The LAN-first constraint</a>.</li>
 </ul>
-<h2 id="where-the-seams-are">Where the seams are</h2><p>The Go panel is the only component that talks to Kubernetes. If you want to replace the UI, you replace React and keep the API. If you want a different simulator, you keep <code>:9002</code> and swap the bridge. The seams are deliberate, which is why the roadmap can add features without rewrites.</p>
+<h2 id="where-the-seams-are">Where the seams are</h2><p>The Go panel is the only component that talks to <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span>. If you want to replace the UI, you replace React and keep the API. If you want a different simulator, you keep <code>:9002</code> and swap the bridge. The seams are deliberate, which is why the roadmap can add features without rewrites.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl version --short
 kubectl -n kube-system get pods
 kubectl -n ldndrc get deploy -o wide</code></pre></div></div>

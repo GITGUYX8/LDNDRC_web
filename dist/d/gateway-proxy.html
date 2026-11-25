@@ -6,6 +6,8 @@
 <title>The cookie gateway — LDNDRC</title>
 <meta name="description" content="Hostname tells the proxy which tool; the cookie tells it whose pod.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,16 +52,16 @@
     </div>
     <h1 class="page-title">The cookie gateway</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Hostname tells the proxy which tool; the cookie tells it whose pod.</p>
-    <div class="prose"><p>The gateway is the piece that makes three separate tools feel like one product. It is not a separate service — it is the control panel&#39;s reverse proxy, and it routes on two facts at once.</p>
+    <div class="prose"><p>The <span class="term" data-term="gateway" tabindex="0">gateway</span> is the piece that makes three separate tools feel like one product. It is not a separate <span class="term" data-term="service" tabindex="0">service</span> — it is the control panel&#39;s reverse proxy, and it routes on two facts at once.</p>
 <h2 id="the-two-facts">The two facts</h2><ol>
 <li><strong>Hostname</strong> → which tool is being asked for.</li>
-<li><strong>Cookie</strong> → whose session it should be routed to.</li>
+<li><strong><span class="term" data-term="cookie" tabindex="0">Cookie</span></strong> → whose <span class="term" data-term="session" tabindex="0">session</span> it should be routed to.</li>
 </ol>
 <div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">editor.ros-platform.local   + valid cookie → user&#x27;s pod :7682
 desktop.ros-platform.local  + valid cookie → user&#x27;s pod :8080
 gazebo.ros-platform.local   + valid cookie → user&#x27;s pod :9002</code></pre></div><p>There is no path prefix and no query parameter. The hostname is the entire tool selector, which is why the four subdomains are not cosmetic.</p>
-<h2 id="why-the-cookie-and-not-the-jwt">Why the cookie and not the JWT</h2><p>Iframes and WebSockets cannot attach an <code>Authorization</code> header reliably. A cookie is sent automatically by the browser on every request, including the WebSocket upgrade. That is the only reason the second credential exists — see <a href="auth-csrf.html" class="topic-link">JWT, cookies, and CSRF stamps</a>.</p>
-<h2 id="the-error-contract">The error contract</h2><p>The gateway does not return vague failures. Each status means exactly one thing:</p>
+<h2 id="why-the-cookie-and-not-the-jwt">Why the cookie and not the JWT</h2><p>Iframes and <span class="term" data-term="websocket" tabindex="0">WebSockets</span> cannot attach an <code>Authorization</code> header reliably. A <span class="term" data-term="cookie" tabindex="0">cookie</span> is sent automatically by the browser on every request, including the <span class="term" data-term="websocket" tabindex="0">WebSocket</span> upgrade. That is the only reason the second credential exists — see <a href="auth-csrf.html" class="topic-link">JWT, cookies, and CSRF stamps</a>.</p>
+<h2 id="the-error-contract">The error contract</h2><p>The <span class="term" data-term="gateway" tabindex="0">gateway</span> does not return vague failures. Each status means exactly one thing:</p>
 <table>
 <thead>
 <tr>
@@ -69,23 +71,23 @@ gazebo.ros-platform.local   + valid cookie → user&#x27;s pod :9002</code></pre
 </thead>
 <tbody><tr>
 <td><code>401</code></td>
-<td>No valid cookie — log in again</td>
+<td>No valid <span class="term" data-term="cookie" tabindex="0">cookie</span> — log in again</td>
 </tr>
 <tr>
 <td><code>404</code></td>
-<td>No active session for this user</td>
+<td>No active <span class="term" data-term="session" tabindex="0">session</span> for this user</td>
 </tr>
 <tr>
 <td><code>503</code></td>
-<td>Session is still <code>provisioning</code></td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> is still <code>provisioning</code></td>
 </tr>
 <tr>
 <td><code>502</code></td>
-<td>Session pod is unhealthy</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> <span class="term" data-term="pod" tabindex="0">pod</span> is unhealthy</td>
 </tr>
 </tbody></table>
-<p>This is the single best debugging surface in the system. A student reading &quot;503&quot; knows to wait; an operator reading &quot;502&quot; knows to look at the pod.</p>
-<h2 id="websockets">WebSockets</h2><p><code>/ws/{session}</code> proxies the upgrade into the pod. Everything downstream — code-server&#39;s terminal, gzweb&#39;s scene stream, Selkies&#39; signalling — rides the same proxy. If one tool works and another does not, the gateway is usually fine and the upstream port is not.</p>
+<p>This is the single best debugging surface in the system. A student reading &quot;503&quot; knows to wait; an <span class="term" data-term="operator" tabindex="0">operator</span> reading &quot;502&quot; knows to look at the <span class="term" data-term="pod" tabindex="0">pod</span>.</p>
+<h2 id="websockets">WebSockets</h2><p><code>/ws/{session}</code> proxies the upgrade into the <span class="term" data-term="pod" tabindex="0">pod</span>. Everything downstream — <span class="term" data-term="code-server" tabindex="0">code-server</span>&#39;s terminal, <span class="term" data-term="gzweb" tabindex="0">gzweb</span>&#39;s scene stream, Selkies&#39; signalling — rides the same proxy. If one tool works and another does not, the <span class="term" data-term="gateway" tabindex="0">gateway</span> is usually fine and the upstream port is not.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">COOKIE=$(curl -s -D - -o /dev/null -X POST http://127.0.0.1:8082/api/auth/login \
   -H <span class="hljs-string">&#x27;Content-Type: application/json&#x27;</span> \
   -d <span class="hljs-string">&#x27;{&quot;username&quot;:&quot;bob&quot;,&quot;password&quot;:&quot;secret123&quot;}&#x27;</span> \

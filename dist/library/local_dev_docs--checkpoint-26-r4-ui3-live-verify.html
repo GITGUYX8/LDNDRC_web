@@ -6,6 +6,8 @@
 <title>Checkpoint 26 — R4 UI-3 Live Verify on Real Master (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-26-r4-ui3-live-verify.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -46,25 +48,25 @@
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-26-r4-ui3-live-verify.md · 2.9 KB</div>
 <h1 class="page-title">Checkpoint 26 — R4 UI-3 Live Verify on Real Master (detailed)</h1>
 <div class="prose"><h2 id="context">Context</h2><p>Continues on branch <code>feat/r3-csrf</code>, unpushed. Checkpoint-25 built
-UI-3 (reference user/session cards) as local commit <code>fdd2dc1</code> and
-queued the live rollout. Meanwhile the master node <strong>rebooted</strong>
-(pods show restarts ~5h ago, <code>/tmp</code> tmpfs wiped including the saved
-tarball). This run: re-saved the tarball from Docker&#39;s on-disk store,
+UI-3 (reference user/<span class="term" data-term="session" tabindex="0">session</span> cards) as local commit <code>fdd2dc1</code> and
+queued the live rollout. Meanwhile the master <span class="term" data-term="node" tabindex="0">node</span> <strong>rebooted</strong>
+(<span class="term" data-term="pod" tabindex="0">pods</span> show restarts ~5h ago, <code>/tmp</code> tmpfs wiped including the saved
+tarball). This run: re-saved the tarball from <span class="term" data-term="docker" tabindex="0">Docker</span>&#39;s on-disk store,
 imported, rolled out, verified. No code changes (image = <code>fdd2dc1</code>
-source); dirty join/nodes files untouched.</p>
+source); dirty join/<span class="term" data-term="node" tabindex="0">nodes</span> files untouched.</p>
 <h2 id="step-by-step-with-observed-outputs">Step-by-step with observed outputs</h2><h3 id="1-tarball-recovery">1. Tarball recovery</h3><ul>
 <li><code>sudo k3s ctr images import</code> failed: <code>/tmp</code> tarball gone with the
-reboot. Docker store survived: image <code>528c3359</code> (built 05:29 from
+reboot. <span class="term" data-term="docker" tabindex="0">Docker</span> store survived: image <code>528c3359</code> (built 05:29 from
 the cards source) intact.</li>
 <li><code>docker save</code> → <code>/tmp/ldndrc-control-panel-dev.tar</code> (14M) again.</li>
-<li>Operator import: index <code>sha256:528c3359…</code> confirmed.</li>
+<li><span class="term" data-term="operator" tabindex="0">Operator</span> import: index <code>sha256:528c3359…</code> confirmed.</li>
 </ul>
 <h3 id="2-rollout-delete-old-first-never-plain-rollout-restart">2. Rollout (delete-old-first, never plain <code>rollout restart</code>)</h3><ul>
-<li>Deleted pod <code>…-qhshf</code> (old image <code>48724709…</code>, UI-1/UI-2) →
-<code>rollout status</code> success in seconds → new pod <code>…-7hf9d</code>
+<li>Deleted <span class="term" data-term="pod" tabindex="0">pod</span> <code>…-qhshf</code> (old image <code>48724709…</code>, UI-1/UI-2) →
+<code>rollout status</code> success in seconds → new <span class="term" data-term="pod" tabindex="0">pod</span> <code>…-7hf9d</code>
 <code>1/1 Running</code>, <code>hostNetwork=true</code>.</li>
-<li>Note: containerd reports <code>imageID=7d9f9634…</code> (config digest form,
-differs from the docker index digest) — confirmed as the new image
+<li>Note: <span class="term" data-term="containerd" tabindex="0">containerd</span> reports <code>imageID=7d9f9634…</code> (config digest form,
+differs from the <span class="term" data-term="docker" tabindex="0">docker</span> index digest) — confirmed as the new image
 by content, not by digest string (below).</li>
 </ul>
 <h3 id="3-live-verify-green-plain-dns-the-etc-hosts-fix-works">3. Live verify GREEN (plain DNS — the <code>/etc/hosts</code> fix works)</h3><table>
@@ -80,14 +82,14 @@ by content, not by digest string (below).</li>
 </tr>
 <tr>
 <td>Login (instructor)</td>
-<td>token 160 + csrf 64 + cookie</td>
+<td>token 160 + <span class="term" data-term="csrf" tabindex="0">csrf</span> 64 + <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 </tr>
 <tr>
 <td><code>GET /api/nodes</code> no bearer</td>
 <td>401 (regression holds)</td>
 </tr>
 <tr>
-<td>Cookie POST without <code>X-CSRF-Token</code></td>
+<td><span class="term" data-term="cookie" tabindex="0">Cookie</span> POST without <code>X-CSRF-Token</code></td>
 <td>403 (regression holds)</td>
 </tr>
 <tr>
@@ -100,41 +102,41 @@ by content, not by digest string (below).</li>
 </tr>
 <tr>
 <td>Approve A / deny B + reason</td>
-<td><code>approved</code> / <code>denied</code> — the exact payloads the host cards render</td>
+<td><code>approved</code> / <code>denied</code> — the exact payloads the <span class="term" data-term="host" tabindex="0">host</span> cards render</td>
 </tr>
 <tr>
 <td><code>POST /api/sessions</code></td>
 <td>202 <code>provisioning</code> → <code>ready</code> (3rd 10s poll)</td>
 </tr>
 <tr>
-<td><code>editor</code> + cookie</td>
+<td><code>editor</code> + <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 <td>200 (student path regression holds)</td>
 </tr>
 <tr>
-<td><code>editor</code> no cookie</td>
-<td>401 · <code>desktop</code> + cookie 502 by design</td>
+<td><code>editor</code> no <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
+<td>401 · <code>desktop</code> + <span class="term" data-term="cookie" tabindex="0">cookie</span> 502 by design</td>
 </tr>
 <tr>
 <td><code>DELETE /api/sessions/{id}</code></td>
-<td><code>stopped</code> — feeds the session cards&#39; <code>stopped</code> filter chip</td>
+<td><code>stopped</code> — feeds the <span class="term" data-term="session" tabindex="0">session</span> cards&#39; <code>stopped</code> filter chip</td>
 </tr>
 </tbody></table>
 <p>The stopped workload <code>ros2-session-fed39e360a7c</code> was <code>Terminating</code>
 at read time (cleanup in flight).</p>
 <h2 id="residue-to-know-about">Residue to know about</h2><ul>
-<li>Live nodes DB now holds 2 verify rows (<code>verify-laptop-a</code>
+<li>Live <span class="term" data-term="node" tabindex="0">nodes</span> DB now holds 2 verify rows (<code>verify-laptop-a</code>
 approved, <code>verify-laptop-b</code> denied &quot;verify run, not a real
-laptop&quot;) — no node-delete API exists, so they persist as cards.
+laptop&quot;) — no <span class="term" data-term="node" tabindex="0">node</span>-delete API exists, so they persist as cards.
 Harmless and clearly named.</li>
-<li>Pre-existing orphaned session workloads from checkpoint-24 still
+<li>Pre-existing orphaned <span class="term" data-term="session" tabindex="0">session</span> workloads from checkpoint-24 still
 Running (R2-final resolves for good).</li>
-<li>Live Deployment still predates <code>SESSIONS_DB</code> env and
+<li>Live <span class="term" data-term="deployment" tabindex="0">Deployment</span> still predates <code>SESSIONS_DB</code> env and
 <code>maxUnavailable: 1</code> — queued with R2-final.</li>
 </ul>
-<h2 id="next">Next</h2><p>R2-final (nodes/sessions → PVC/DB) + panel Deployment
+<h2 id="next">Next</h2><p>R2-final (<span class="term" data-term="node" tabindex="0">nodes</span>/<span class="term" data-term="session" tabindex="0">sessions</span> → <span class="term" data-term="pvc" tabindex="0">PVC</span>/DB) + panel <span class="term" data-term="deployment" tabindex="0">Deployment</span>
 <code>maxUnavailable: 1</code>. Optional later: <code>GET /api/admin/sessions</code>
 list-all seam (fills Users room-wide, no view change); ADMIN-role
-gating for headlamp (checkpoint-10).</p>
+gating for <span class="term" data-term="headlamp" tabindex="0">headlamp</span> (checkpoint-10).</p>
 </div>
 </div>
 </body>

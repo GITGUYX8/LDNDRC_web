@@ -6,6 +6,8 @@
 <title>Contribute to LDNDRC — LDNDRC</title>
 <meta name="description" content="Open-source contribution workflow: issues, pull requests, proof, and review.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -55,7 +57,7 @@
 <p>The project has three laws:</p>
 <ol>
 <li>LAN first: the live workshop must not depend on the public internet.</li>
-<li>Isolation is structural: one student gets one private workspace; DDS never crosses the pod boundary.</li>
+<li>Isolation is structural: one student gets one private workspace; <span class="term" data-term="dds" tabindex="0">DDS</span> never crosses the <span class="term" data-term="pod" tabindex="0">pod</span> boundary.</li>
 <li>Least privilege is proved: new permissions need a concrete <code>kubectl auth can-i</code> check.</li>
 </ol>
 <h2 id="choose-the-right-shelf">Choose the right shelf</h2><table>
@@ -66,7 +68,7 @@
 </tr>
 </thead>
 <tbody><tr>
-<td>Design or operator reference</td>
+<td>Design or <span class="term" data-term="operator" tabindex="0">operator</span> reference</td>
 <td><code>docs/</code></td>
 </tr>
 <tr>
@@ -96,11 +98,11 @@ fix(gateway): preserve provisioning status
 ./test-join.sh
 ./test-joining.sh
 ./test-captive-trap.sh
-<span class="hljs-built_in">cd</span> docs-site &amp;&amp; npm run build</code></pre></div><p>For Kubernetes changes, add <code>kubectl apply --dry-run=server -f manifests/</code> and the relevant <code>kubectl auth can-i</code> output. For a user-visible change, include a screenshot or a short before/after. If a second laptop, GPU, or real LAN was unavailable, say that plainly.</p>
+<span class="hljs-built_in">cd</span> docs-site &amp;&amp; npm run build</code></pre></div><p>For <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> changes, add <code>kubectl apply --dry-run=server -f manifests/</code> and the relevant <code>kubectl auth can-i</code> output. For a user-visible change, include a screenshot or a short before/after. If a second laptop, GPU, or real LAN was unavailable, say that plainly.</p>
 <h2 id="add-to-the-map">Add to the map</h2><p>To improve this lesson or add a contribution topic:</p>
 <ol>
 <li>Edit <code>content/topics/&lt;id&gt;.md</code> with the problem, mechanism, failure mode, and a runnable Verify command.</li>
-<li>Add the node and its prerequisites to <code>content/graph.json</code>.</li>
+<li>Add the <span class="term" data-term="node" tabindex="0">node</span> and its prerequisites to <code>content/graph.json</code>.</li>
 <li>Use <code>[[topic-id]]</code> links for related concepts.</li>
 <li>Run <code>npm run build</code> and check the route in the map.</li>
 </ol>

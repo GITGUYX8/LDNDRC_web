@@ -6,6 +6,8 @@
 <title>Checkpoint 21 — R3 CSRF + R2 Session Persistence (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-21-r3-r2.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -47,35 +49,35 @@
 <h1 class="page-title">Checkpoint 21 — R3 CSRF + R2 Session Persistence (detailed)</h1>
 <div class="prose"><h2 id="context">Context</h2><p>Two roadmap items landed on the real master (<code>hari</code>), on branch
 <code>feat/r3-csrf</code> (from <code>main@a404617</code>), each committed alone. No push.
-R3 closed a reference-parity gap before the R4 SPA makes cookie-authed
+R3 closed a reference-parity gap before the R4 SPA makes <span class="term" data-term="cookie" tabindex="0">cookie</span>-authed
 mutations real; R2 ended the restart-orphan tax observed in
-CP09/CP11/checkpoint-20. Guest agent join remains deferred.</p>
-<h2 id="r3-csrf-protection">R3 — CSRF protection</h2><h3 id="scope-correction-found-in-code-not-assumed">Scope correction (found in code, not assumed)</h3><p>The planned premise — &quot;cookie auth on mutating routes&quot; — did not exist:
+CP09/CP11/checkpoint-20. <span class="term" data-term="guest" tabindex="0">Guest</span> agent join remains deferred.</p>
+<h2 id="r3-csrf-protection">R3 — CSRF protection</h2><h3 id="scope-correction-found-in-code-not-assumed">Scope correction (found in code, not assumed)</h3><p>The planned premise — &quot;<span class="term" data-term="cookie" tabindex="0">cookie</span> auth on mutating routes&quot; — did not exist:
 all mutating API routes require the <code>Authorization: Bearer</code> header
-(<code>bearerClaims</code>), which browsers never attach cross-site. The session
-cookie (<code>ldndrc_session</code>, <code>SameSite=Lax</code>) is consumed only by the
-gateway&#39;s GET navigation. Classic CSRF was already neutered by
+(<code>bearerClaims</code>), which browsers never attach cross-site. The <span class="term" data-term="session" tabindex="0">session</span>
+<span class="term" data-term="cookie" tabindex="0">cookie</span> (<code>ldndrc_session</code>, <code>SameSite=Lax</code>) is consumed only by the
+<span class="term" data-term="gateway" tabindex="0">gateway</span>&#39;s GET navigation. Classic <span class="term" data-term="csrf" tabindex="0">CSRF</span> was already neutered by
 architecture; R3 is defense-in-depth plus the precondition for R4.</p>
 <h3 id="what-shipped-473441f">What shipped (<code>473441f</code>)</h3><ul>
 <li><code>IssueCSRF</code>/<code>VerifyCSRF</code> (<code>internal/auth</code>): <code>HMAC(JWT_SECRET, &quot;csrf:&quot;+jwt)</code>, hex, constant-time compare. Stateless, unforgeable
 without the secret, rotates with re-login. Token travels in JS memory
-as <code>X-CSRF-Token</code>, never a cookie.</li>
-<li><code>guardCSRF</code> middleware (<code>internal/httpapi/csrf.go</code>): cookie present +
+as <code>X-CSRF-Token</code>, never a <span class="term" data-term="cookie" tabindex="0">cookie</span>.</li>
+<li><code>guardCSRF</code> middleware (<code>internal/httpapi/csrf.go</code>): <span class="term" data-term="cookie" tabindex="0">cookie</span> present +
 mutating method + missing/invalid token → <strong>403</strong> before any handler.
-Bearer-only requests and safe methods pass through; gateway GET
+Bearer-only requests and safe methods pass through; <span class="term" data-term="gateway" tabindex="0">gateway</span> GET
 navigation untouched (R4 iframe compat).</li>
-<li>Login returns <code>csrf_token</code> alongside JWT + cookie.</li>
+<li>Login returns <code>csrf_token</code> alongside <span class="term" data-term="jwt" tabindex="0">JWT</span> + <span class="term" data-term="cookie" tabindex="0">cookie</span>.</li>
 <li><code>POST /api/nodes/register</code> stays exempt: pre-auth by design,
-rate-limited (10/min/IP). Diagnostics/polls carry no cookie.</li>
+rate-limited (10/min/IP). Diagnostics/polls carry no <span class="term" data-term="cookie" tabindex="0">cookie</span>.</li>
 </ul>
 <h3 id="proofs">Proofs</h3><ul>
 <li>Unit: 7 guard cases on real routes (403/403/401-fallthrough/foreign
 rejection/Bearer-202/GET-pass/register-open) + 5 token-binding cases.
 Full <code>go test ./...</code> green (7 packages), <code>gofmt</code>/<code>vet</code> clean.</li>
 <li>Live (rebuilt image, user <code>ctr import</code>, preempted hostNetwork rollout
-deadlock via delete-old-first): login shape OK; cookie POST no
+deadlock via delete-old-first): login shape OK; <span class="term" data-term="cookie" tabindex="0">cookie</span> POST no
 token → 403, bad token → 403, valid token w/o bearer → 401 (guard
-passed, handler auth), Bearer → 202; gateway editor-200 regression
+passed, handler auth), Bearer → 202; <span class="term" data-term="gateway" tabindex="0">gateway</span> editor-200 regression
 holds under the R3 image.</li>
 </ul>
 <h2 id="r2-session-persistence">R2 — Session persistence</h2><h3 id="what-shipped-6241549">What shipped (<code>6241549</code>)</h3><ul>
@@ -86,10 +88,10 @@ failure; corrupt file is a hard error (never silently start empty).</li>
 <li>Boot reconcile (<code>main.go</code>, after provisioner wiring): loaded
 non-terminal records checked via <code>WorkloadExists</code> (fail-open on API
 errors) → existing <strong>adopted</strong> (readiness re-probes lazily on next
-gateway visit), missing <strong>tombstoned to <code>stopped</code></strong> with
+<span class="term" data-term="gateway" tabindex="0">gateway</span> visit), missing <strong>tombstoned to <code>stopped</code></strong> with
 <code>&quot;workload gone at restart&quot;</code> (never silent-delete, never
 auto-reprovision). Counts logged.</li>
-<li>Nodes DB stays on emptyDir (PVC/DB path = R2-final follow-up).</li>
+<li><span class="term" data-term="node" tabindex="0">Nodes</span> DB stays on emptyDir (<span class="term" data-term="pvc" tabindex="0">PVC</span>/DB path = R2-final follow-up).</li>
 <li>Manifest gains explicit <code>SESSIONS_DB</code> env for symmetry with NODES_DB.</li>
 </ul>
 <h3 id="proofs">Proofs</h3><ul>
@@ -97,26 +99,26 @@ auto-reprovision). Counts logged.</li>
 fails fast, adopt/tombstone + tombstone-persists-across-reload,
 terminal records ignored.</li>
 <li>Live restart proof (in-place container kill via <code>crictl stop</code>, same
-pod <code>restarts=0</code> → <code>1</code>, emptyDir intact): session <code>20c8e08984b1</code>
+<span class="term" data-term="pod" tabindex="0">pod</span> <code>restarts=0</code> → <code>1</code>, emptyDir intact): <span class="term" data-term="session" tabindex="0">session</span> <code>20c8e08984b1</code>
 listed with the <strong>same id</strong> post-restart (user-confirmed, then
-re-verified), <code>provisioning</code> → <code>ready</code> on gateway visit,
+re-verified), <code>provisioning</code> → <code>ready</code> on <span class="term" data-term="gateway" tabindex="0">gateway</span> visit,
 editor-200 first try, zero orphans. This is the first restart in
 project history that lost nothing.</li>
 </ul>
-<h2 id="data-layer-clarification-asked-mid-run">Data-layer clarification (asked mid-run)</h2><p>Two layers, one touched: session <strong>records</strong> (JSON pointers + status,
+<h2 id="data-layer-clarification-asked-mid-run">Data-layer clarification (asked mid-run)</h2><p>Two layers, one touched: <span class="term" data-term="session" tabindex="0">session</span> <strong>records</strong> (JSON pointers + status,
 hundreds of bytes — persisted + reconciled) vs workspace <strong>home data</strong>
-(5Gi PVCs, K8s-native — always survived; the bug was forgotten
-pointers, now fixed). Login tokens were never at risk (secret in a K8s
-Secret). Node approvals still emptyDir-only (deferred).</p>
+(5Gi <span class="term" data-term="pvc" tabindex="0">PVCs</span>, <span class="term" data-term="kubernetes" tabindex="0">K8s</span>-native — always survived; the bug was forgotten
+pointers, now fixed). Login tokens were never at risk (secret in a <span class="term" data-term="kubernetes" tabindex="0">K8s</span>
+Secret). <span class="term" data-term="node" tabindex="0">Node</span> approvals still emptyDir-only (deferred).</p>
 <h2 id="follow-ups">Follow-ups</h2><ul>
 <li>R4: step 0 locate <code>uiux-design.md</code> (absent from <code>docs/</code>), then
 scaffold + phased UI-1..3.</li>
-<li>R2-final: nodes + sessions to PVC or DB when leaving demo stage.</li>
-<li>Panel Deployment: <code>maxUnavailable:1</code> (or Recreate) so single-node
+<li>R2-final: <span class="term" data-term="node" tabindex="0">nodes</span> + <span class="term" data-term="session" tabindex="0">sessions</span> to <span class="term" data-term="pvc" tabindex="0">PVC</span> or DB when leaving demo stage.</li>
+<li>Panel <span class="term" data-term="deployment" tabindex="0">Deployment</span>: <code>maxUnavailable:1</code> (or Recreate) so single-<span class="term" data-term="node" tabindex="0">node</span>
 hostNetwork rollouts never deadlock (worked around twice now).</li>
 <li>Uncommitted join-file modifications in the tree (<code>cmd/join/main.go</code>,
 <code>internal/join/*</code>) are NOT part of R3/R2 — origin unknown, flagged
-to the operator, left untouched.</li>
+to the <span class="term" data-term="operator" tabindex="0">operator</span>, left untouched.</li>
 </ul>
 </div>
 </div>

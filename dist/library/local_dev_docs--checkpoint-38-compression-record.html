@@ -6,6 +6,8 @@
 <title>Checkpoint 38 — Image Compression Record (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-38-compression-record.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -48,7 +50,7 @@
 <div class="prose"><h2 id="context">Context</h2><p>Consolidates the compression facts scattered across CP-30/33 into
 one record: method, measured pairs, transfer math, and the options
 verdict. No code or image changes this chunk.</p>
-<h2 id="method">Method</h2><p>Standard OCI/Docker gzip layer compression — nothing custom. All
+<h2 id="method">Method</h2><p>Standard OCI/<span class="term" data-term="docker" tabindex="0">Docker</span> gzip layer compression — nothing custom. All
 transfer figures below are <code>docker save</code> tarballs of gzipped layers;
 all unpacked figures are <code>docker images</code> sizes (uncompressed).</p>
 <h2 id="measured-pairs-observed">Measured pairs (observed)</h2><table>
@@ -85,37 +87,37 @@ all unpacked figures are <code>docker images</code> sizes (uncompressed).</p>
 <td>~4.5x</td>
 </tr>
 </tbody></table>
-<p>Import unpack times on the master (k3s containerd): 164s (first,
+<p>Import unpack times on the master (<span class="term" data-term="k3s" tabindex="0">k3s</span> <span class="term" data-term="containerd" tabindex="0">containerd</span>): 164s (first,
 cold), 65s, 28s (warm, layer sharing). Tarball lives in <code>$HOME</code>,
 not <code>/tmp</code> (7.7GB tmpfs too small and wiped on reboot).</p>
 <h2 id="transfer-math-per-link-2-4gb-file">Transfer math per link (2.4GB file)</h2><ul>
 <li>1Gbps wired: ~25s.</li>
 <li>Real-world Wi-Fi (100–300Mbps): ~1–4 min.</li>
-<li>Unpack on host: ~1–3 min, 1 CPU spiked.</li>
-<li>Per-host one-time total on Wi-Fi: ~5–10 min, then cached forever
-(<code>IfNotPresent</code>); 10.8GB pinned disk per host.</li>
+<li>Unpack on <span class="term" data-term="host" tabindex="0">host</span>: ~1–3 min, 1 CPU spiked.</li>
+<li>Per-<span class="term" data-term="host" tabindex="0">host</span> one-time total on Wi-Fi: ~5–10 min, then cached forever
+(<code>IfNotPresent</code>); 10.8GB pinned disk per <span class="term" data-term="host" tabindex="0">host</span>.</li>
 </ul>
 <h2 id="options-verdict-analyzed-not-implemented">Options verdict (analyzed, not implemented)</h2><ul>
 <li><strong>Join-time tarball import</strong> (current plan): proven, offline-safe.</li>
 <li><strong>Registry mirror on master</strong>: same bytes, less labor; worth it
-at ~5+ hosts.</li>
-<li><strong>Slimming</strong>: measured candidates — system node stack <del>330MB,
+at ~5+ <span class="term" data-term="host" tabindex="0">hosts</span>.</li>
+<li><strong>Slimming</strong>: measured candidates — system <span class="term" data-term="node" tabindex="0">node</span> stack <del>330MB,
 Rust ~250–300MB, valgrind 75MB, clang/LLVM dupes ~200–400MB,
 <code>/usr/share/doc</code> 174MB, OpenJDK ~286MB (nothing outside Java
 requires it, needs smoke). Conservative yield ~1–1.5GB unpacked
 (</del>400–600MB transfer). VTK/PCL/RViz/Qt/Mesa stay (the product).</li>
 <li><strong>zstd</strong>: untested; expect ~20–30% faster unpack, marginal size
-change. Needs containerd acceptance check first.</li>
+change. Needs <span class="term" data-term="containerd" tabindex="0">containerd</span> acceptance check first.</li>
 <li><strong>Lazy pulling (stargz)</strong>: skipped — best latency on paper, worst
 complexity payoff at this scale.</li>
 <li><strong>Multi-stage builds</strong>: wrong tool here — ~95% of the image is
 runtime payload, not compiled artifacts; savings come from
 deletion, not staging.</li>
-<li><strong>Light/desktop-light image</strong>: parked by operator decision —
+<li><strong>Light/desktop-light image</strong>: parked by <span class="term" data-term="operator" tabindex="0">operator</span> decision —
 stand-in covers flow checks (already imported), light only when a
-new host needs desktop proof without the 10GB pull.</li>
+new <span class="term" data-term="host" tabindex="0">host</span> needs desktop proof without the 10GB pull.</li>
 </ul>
-<h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>Only this report (staged for commit). The 8 join/nodes files +
+<h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>Only this report (staged for commit). The 8 join/<span class="term" data-term="node" tabindex="0">nodes</span> files +
 <code>join-cluster.sh</code> untouched/unstaged; untracked junk left alone.</p>
 </div>
 </div>

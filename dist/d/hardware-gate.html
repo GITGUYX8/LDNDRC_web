@@ -6,6 +6,8 @@
 <title>The hardware gate — LDNDRC</title>
 <meta name="description" content="Eight cores, sixteen gigabytes, and an NVIDIA GPU decide what a laptop becomes.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,7 +52,7 @@
     </div>
     <h1 class="page-title">The hardware gate</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Eight cores, sixteen gigabytes, and an NVIDIA GPU decide what a laptop becomes.</p>
-    <div class="prose"><p>Not every laptop should become a Host. The gate is a deterministic check run before anything is installed, so a weak machine is never offered a K3s agent it cannot carry.</p>
+    <div class="prose"><p>Not every laptop should become a <span class="term" data-term="host" tabindex="0">Host</span>. The gate is a deterministic check run before anything is installed, so a weak machine is never offered a <span class="term" data-term="k3s" tabindex="0">K3s</span> agent it cannot carry.</p>
 <h2 id="the-bar">The bar</h2><table>
 <thead>
 <tr>
@@ -62,32 +64,32 @@
 <tbody><tr>
 <td>CPU cores</td>
 <td>8</td>
-<td>A session pod runs an editor, a desktop, Gazebo, and ROS</td>
+<td>A <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span> runs an editor, a desktop, <span class="term" data-term="gazebo" tabindex="0">Gazebo</span>, and ROS</td>
 </tr>
 <tr>
 <td>RAM</td>
 <td>16 GB</td>
-<td>Gazebo plus DDS plus the browser tooling</td>
+<td><span class="term" data-term="gazebo" tabindex="0">Gazebo</span> plus <span class="term" data-term="dds" tabindex="0">DDS</span> plus the browser tooling</td>
 </tr>
 <tr>
 <td>GPU</td>
 <td>NVIDIA</td>
-<td>The workspace image requests <code>nvidia.com/gpu: 1</code></td>
+<td>The <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> requests <code>nvidia.com/gpu: 1</code></td>
 </tr>
 <tr>
 <td>Disk</td>
 <td>~25 GB free</td>
-<td>The image is roughly 10 GB, imported per node</td>
+<td>The image is roughly 10 GB, imported per <span class="term" data-term="node" tabindex="0">node</span></td>
 </tr>
 </tbody></table>
 <h2 id="the-verdicts">The verdicts</h2><div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">High-end laptop detected. Joining as HOST.
-Low-end laptop detected. Staying a Guest — use the browser.</code></pre></div><p>There is no third option and no manual override in the normal path. That is intentional: a Host that cannot carry a session makes the whole workshop worse for one student, silently.</p>
+Low-end laptop detected. Staying a Guest — use the browser.</code></pre></div><p>There is no third option and no manual override in the normal path. That is intentional: a <span class="term" data-term="host" tabindex="0">Host</span> that cannot carry a <span class="term" data-term="session" tabindex="0">session</span> makes the whole workshop worse for one student, silently.</p>
 <h2 id="testing-the-gate-without-hardware">Testing the gate without hardware</h2><p>The detection logic is separated from the install so it can be exercised in two seconds:</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">./test-join.sh
 TEST_CPU=12 TEST_RAM=16 TEST_GPU=nvidia ./join-cluster.sh</code></pre></div><p><code>TEST_*</code> overrides exist because CI and developer machines rarely look like workshop laptops. They change only the input to the decision, not the decision itself.</p>
-<h2 id="the-real-lesson">The real lesson</h2><p>The gate is deliberately conservative. A laptop with 15 GB of RAM is a Guest even though it would probably cope. Being wrong in that direction costs one unused machine. Being wrong in the other direction costs a student their session in the middle of a lesson.</p>
+<h2 id="the-real-lesson">The real lesson</h2><p>The gate is deliberately conservative. A laptop with 15 GB of RAM is a <span class="term" data-term="guest" tabindex="0">Guest</span> even though it would probably cope. Being wrong in that direction costs one unused machine. Being wrong in the other direction costs a student their <span class="term" data-term="session" tabindex="0">session</span> in the middle of a lesson.</p>
 <h2 id="how-it-connects">How it connects</h2><ul>
-<li>The gate decides whether a laptop can even reach <a href="nodes-api.html" class="topic-link">Register, approve, poll</a>&#39;s approval step as a Host.</li>
+<li>The gate decides whether a laptop can even reach <a href="nodes-api.html" class="topic-link">Register, approve, poll</a>&#39;s approval step as a <span class="term" data-term="host" tabindex="0">Host</span>.</li>
 <li>It is why the join binary can say &quot;you cannot join&quot; before downloading anything — see <a href="join-binary.html" class="topic-link">The join binary</a>.</li>
 <li>GPU capacity is then shared with <a href="gpu-timeslicing.html" class="topic-link">Time-slicing one GPU</a>.</li>
 </ul>

@@ -6,6 +6,8 @@
 <title>Contributing to LDNDRC — LDNDRC library</title>
 <meta name="description" content="Source document: CONTRIBUTING.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -48,16 +50,16 @@
 <div class="prose"><p>Thanks for wanting to help. This project is a workshop platform built by people who
 had to run it in front of a room, so the bar is simple: <strong>if you claim it works, show
 the command that proves it.</strong></p>
-<p>You do not need to be a Kubernetes expert to contribute. Documentation, tests, and
+<p>You do not need to be a <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> expert to contribute. Documentation, tests, and
 honest failure reports are as valuable as features.</p>
 <h2 id="the-three-laws">The three laws</h2><p>These are not style preferences. Every merge should respect them.</p>
 <ol>
 <li><strong>The LAN comes first.</strong> Nothing may require the public internet to run a class.
 No cloud identity, no hosted database, no external registry at demo time.</li>
-<li><strong>Isolation is a structural property.</strong> One student per pod, one namespace per
-session, DDS never crossing the pod boundary. Do not &quot;fix&quot; isolation with a
+<li><strong>Isolation is a structural property.</strong> One student per <span class="term" data-term="pod" tabindex="0">pod</span>, one <span class="term" data-term="namespace" tabindex="0">namespace</span> per
+<span class="term" data-term="session" tabindex="0">session</span>, <span class="term" data-term="dds" tabindex="0">DDS</span> never crossing the <span class="term" data-term="pod" tabindex="0">pod</span> boundary. Do not &quot;fix&quot; isolation with a
 firewall rule or a shared workspace.</li>
-<li><strong>Least privilege, proven by command.</strong> The panel runs with namespace-scoped RBAC.
+<li><strong>Least privilege, proven by command.</strong> The panel runs with <span class="term" data-term="namespace" tabindex="0">namespace</span>-scoped <span class="term" data-term="rbac" tabindex="0">RBAC</span>.
 A new permission needs a <code>kubectl auth can-i</code> line showing exactly what it grants.</li>
 </ol>
 <h2 id="ways-to-help">Ways to help</h2><table>
@@ -75,7 +77,7 @@ A new permission needs a <code>kubectl auth can-i</code> line showing exactly wh
 </tr>
 <tr>
 <td><strong>Control panel (Go)</strong></td>
-<td>Sessions, auth/CSRF, onboarding, gateway, portal</td>
+<td><span class="term" data-term="session" tabindex="0">Sessions</span>, auth/<span class="term" data-term="csrf" tabindex="0">CSRF</span>, onboarding, <span class="term" data-term="gateway" tabindex="0">gateway</span>, portal</td>
 <td><code>control-panel/</code> — <code>go test ./...</code> is green</td>
 </tr>
 <tr>
@@ -85,17 +87,17 @@ A new permission needs a <code>kubectl auth can-i</code> line showing exactly wh
 </tr>
 <tr>
 <td><strong>Manifests</strong></td>
-<td>RBAC, Deployment/Service/Ingress, GPU scheduling</td>
+<td><span class="term" data-term="rbac" tabindex="0">RBAC</span>, <span class="term" data-term="deployment" tabindex="0">Deployment</span>/<span class="term" data-term="service" tabindex="0">Service</span>/<span class="term" data-term="ingress" tabindex="0">Ingress</span>, GPU scheduling</td>
 <td><code>manifests/</code></td>
 </tr>
 <tr>
 <td><strong>Join path</strong></td>
-<td><code>join-cluster.sh</code>, <code>ldndrc-join</code>, mDNS, release pipeline</td>
+<td><code>join-cluster.sh</code>, <code>ldndrc-join</code>, <span class="term" data-term="mdns" tabindex="0">mDNS</span>, release pipeline</td>
 <td><code>join-cluster.sh</code>, <code>docs/host-joiner-tui-spec.md</code></td>
 </tr>
 <tr>
 <td><strong>Simulation</strong></td>
-<td>Session image, Gazebo worlds, websocket scene bridge</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> image, <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> worlds, <span class="term" data-term="websocket" tabindex="0">websocket</span> scene bridge</td>
 <td><code>images/</code>, <code>sim-web-app/</code></td>
 </tr>
 <tr>
@@ -121,7 +123,7 @@ sim-web-app/            standalone gzweb viewer harness (:9002 scene path)
 tools/captive-portal/   onboarding Wi-Fi harness (prints privileged steps, never runs them)
 docs/                   design docs: roadmap, joiner TUI, portal, UI/UX, journey
 local_dev_docs/         build checkpoints and the operator cheatsheet
-docs-site/              the concept map site (content/ + src/ + build.mjs)</code></pre></div><h2 id="setup">Setup</h2><p>Prerequisites: Go ≥ 1.26, Node ≥ 22 (docs site ≥ 20), Docker, <code>kubectl</code>, <code>k3d</code>.</p>
+docs-site/              the concept map site (content/ + src/ + build.mjs)</code></pre></div><h2 id="setup">Setup</h2><p>Prerequisites: Go ≥ 1.26, <span class="term" data-term="node" tabindex="0">Node</span> ≥ 22 (docs site ≥ 20), <span class="term" data-term="docker" tabindex="0">Docker</span>, <code>kubectl</code>, <code>k3d</code>.</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-comment"># optional, matches the repo&#x27;s tool pins</span>
 mise install
 
@@ -143,9 +145,9 @@ JWT_SECRET=dev-only \
   DOWNLOADS_DB=/tmp/ldndrc-dev/downloads.json \
   go run ./cmd/server
 
-curl -s http://127.0.0.1:8087/healthz    <span class="hljs-comment"># {&quot;status&quot;:&quot;ok&quot;}</span></code></pre></div><p>Without in-cluster config the panel still serves login, sessions (recorded, not
-provisioned), node registration, the portal, and the gateway routes — enough to test
-auth, CSRF, validation, and handler behaviour. Anything that needs a real pod
+curl -s http://127.0.0.1:8087/healthz    <span class="hljs-comment"># {&quot;status&quot;:&quot;ok&quot;}</span></code></pre></div><p>Without in-cluster config the panel still serves login, <span class="term" data-term="session" tabindex="0">sessions</span> (recorded, not
+provisioned), <span class="term" data-term="node" tabindex="0">node</span> registration, the portal, and the <span class="term" data-term="gateway" tabindex="0">gateway</span> routes — enough to test
+auth, <span class="term" data-term="csrf" tabindex="0">CSRF</span>, validation, and handler behaviour. Anything that needs a real <span class="term" data-term="pod" tabindex="0">pod</span>
 requires Path A.</p>
 <p>The student UI must be built before <code>go build</code> embeds a real SPA. <code>control-panel/web/dist/</code>
 is gitignored:</p>
@@ -153,8 +155,8 @@ is gitignored:</p>
 npm ci
 npm run build</code></pre></div><h3 id="images">Images</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">docker build -t ldndrc/control-panel:dev ./control-panel
 docker build -t ldndrc/demo-standin:dev ./images/demo-standin
-k3d image import ldndrc/control-panel:dev ldndrc/demo-standin:dev -c ldndrc</code></pre></div><p>The workspace image is ~10 GB and takes a long time. Do not rebuild it to test a
-frontend change. Use <code>demo-standin</code> unless the change is actually inside the session.</p>
+k3d image import ldndrc/control-panel:dev ldndrc/demo-standin:dev -c ldndrc</code></pre></div><p>The <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> is ~10 GB and takes a long time. Do not rebuild it to test a
+frontend change. Use <code>demo-standin</code> unless the change is actually inside the <span class="term" data-term="session" tabindex="0">session</span>.</p>
 <h3 id="docs-site">Docs site</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-built_in">cd</span> docs-site
 npm install
 npm run build      <span class="hljs-comment"># validates the graph, then writes dist/</span>
@@ -175,12 +177,12 @@ npm run serve      <span class="hljs-comment"># http://127.0.0.1:8090</span></co
 <td><code>JWT_SECRET=x go run ./cmd/server</code> then <code>/healthz</code></td>
 </tr>
 <tr>
-<td>Manifest / RBAC</td>
+<td>Manifest / <span class="term" data-term="rbac" tabindex="0">RBAC</span></td>
 <td><code>kubectl apply --dry-run=server -f manifests/</code> + <code>kubectl -n ldndrc auth can-i …</code></td>
 </tr>
 <tr>
-<td>Session lifecycle</td>
-<td>Create a session, wait for <code>ready</code>, <code>curl</code> the editor host with and without the cookie (<code>200</code> / <code>401</code>)</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> lifecycle</td>
+<td>Create a <span class="term" data-term="session" tabindex="0">session</span>, wait for <code>ready</code>, <code>curl</code> the editor <span class="term" data-term="host" tabindex="0">host</span> with and without the <span class="term" data-term="cookie" tabindex="0">cookie</span> (<code>200</code> / <code>401</code>)</td>
 </tr>
 <tr>
 <td>Join detection</td>
@@ -214,7 +216,7 @@ the design conversation does not happen inside a diff.</p>
 <li><p><strong>Keep the change one idea.</strong> A refactor mixed with a behavior change cannot be
 reviewed or reverted cleanly.</p>
 </li>
-<li><p><strong>Update the docs in the same commit.</strong> A feature with no operator instructions
+<li><p><strong>Update the docs in the same commit.</strong> A feature with no <span class="term" data-term="operator" tabindex="0">operator</span> instructions
 is not finished; this repo has been burned by that.</p>
 </li>
 <li><p><strong>Record the proof.</strong> For a milestone, add the next
@@ -233,16 +235,16 @@ gaps. Link the roadmap row or checkpoint it closes.</p>
 <li>Standard library first: <code>net/http</code>, <code>client-go</code>, <code>encoding/json</code>. Justify any new
 dependency in the PR.</li>
 <li>Keep the package boundaries: <code>internal/auth</code>, <code>sessions</code>, <code>nodes</code>, <code>gateway</code>,
-<code>portal</code>, <code>discovery</code>, <code>join</code>. A handler that talks to Kubernetes directly is a
+<code>portal</code>, <code>discovery</code>, <code>join</code>. A handler that talks to <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> directly is a
 smell — put it in <code>internal/sessions</code>.</li>
-<li>Errors at the gateway have one meaning each: <code>401</code> no cookie, <code>404</code> no session,
-<code>503</code> provisioning, <code>502</code> unhealthy pod. Do not collapse them.</li>
+<li>Errors at the <span class="term" data-term="gateway" tabindex="0">gateway</span> have one meaning each: <code>401</code> no <span class="term" data-term="cookie" tabindex="0">cookie</span>, <code>404</code> no <span class="term" data-term="session" tabindex="0">session</span>,
+<code>503</code> provisioning, <code>502</code> unhealthy <span class="term" data-term="pod" tabindex="0">pod</span>. Do not collapse them.</li>
 <li>Tests are table-driven and hermetic. Do not require a live cluster for <code>go test</code>.</li>
 </ul>
 <h3 id="kubernetes">Kubernetes</h3><ul>
 <li>One concern per manifest, and the filename says which concern.</li>
-<li>RBAC stays namespace-scoped. Cluster-wide verbs need a written reason.</li>
-<li>Session pods request <code>nvidia.com/gpu</code> only when the deployment says so; the demo
+<li><span class="term" data-term="rbac" tabindex="0">RBAC</span> stays <span class="term" data-term="namespace" tabindex="0">namespace</span>-scoped. Cluster-wide verbs need a written reason.</li>
+<li><span class="term" data-term="session" tabindex="0">Session</span> <span class="term" data-term="pod" tabindex="0">pods</span> request <code>nvidia.com/gpu</code> only when the <span class="term" data-term="deployment" tabindex="0">deployment</span> says so; the demo
 path (<code>SESSION_GPU_LIMIT=0</code>) must keep working.</li>
 <li>Never commit a Secret. <code>secret.example.yaml</code> documents the shape; the real value
 is created at deploy time.</li>
@@ -281,7 +283,7 @@ end with something the reader can run. A lesson that only links to another docum
 is a stub and should not be marked <code>shipped</code>.</p>
 <p>To add a topic:</p>
 <ol>
-<li>Add the node to <code>docs-site/content/graph.json</code> with <code>domain</code>, <code>title</code>, <code>summary</code>,
+<li>Add the <span class="term" data-term="node" tabindex="0">node</span> to <code>docs-site/content/graph.json</code> with <code>domain</code>, <code>title</code>, <code>summary</code>,
 <code>status</code>, <code>minutes</code>, <code>requires</code>, <code>sources</code>, <code>glyph</code>, and <code>verify</code>.</li>
 <li>Write <code>docs-site/content/topics/&lt;id&gt;.md</code>. Use <code>[[other-topic-id]]</code> for links.</li>
 <li><code>npm run build</code> — it refuses unknown prerequisites, missing files, and cycles.</li>
@@ -317,15 +319,15 @@ design from tokens.</li>
 </ul>
 <h2 id="where-to-start-right-now">Where to start right now</h2><p>From <code>docs/roadmap.md</code>, in order of impact:</p>
 <ol>
-<li><strong>R2-final</strong> — durable panel state across a redeploy (PVC + safe rollout).</li>
+<li><strong>R2-final</strong> — durable panel state across a redeploy (<span class="term" data-term="pvc" tabindex="0">PVC</span> + safe rollout).</li>
 <li><strong>R4</strong> — the pretty 3D viewer instead of the raw data frame.</li>
 <li><strong>R5</strong> — a full two-laptop install rehearsal, end to end.</li>
-<li><strong>R7</strong> — encryption at rest, resource limits, operator dashboards.</li>
+<li><strong>R7</strong> — encryption at rest, resource limits, <span class="term" data-term="operator" tabindex="0">operator</span> dashboards.</li>
 <li><strong>Docs</strong> — every <code>designed</code> topic on the map is an invitation to build or to
 sharpen the specification.</li>
 </ol>
 <h2 id="getting-unstuck">Getting unstuck</h2><ul>
-<li><code>local_dev_docs/cheatsheet.md</code> — &quot;if X, run Y&quot; for operators.</li>
+<li><code>local_dev_docs/cheatsheet.md</code> — &quot;if X, run Y&quot; for <span class="term" data-term="operator" tabindex="0">operators</span>.</li>
 <li><code>docs/project-journey-report.md</code> — the plain-English architecture and glossary.</li>
 <li><code>docs/roadmap.md</code> — what is done, what is left, and why in that order.</li>
 <li>The docs site (<code>docs-site/</code>) — the same material as a guided map, with a verify

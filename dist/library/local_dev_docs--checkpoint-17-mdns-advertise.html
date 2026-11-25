@@ -6,6 +6,8 @@
 <title>Checkpoint 17 — mDNS Master Advertisement (P2) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-17-mdns-advertise.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -48,9 +50,9 @@
 <div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>Joining laptops shouldn&#39;t have to type the master&#39;s IP address — the master
 should announce itself on the local network, like a shop hanging its sign
 outside. This checkpoint added that announcement: the control panel now
-advertises <code>_ldndrc-master._tcp</code> via mDNS, which is exactly what the join
+advertises <code>_ldndrc-master._tcp</code> via <span class="term" data-term="mdns" tabindex="0">mDNS</span>, which is exactly what the join
 binary&#39;s bloodhound already knows how to sniff for.</p>
-<p>One honest limitation: a normal pod cannot reach LAN radio waves (multicast
+<p>One honest limitation: a normal <span class="term" data-term="pod" tabindex="0">pod</span> cannot reach LAN radio waves (<span class="term" data-term="multicast" tabindex="0">multicast</span>
 never leaves its network bubble), so real masters need a one-file network
 patch. The demo cluster stays quiet on purpose.</p>
 <h2 id="what-got-built">What got built</h2><table>
@@ -69,32 +71,32 @@ patch. The demo cluster stays quiet on purpose.</p>
 <tr>
 <td><code>cmd/server/main.go</code></td>
 <td>The Light Switch</td>
-<td>Turns the crier on/off via <code>ADVERTISE_MDNS</code> (default on); a failure only logs — the control plane never crashes over announcements</td>
+<td>Turns the crier on/off via <code>ADVERTISE_MDNS</code> (default on); a failure only logs — the <span class="term" data-term="control-plane" tabindex="0">control plane</span> never crashes over announcements</td>
 </tr>
 <tr>
 <td><code>manifests/control-panel-hostnetwork-patch.yaml</code></td>
 <td>The Balcony Pass</td>
-<td>Optional one-file patch letting the pod use the host network on real masters, so announcements reach the LAN</td>
+<td>Optional one-file patch letting the <span class="term" data-term="pod" tabindex="0">pod</span> use the <span class="term" data-term="host" tabindex="0">host</span> network on real masters, so announcements reach the LAN</td>
 </tr>
 <tr>
 <td><code>manifests/control-panel-deployment.yaml</code></td>
 <td>The Quiet Demo</td>
-<td>Sets <code>ADVERTISE_MDNS=false</code> for k3d (no LAN multicast from a pod netns)</td>
+<td>Sets <code>ADVERTISE_MDNS=false</code> for <span class="term" data-term="k3d" tabindex="0">k3d</span> (no LAN <span class="term" data-term="multicast" tabindex="0">multicast</span> from a <span class="term" data-term="pod" tabindex="0">pod</span> netns)</td>
 </tr>
 <tr>
 <td><code>docs/local-cluster-headlamp.md</code></td>
 <td>The Fixed Manual</td>
-<td>Port-forward survival lessons (direct binary + <code>setsid</code>) and the real-master mDNS recipe</td>
+<td>Port-forward survival lessons (direct binary + <code>setsid</code>) and the real-master <span class="term" data-term="mdns" tabindex="0">mDNS</span> recipe</td>
 </tr>
 </tbody></table>
 <h2 id="how-it-was-verified">How it was verified</h2><ul>
 <li><code>TestTXTRecords</code>: announcement payload contains cluster, version, path.</li>
 <li><code>TestAdvertiseAndBrowse</code>: a real announce-then-find round trip over
-multicast (skips gracefully where sandboxes lack it) — passed here.</li>
-<li><code>gofmt</code>/<code>vet</code>/<code>go test</code> all green; rebuilt image rolled out to k3d with
+<span class="term" data-term="multicast" tabindex="0">multicast</span> (skips gracefully where sandboxes lack it) — passed here.</li>
+<li><code>gofmt</code>/<code>vet</code>/<code>go test</code> all green; rebuilt image rolled out to <span class="term" data-term="k3d" tabindex="0">k3d</span> with
 no announcement noise in the logs (as configured).</li>
-<li>Gateway re-verified after rollout: fresh session → editor 200; orphaned
-pre-restart session resources cleaned (in-memory store limits, as known).</li>
+<li><span class="term" data-term="gateway" tabindex="0">Gateway</span> re-verified after rollout: fresh <span class="term" data-term="session" tabindex="0">session</span> → editor 200; orphaned
+pre-restart <span class="term" data-term="session" tabindex="0">session</span> resources cleaned (in-memory store limits, as known).</li>
 <li>Full LAN proof (second laptop sees the announcement) needs a real master
 with the balcony pass applied — flagged, not faked.</li>
 </ul>

@@ -6,6 +6,8 @@
 <title>LAN Onboarding Portal (Connection Approval Gate) — LDNDRC library</title>
 <meta name="description" content="Source document: docs/lan-onboarding-portal.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -48,7 +50,7 @@
 <div class="prose"><p>Status: <strong>implemented</strong> (checkpoint 41) and <strong>verified on real hardware</strong>
 (checkpoint 43). The soft-portal enrollment flow ships in the control panel
 binary; the onboarding AP + interception harness lives in
-<a href="..--tools--captive-portal--README.html"><code>tools/captive-portal/</code></a>; gateway-level
+<a href="..--tools--captive-portal--README.html"><code>tools/captive-portal/</code></a>; <span class="term" data-term="gateway" tabindex="0">gateway</span>-level
 enforcement is a designed follow-up.</p>
 <h2 id="what-it-is">What it is</h2><p>A captive-style portal hosted entirely inside the control panel (<code>:8082</code>), reachable
 <strong>before</strong> a device is approved. A laptop that joins the onboarding Wi-Fi gets:</p>
@@ -73,7 +75,7 @@ served from the master laptop.</p>
      ├─ /portal                 welcome page (no auth — by design)
      ├─ /portal/joining-cluster.{sh,ps1}
      ├─ /api/downloads/count    public aggregate counter
-     └─ /api/downloads/stats    JWT-gated detail for the admin console</code></pre></div><p><strong>Traffic separation is physical</strong>: the master hosts the onboarding AP only; the
+     └─ /api/downloads/stats    JWT-gated detail for the admin console</code></pre></div><p><strong>Traffic separation is physical</strong>: the master <span class="term" data-term="host" tabindex="0">hosts</span> the onboarding AP only; the
 cluster router carries all cluster traffic. The master laptop is never a router.</p>
 <h2 id="enrollment-flow">Enrollment flow</h2><div class="mermaid-diagram" data-mermaid="sequenceDiagram
     participant L as New laptop (onboarding Wi-Fi)
@@ -97,20 +99,20 @@ cluster router carries all cluster traffic. The master laptop is never a router.
     L-&gt;&gt;P: GET /api/nodes/{id} poll every 5s
     A-&gt;&gt;P: POST /api/nodes/{id}/approve | deny
     L-&gt;&gt;P: poll returns approved (+ k3s token for Hosts)
-    L-&gt;&gt;L: switch Wi-Fi (nmcli/netsh or manual)</code></pre></div><h3 id="the-scripts-joining-cluster-sh-joining-cluster-ps1">The scripts (<code>joining-cluster.sh</code>, <code>joining-cluster.ps1</code>)</h3><p>Both mirror <code>join-cluster.sh</code>&#39;s hardware gate (≥8 cores, ≥16 GB, NVIDIA ⇒ Host) and:</p>
+    L-&gt;&gt;L: switch Wi-Fi (nmcli/netsh or manual)</code></pre></div><h3 id="the-scripts-joining-cluster-sh-joining-cluster-ps1">The scripts (<code>joining-cluster.sh</code>, <code>joining-cluster.ps1</code>)</h3><p>Both mirror <code>join-cluster.sh</code>&#39;s hardware gate (≥8 cores, ≥16 GB, NVIDIA ⇒ <span class="term" data-term="host" tabindex="0">Host</span>) and:</p>
 <ul>
-<li>Find the panel via <code>PANEL_URL</code> env → mDNS (<code>_ldndrc-master._tcp</code>) → interactive prompt.</li>
+<li>Find the panel via <code>PANEL_URL</code> env → <span class="term" data-term="mdns" tabindex="0">mDNS</span> (<code>_ldndrc-master._tcp</code>) → interactive prompt.</li>
 <li>Register with retries. <strong>Idempotent</strong>: the panel deduplicates by hardware
 fingerprint, so re-running after a failure reuses the same join request.</li>
-<li>Poll until <code>approved</code> / <code>denied</code> / <code>expired</code>; denied shows the operator&#39;s reason.</li>
+<li>Poll until <code>approved</code> / <code>denied</code> / <code>expired</code>; denied shows the <span class="term" data-term="operator" tabindex="0">operator</span>&#39;s reason.</li>
 <li>Attempt the cluster Wi-Fi switch (<code>nmcli --ask</code> / <code>netsh wlan connect</code>) with manual
 fallback instructions printed on any failure.</li>
-<li>Approved <strong>Hosts</strong> are offered the K3s agent install (confirm prompt; sudo; uses
-<code>K3S_INSTALL_URL</code>, default <code>https://get.k3s.io</code>). Guests stop after approval —
-browser-only. Windows laptops always enroll as Guests (k3s agents are Linux-only).</li>
+<li>Approved <strong><span class="term" data-term="host" tabindex="0">Hosts</span></strong> are offered the <span class="term" data-term="k3s" tabindex="0">K3s</span> agent install (confirm prompt; sudo; uses
+<code>K3S_INSTALL_URL</code>, default <code>https://get.k3s.io</code>). <span class="term" data-term="guest" tabindex="0">Guests</span> stop after approval —
+browser-only. Windows laptops always enroll as <span class="term" data-term="guest" tabindex="0">Guests</span> (<span class="term" data-term="k3s" tabindex="0">k3s</span> agents are Linux-only).</li>
 </ul>
 <p>The status the script displays comes exclusively from the panel — a client cannot
-assert its own approval, and actual network access is enforced by the gateway, not by
+assert its own approval, and actual network access is enforced by the <span class="term" data-term="gateway" tabindex="0">gateway</span>, not by
 the script or the UI.</p>
 <h3 id="detect-only-and-test-joining-sh"><code>--detect-only</code> and <code>test-joining.sh</code></h3><p><code>joining-cluster.sh --detect-only</code> prints the detection/decision lines and exits — no
 network. <code>test-joining.sh</code> (repo root) runs five threshold scenarios against it,
@@ -149,8 +151,8 @@ this doc. Treat the counter as engagement telemetry, not conversion data.</p>
 mutation. Concurrent increments are serialized and exact (tested with parallel
 writers).</li>
 <li>Persists across server restarts and container restarts. Same caveat as the other
-panel stores: the Deployment uses an <code>emptyDir</code> volume, so counts reset on pod
-redeploy. Move all three DBs to a PVC in the same change if this ever matters.</li>
+panel stores: the <span class="term" data-term="deployment" tabindex="0">Deployment</span> uses an <code>emptyDir</code> volume, so counts reset on <span class="term" data-term="pod" tabindex="0">pod</span>
+redeploy. Move all three DBs to a <span class="term" data-term="pvc" tabindex="0">PVC</span> in the same change if this ever matters.</li>
 <li>A random per-DB <code>salt</code> is persisted with the counts so the unique-device hashes stay
 stable across restarts.</li>
 </ul>
@@ -194,11 +196,11 @@ metric is directional. MAC addresses are deliberately not used.</p>
 <tr>
 <td><code>GET</code></td>
 <td><code>/api/downloads/stats</code></td>
-<td>JWT</td>
+<td><span class="term" data-term="jwt" tabindex="0">JWT</span></td>
 <td>Adds per-artifact <code>requests</code>/<code>devices</code> + <code>unique_devices</code></td>
 </tr>
 </tbody></table>
-<p>Also changed: node IDs are now 128-bit (32 hex chars) instead of 32-bit. The ID doubles
+<p>Also changed: <span class="term" data-term="node" tabindex="0">node</span> IDs are now 128-bit (32 hex chars) instead of 32-bit. The ID doubles
 as the enrollment bearer capability for polls/diagnostics — knowledge of the ID is the
 token, never IP/MAC. Existing stored IDs keep working.</p>
 <h2 id="onboarding-ap-setup-master-laptop-infrastructure">Onboarding AP setup (master laptop, infrastructure)</h2><p>Not part of the Go app — the harness that makes the captive prompt real lives in
@@ -208,7 +210,7 @@ token, never IP/MAC. Existing stored IDs keep working.</p>
 <ol>
 <li><strong>Hotspot</strong> — NetworkManager AP mode on the Wi-Fi interface, pinned to
 <code>192.168.4.1/24</code> with <code>ipv4.method manual</code>. Do <strong>not</strong> use
-<code>ipv4.method shared</code>: NM&#39;s internal dnsmasq fails to spawn on some hosts
+<code>ipv4.method shared</code>: NM&#39;s internal dnsmasq fails to spawn on some <span class="term" data-term="host" tabindex="0">hosts</span>
 (<code>Failed to execute child process &quot;/usr/bin/dnsmasq&quot; (Operation not permitted)</code>) — that was the blocker on the reference laptop.</li>
 <li><strong>dnsmasq</strong> (run as root, pid file in the runtime dir) — DHCP
 <code>192.168.4.50–150</code> and wildcard DNS <code>address=/#/192.168.4.1</code>, so any
@@ -223,18 +225,18 @@ triggers the OS &quot;sign in to network&quot; prompt.</li>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-comment"># root teardown</span>
 <span class="hljs-built_in">sudo</span> nft delete table ip ldndrc-captive
 <span class="hljs-built_in">sudo</span> <span class="hljs-built_in">kill</span> <span class="hljs-string">&quot;<span class="hljs-subst">$(cat ~/.local/state/ldndrc-captive/dnsmasq.pid)</span>&quot;</span>
-nmcli connection down ldndrc-onboarding</code></pre></div><p>Test panel port: if a deployed control-panel pod already owns <code>:8082</code>
+nmcli connection down ldndrc-onboarding</code></pre></div><p>Test panel port: if a deployed control-panel <span class="term" data-term="pod" tabindex="0">pod</span> already owns <code>:8082</code>
 (hostNetwork), start the harness with <code>PANEL_PORT=8083</code>; the trap and printed
 commands follow that port.</p>
-<p>The mDNS advertiser (<code>_ldndrc-master._tcp</code>, already in the panel) also answers
+<p>The <span class="term" data-term="mdns" tabindex="0">mDNS</span> advertiser (<code>_ldndrc-master._tcp</code>, already in the panel) also answers
 &quot;where is the master&quot; for scripts using <code>avahi-browse</code>.</p>
 <p><code>./test-captive-trap.sh</code> checks the redirect contract (302, <code>Location</code>,
 <code>no-store</code>, body refresh, HEAD/POST) in ~2 s with no root.</p>
-<h2 id="gateway-enforcement-designed-follow-up">Gateway enforcement (designed follow-up)</h2><p>Approval state lives in the panel; enforcement lives at the gateway. To keep them
+<h2 id="gateway-enforcement-designed-follow-up">Gateway enforcement (designed follow-up)</h2><p>Approval state lives in the panel; enforcement lives at the <span class="term" data-term="gateway" tabindex="0">gateway</span>. To keep them
 decoupled (and vendor-neutral), the core deliberately ships <strong>no</strong> enforcement code.
 The later integration contract:</p>
 <div class="code term" data-lang=""><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs">GET /api/gateway/devices            (JWT or gateway-shared secret)
-→ {&quot;devices&quot;:[{&quot;id&quot;:&quot;…&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;mac&quot;:&quot;…&quot;,&quot;ip&quot;:&quot;…&quot;}]}</code></pre></div><p>A gateway integration (OpenWrt script, hostapd helper, or any router with an API) polls
+→ {&quot;devices&quot;:[{&quot;id&quot;:&quot;…&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;mac&quot;:&quot;…&quot;,&quot;ip&quot;:&quot;…&quot;}]}</code></pre></div><p>A <span class="term" data-term="gateway" tabindex="0">gateway</span> integration (OpenWrt script, hostapd helper, or any router with an API) polls
 this endpoint and applies allow/deny rules to the radio interface. Nothing in
 <code>internal/portal</code> or <code>internal/nodes</code> changes; the panel already treats approval as
 data, not enforcement. Options for extending <code>nodes.Node</code> with <code>mac</code>/<code>last_ip</code> at

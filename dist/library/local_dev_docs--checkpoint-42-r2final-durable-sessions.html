@@ -6,6 +6,8 @@
 <title>Checkpoint 42 — R2-final: durable panel DBs + storm-proof rollout/probes — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-42-r2final-durable-sessions.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -54,19 +56,19 @@
 </thead>
 <tbody><tr>
 <td><code>manifests/control-panel-pvc.yaml</code> (new): 1Gi RWO, <code>local-path</code></td>
-<td>Panel DBs must survive pod redeploys, not just container restarts</td>
+<td>Panel DBs must survive <span class="term" data-term="pod" tabindex="0">pod</span> redeploys, not just container restarts</td>
 </tr>
 <tr>
-<td>Deployment <code>volumes.data</code>: emptyDir → PVC</td>
-<td>same; <code>SESSIONS_DB</code> + <code>NODES_DB</code> both live under <code>/var/lib/ldndrc</code> on the PVC</td>
+<td><span class="term" data-term="deployment" tabindex="0">Deployment</span> <code>volumes.data</code>: emptyDir → <span class="term" data-term="pvc" tabindex="0">PVC</span></td>
+<td>same; <code>SESSIONS_DB</code> + <code>NODES_DB</code> both live under <code>/var/lib/ldndrc</code> on the <span class="term" data-term="pvc" tabindex="0">PVC</span></td>
 </tr>
 <tr>
 <td><code>SESSIONS_DB</code> env now actually live (was missing in-cluster; repo had it, cluster didn&#39;t)</td>
-<td>R2 session records were still in-memory-only in production</td>
+<td>R2 <span class="term" data-term="session" tabindex="0">session</span> records were still in-memory-only in production</td>
 </tr>
 <tr>
 <td><code>strategy: maxSurge 0 / maxUnavailable 1</code></td>
-<td>hostNetwork pod binds node <code>:8082</code>; a surge pod deadlocks forever (CP-20 §6). This formalizes delete-old-first — future <code>rollout restart</code> should behave, but delete-pod stays the habit until proven</td>
+<td>hostNetwork <span class="term" data-term="pod" tabindex="0">pod</span> binds <span class="term" data-term="node" tabindex="0">node</span> <code>:8082</code>; a surge <span class="term" data-term="pod" tabindex="0">pod</span> deadlocks forever (CP-20 §6). This formalizes delete-old-first — future <code>rollout restart</code> should behave, but delete-<span class="term" data-term="pod" tabindex="0">pod</span> stays the habit until proven</td>
 </tr>
 <tr>
 <td>Probes pinned <code>host: 127.0.0.1</code></td>
@@ -79,34 +81,34 @@
 </tbody></table>
 <h2 id="two-root-cause-discoveries-both-from-the-same-churn-family">Two root-cause discoveries (both from the same churn family)</h2><ol>
 <li><strong>141-restart crashloop storm (panel <code>RestartedCount</code> 95→101→141 over 3 days).</strong>
-hostNetwork pod&#39;s probes default to the podIP — baked in at pod
+hostNetwork <span class="term" data-term="pod" tabindex="0">pod</span>&#39;s probes default to the podIP — baked in at <span class="term" data-term="pod" tabindex="0">pod</span>
 creation. The laptop&#39;s DHCP lease drifted (<code>.37</code> → <code>.65</code> → <code>.42</code>),
-the baked IP went dead, liveness killed the container, and kubelet
+the baked IP went dead, liveness killed the container, and <span class="term" data-term="kubelet" tabindex="0">kubelet</span>
 restarted it <em>inside the same sandbox with the same stale IP</em> →
 permanent crashloop. Fix: loopback probes. Post-fix: the identical
 server has run 3d6h+ with <strong>0 restarts</strong>.</li>
-<li><strong>Pod-network outage (blocked the PVC bind).</strong> The first apply left
-the new pod Pending: <code>rancher.io/local-path</code> was alive but its
+<li><strong><span class="term" data-term="pod" tabindex="0">Pod</span>-network outage (blocked the <span class="term" data-term="pvc" tabindex="0">PVC</span> bind).</strong> The first apply left
+the new <span class="term" data-term="pod" tabindex="0">pod</span> Pending: <code>rancher.io/local-path</code> was alive but its
 reflector had <code>dial tcp 10.43.0.1:443: no route to host</code> — no
-pod-network pod could reach the service ClusterIP (proved with a
-scratch pod + wget). Same stale-flannel/iptables family as #1.
+<span class="term" data-term="pod" tabindex="0">pod</span>-network <span class="term" data-term="pod" tabindex="0">pod</span> could reach the <span class="term" data-term="service" tabindex="0">service</span> ClusterIP (proved with a
+scratch <span class="term" data-term="pod" tabindex="0">pod</span> + wget). Same stale-<span class="term" data-term="flannel" tabindex="0">flannel</span>/iptables family as #1.
 Fix needed <code>sudo systemctl restart k3s</code> (user-run, Oct 27) →
-PVC bound, cluster healthy.</li>
+<span class="term" data-term="pvc" tabindex="0">PVC</span> bound, cluster healthy.</li>
 </ol>
 <h2 id="durability-proof-the-r2-final-headline">Durability proof (the R2-final headline)</h2><ol>
 <li>Login as <code>durability</code> → <code>POST /api/sessions</code> → <code>202</code>, SID
-<code>117fd258af33</code> (Deployment + Service + 5Gi PVC created, all bound).</li>
+<code>117fd258af33</code> (<span class="term" data-term="deployment" tabindex="0">Deployment</span> + <span class="term" data-term="service" tabindex="0">Service</span> + 5Gi <span class="term" data-term="pvc" tabindex="0">PVC</span> created, all bound).</li>
 <li><code>kubectl delete pod -l app.kubernetes.io/name=ldndrc-control-panel</code> —
-the exact operation that used to wipe every session record.</li>
-<li>Fresh pod ready in ~5s; boot log: <code>sessions reconcile: 1 adopted, 0 tombstoned</code> — records loaded <strong>from the PVC</strong> and the live
-Deployment adopted.</li>
+the exact operation that used to wipe every <span class="term" data-term="session" tabindex="0">session</span> record.</li>
+<li>Fresh <span class="term" data-term="pod" tabindex="0">pod</span> ready in ~5s; boot log: <code>sessions reconcile: 1 adopted, 0 tombstoned</code> — records loaded <strong>from the <span class="term" data-term="pvc" tabindex="0">PVC</span></strong> and the live
+<span class="term" data-term="deployment" tabindex="0">Deployment</span> adopted.</li>
 <li><code>GET /api/sessions</code> from a fresh login → <code>117fd258af33</code> still there,
-<code>provisioning</code> → pod shortly <code>1/1 Running</code> (real workspace image,
+<code>provisioning</code> → <span class="term" data-term="pod" tabindex="0">pod</span> shortly <code>1/1 Running</code> (real <span class="term" data-term="workspace-image" tabindex="0">workspace image</span>,
 left running for use).</li>
 </ol>
 <p>The memory-hole that motivated R2 is closed: panel redeploys no longer
-lose sessions.</p>
-<h2 id="known-cost-of-the-emptydir-pvc-swap">Known cost of the emptyDir → PVC swap</h2><p>The old pod&#39;s <code>nodes.json</code> went with the emptyDir. Approved-laptop
+lose <span class="term" data-term="session" tabindex="0">sessions</span>.</p>
+<h2 id="known-cost-of-the-emptydir-pvc-swap">Known cost of the emptyDir → PVC swap</h2><p>The old <span class="term" data-term="pod" tabindex="0">pod</span>&#39;s <code>nodes.json</code> went with the emptyDir. Approved-laptop
 registrations from the rehearsal are gone; laptops re-join via the
 join TUI (same flow as before). <code>downloads.json</code> had no legacy data.</p>
 <h2 id="side-discovery-parallel-in-flight-work">Side discovery: parallel in-flight work</h2><p>The worktree holds an uncommitted, complete second chunk from Oct
@@ -114,19 +116,19 @@ join TUI (same flow as before). <code>downloads.json</code> had no legacy data.<
 written, not deployed. Committed as its own commit immediately after
 this one (manifest&#39;s <code>DOWNLOADS_DB</code> block was surgically separated so
 neither commit carries the other&#39;s work). Nothing in that chunk was
-modified beyond one manifest comment refresh to match the new PVC
+modified beyond one manifest comment refresh to match the new <span class="term" data-term="pvc" tabindex="0">PVC</span>
 reality (its &quot;emptyDir caveat&quot; text was honest then; the store now
-lives on the PVC).</p>
+lives on the <span class="term" data-term="pvc" tabindex="0">PVC</span>).</p>
 <h2 id="deploy-state-after-this-chunk">Deploy state after this chunk</h2><ul>
-<li>Cluster = repo manifest (applied Oct 27, verified today): PVC-backed,
+<li>Cluster = repo manifest (applied Oct 27, verified today): <span class="term" data-term="pvc" tabindex="0">PVC</span>-backed,
 loopback probes, safe strategy, <code>SESSIONS_DB</code> + stale join URL fixed.</li>
 <li>Panel image <code>ldndrc/control-panel:dev</code> (imported Oct 26) predates the
 portal code — env <code>DOWNLOADS_DB</code> is live but dormant until a rebuild.
-Portal deploy = next chunk&#39;s rebuild + import + delete-pod rollout.</li>
-<li>Durability session <code>117fd258af33</code> left Running for use.</li>
+Portal deploy = next chunk&#39;s rebuild + import + delete-<span class="term" data-term="pod" tabindex="0">pod</span> rollout.</li>
+<li>Durability <span class="term" data-term="session" tabindex="0">session</span> <code>117fd258af33</code> left Running for use.</li>
 </ul>
 <h2 id="discipline">Discipline</h2><p>No push. Untracked junk untouched. Image tarballs live in <code>$HOME</code>
-(<code>/tmp</code> proved worthless again — it ate the CSRF tarball Oct 26).</p>
+(<code>/tmp</code> proved worthless again — it ate the <span class="term" data-term="csrf" tabindex="0">CSRF</span> tarball Oct 26).</p>
 </div>
 </div>
 </body>

@@ -6,6 +6,8 @@
 <title>VS Code in a tab — LDNDRC</title>
 <meta name="description" content="The editor and its terminals are the student&#39;s actual workbench.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -51,9 +53,9 @@
     <h1 class="page-title">VS Code in a tab</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">The editor and its terminals are the student&#39;s actual workbench.</p>
     <div class="prose"><p><code>code-server</code> is VS Code compiled to run on a server and render in a browser. For most students it is the actual product: the editor, the integrated terminal, and the place every command in these docs is typed.</p>
-<p>It runs inside the session pod on port <code>7682</code>, behind the gateway at <code>editor.ros-platform.local</code>.</p>
-<h2 id="why-not-a-local-editor">Why not a local editor?</h2><p>Because the code has to run where ROS and Gazebo run. A local editor would need a tunnel, a matching toolchain, and a way to ship files back and forth. The editor living next to the robot removes all three problems.</p>
-<h2 id="the-trade-off">The trade-off</h2><p>The browser editor is limited by the browser: no native extensions that need a GUI, no local filesystem, keyboard shortcuts that fight the host OS. For ROS 2 Python and launch files it is more than enough. For heavy C++ debugging, the <a href="selkies.html" class="topic-link">The streamed desktop</a> desktop exists.</p>
+<p>It runs inside the <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span> on port <code>7682</code>, behind the <span class="term" data-term="gateway" tabindex="0">gateway</span> at <code>editor.ros-platform.local</code>.</p>
+<h2 id="why-not-a-local-editor">Why not a local editor?</h2><p>Because the code has to run where ROS and <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> run. A local editor would need a tunnel, a matching toolchain, and a way to ship files back and forth. The editor living next to the robot removes all three problems.</p>
+<h2 id="the-trade-off">The trade-off</h2><p>The browser editor is limited by the browser: no native extensions that need a GUI, no local filesystem, keyboard shortcuts that fight the <span class="term" data-term="host" tabindex="0">host</span> OS. For <span class="term" data-term="ros2" tabindex="0">ROS 2</span> Python and launch files it is more than enough. For heavy C++ debugging, the <a href="selkies.html" class="topic-link">The streamed desktop</a> desktop exists.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">curl -s -o /dev/null -w <span class="hljs-string">&#x27;%{http_code}\n&#x27;</span> \
   -H <span class="hljs-string">&#x27;Host: editor.ros-platform.local&#x27;</span> -H <span class="hljs-string">&quot;Cookie: <span class="hljs-variable">$COOKIE</span>&quot;</span> \
   http://127.0.0.1:8082/

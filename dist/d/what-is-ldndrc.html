@@ -6,6 +6,8 @@
 <title>What LDNDRC is — LDNDRC</title>
 <meta name="description" content="A local-first ROS 2 lab where laptops contribute compute and everyone else just opens a browser.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -51,7 +53,7 @@
     <h1 class="page-title">What LDNDRC is</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">A local-first ROS 2 lab where laptops contribute compute and everyone else just opens a browser.</p>
     <div class="prose"><p>A robotics workshop needs a room full of gaming laptops and one machine that can show everyone a robot. That normally means a cloud account, a GPU server, and a network engineer. LDNDRC replaces all three with the laptops people already brought.</p>
-<p>The product is a <strong>local-first ROS 2 lab</strong>. High-end laptops become compute. Everything else becomes a thin client. The only thing a student installs is nothing — they open a browser.</p>
+<p>The product is a <strong>local-first <span class="term" data-term="ros2" tabindex="0">ROS 2</span> lab</strong>. High-end laptops become compute. Everything else becomes a thin client. The only thing a student installs is nothing — they open a browser.</p>
 <h2 id="the-three-clocks">The three clocks</h2><p>Everything in the system runs on one of three clocks, and keeping them separate is most of the architecture:</p>
 <table>
 <thead>
@@ -64,29 +66,29 @@
 <tbody><tr>
 <td>Cluster</td>
 <td>minutes</td>
-<td>Nodes join, images import, the control panel rolls out</td>
+<td><span class="term" data-term="node" tabindex="0">Nodes</span> join, images import, the control panel rolls out</td>
 </tr>
 <tr>
-<td>Session</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span></td>
 <td>seconds</td>
 <td>A student asks for a workspace and gets one</td>
 </tr>
 <tr>
 <td>Robot</td>
 <td>milliseconds</td>
-<td>Gazebo physics and the websocket scene stream</td>
+<td><span class="term" data-term="gazebo" tabindex="0">Gazebo</span> physics and the <span class="term" data-term="websocket" tabindex="0">websocket</span> scene stream</td>
 </tr>
 </tbody></table>
 <p>A student never sees the first clock. They see a launch screen, and then they see their robot.</p>
-<h2 id="what-a-student-actually-gets">What a student actually gets</h2><p>One login, four hostnames, one private pod:</p>
+<h2 id="what-a-student-actually-gets">What a student actually gets</h2><p>One login, four hostnames, one private <span class="term" data-term="pod" tabindex="0">pod</span>:</p>
 <ul>
 <li><code>control.ros-platform.local</code> — the panel: login, launch, stop</li>
-<li><code>editor.ros-platform.local</code> — code-server, VS Code with terminals</li>
+<li><code>editor.ros-platform.local</code> — <span class="term" data-term="code-server" tabindex="0">code-server</span>, VS Code with terminals</li>
 <li><code>desktop.ros-platform.local</code> — a full Linux desktop over WebRTC</li>
 <li><code>gazebo.ros-platform.local</code> — the 3D scene, streamed</li>
 </ul>
-<p>The cluster, the pods, and the images are invisible. That is the point: the interface is the product.</p>
-<h2 id="what-it-is-not">What it is not</h2><p>It is not a general Kubernetes tutorial, and it is not a robot simulator. It is the plumbing that turns laptops into a classroom, built so that a single instructor can run it without a cloud bill.</p>
+<p>The cluster, the <span class="term" data-term="pod" tabindex="0">pods</span>, and the images are invisible. That is the point: the interface is the product.</p>
+<h2 id="what-it-is-not">What it is not</h2><p>It is not a general <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> tutorial, and it is not a robot simulator. It is the plumbing that turns laptops into a classroom, built so that a single instructor can run it without a cloud bill.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">curl -s http://127.0.0.1:8082/healthz
 <span class="hljs-comment"># {&quot;status&quot;:&quot;ok&quot;}</span></code></pre></div><p>If that answers, a control panel is alive somewhere and you can start asking it questions. Next: <a href="roles.html" class="topic-link">Hosts, Guests, Operators</a> to see which machine you are standing at.</p></div>
     <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>

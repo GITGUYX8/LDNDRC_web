@@ -6,6 +6,8 @@
 <title>Checkpoint 02 — The Workspace Containers &amp; Per-Pod Isolation — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-02-workspace-containers-and-isolation.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -46,10 +48,10 @@
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-02-workspace-containers-and-isolation.md · 5.2 KB</div>
 <h1 class="page-title">Checkpoint 02 — The Workspace Containers &amp; Per-Pod Isolation</h1>
 <div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>The farm has proven its ground rules — only strong laptops join, workloads land
-only on Host machines, and a browser can reach them. But so far we rehearsed
+only on <span class="term" data-term="host" tabindex="0">Host</span> machines, and a browser can reach them. But so far we rehearsed
 with toy passengers (a one-line web page). This checkpoint built the real
 vehicle: the actual container image that will carry the robot workspace —
-Gazebo simulation, browser editor, desktop streaming — plus the little switch
+<span class="term" data-term="gazebo" tabindex="0">Gazebo</span> simulation, browser editor, desktop streaming — plus the little switch
 that gives every student their own private radio channel so nobody&#39;s robots
 accidentally talk to someone else&#39;s.</p>
 <h2 id="what-got-built">What got built</h2><table>
@@ -63,7 +65,7 @@ accidentally talk to someone else&#39;s.</p>
 <tbody><tr>
 <td><code>images/base/Dockerfile</code> + <code>installs.sh</code></td>
 <td>The Foundation</td>
-<td>A ready-made ROS2 + Gazebo workshop, pre-loaded with TurtleBot3 and tools</td>
+<td>A ready-made <span class="term" data-term="ros2" tabindex="0">ROS2</span> + <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> workshop, pre-loaded with TurtleBot3 and tools</td>
 </tr>
 <tr>
 <td><code>images/workspace/</code> (82 files)</td>
@@ -82,30 +84,30 @@ accidentally talk to someone else&#39;s.</p>
 </tr>
 </tbody></table>
 <h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-foundation-images-base">The Foundation — <code>images/base/</code></h3><p>The base container is the &quot;factory default&quot; laptop for the farm. We reused a
-tried-and-tested recipe: the standard ROS2 Jazzy full desktop image, plus a big
-shopping list of extras — Gazebo simulation, the bridge that lets ROS2 talk to
-Gazebo, TurtleBot3&#39;s robot packages, and coding tools like colcon and clang.
-It also switches on a safety setting (DDS only talks on localhost) so no robot
+tried-and-tested recipe: the standard <span class="term" data-term="ros2" tabindex="0">ROS2</span> Jazzy full desktop image, plus a big
+shopping list of extras — <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> simulation, the bridge that lets <span class="term" data-term="ros2" tabindex="0">ROS2</span> talk to
+<span class="term" data-term="gazebo" tabindex="0">Gazebo</span>, TurtleBot3&#39;s robot packages, and coding tools like colcon and clang.
+It also switches on a safety setting (<span class="term" data-term="dds" tabindex="0">DDS</span> only talks on localhost) so no robot
 data can wander outside its own container.</p>
 <h3 id="the-workspace-kit-images-workspace">The Workspace Kit — <code>images/workspace/</code></h3><p>On top of the foundation, this kit adds the three things a student sees in a
 browser:</p>
 <ul>
-<li><strong>code-server</strong> — a full editor (VS Code) with a built-in terminal, so
+<li><strong><span class="term" data-term="code-server" tabindex="0">code-server</span></strong> — a full editor (VS Code) with a built-in terminal, so
 students can type <code>ros2 launch</code> right in the browser.</li>
 <li><strong>Selkies</strong> — the live desktop streaming, so the whole Linux desktop shows up
 in a browser tab.</li>
-<li><strong>gazebo-web</strong> — the bridge that pipes the 3D simulation view out through a
-WebSocket to the browser.</li>
+<li><strong><span class="term" data-term="gazebo" tabindex="0">gazebo</span>-web</strong> — the bridge that pipes the 3D simulation view out through a
+<span class="term" data-term="websocket" tabindex="0">WebSocket</span> to the browser.</li>
 </ul>
 <p>A tiny boss process (supervisord) watches all three and restarts any that crash.
 Each piece ships with its own startup script, all port-tested: editor on 7682,
 desktop on 8080, simulation view on 9002.</p>
-<h3 id="the-channel-assigner-images-workspace-bin-entrypoint-sh">The Channel Assigner — <code>images/workspace/bin/entrypoint.sh</code></h3><p>This is the new brain we added. Every workspace pod is named after a number —
+<h3 id="the-channel-assigner-images-workspace-bin-entrypoint-sh">The Channel Assigner — <code>images/workspace/bin/entrypoint.sh</code></h3><p>This is the new brain we added. Every workspace <span class="term" data-term="pod" tabindex="0">pod</span> is named after a number —
 <code>ros2-platform-0</code>, <code>ros2-platform-1</code>, and so on. At startup, the Channel
-Assigner reads that number and sets the workspace&#39;s radio channel to <code>100 + the number</code>. So pod 0 gets channel 100, pod 1 gets 101, pod 7 gets 107. Because
-every workspace is on a different channel, a robot in one pod can never hear a
+Assigner reads that number and sets the workspace&#39;s radio channel to <code>100 + the number</code>. So <span class="term" data-term="pod" tabindex="0">pod</span> 0 gets channel 100, <span class="term" data-term="pod" tabindex="0">pod</span> 1 gets 101, <span class="term" data-term="pod" tabindex="0">pod</span> 7 gets 107. Because
+every workspace is on a different channel, a robot in one <span class="term" data-term="pod" tabindex="0">pod</span> can never hear a
 robot in another — even on the same laptop. It also re-locks the localhost-only
-setting, so discovery traffic stays inside the pod&#39;s own room. This is the
+setting, so discovery traffic stays inside the <span class="term" data-term="pod" tabindex="0">pod</span>&#39;s own room. This is the
 defense-in-depth that makes &quot;fully isolated per student&quot; a guarantee, not a hope.</p>
 <h3 id="the-assembly-line-images-workspace-dockerfile">The Assembly Line — <code>images/workspace/Dockerfile</code></h3><p>This is the instruction manual that builds the final image: take The Foundation,
 install the Workspace Kit, plug in the Channel Assigner, and tell the container
@@ -127,13 +129,13 @@ Supervisord keeps all three services alive:
 typos that would stop them running.</li>
 <li><strong>Launch file:</strong> the TurtleBot3 web launch file parses as valid Python.</li>
 <li><strong>Channel Assigner, 4/4 scenarios:</strong><ul>
-<li>pod <code>ros2-platform-0</code> → channel 100</li>
-<li>pod <code>ros2-platform-7</code> → channel 107</li>
-<li>no pod name (local testing) → falls back to channel 30</li>
-<li>pod name with no number → falls back to channel 30</li>
+<li><span class="term" data-term="pod" tabindex="0">pod</span> <code>ros2-platform-0</code> → channel 100</li>
+<li><span class="term" data-term="pod" tabindex="0">pod</span> <code>ros2-platform-7</code> → channel 107</li>
+<li>no <span class="term" data-term="pod" tabindex="0">pod</span> name (local testing) → falls back to channel 30</li>
+<li><span class="term" data-term="pod" tabindex="0">pod</span> name with no number → falls back to channel 30</li>
 </ul>
 </li>
-<li>The <code>FROM</code> reference in the workspace image was correctly repointed at our own
+<li>The <code>FROM</code> reference in the <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> was correctly repointed at our own
 base image, so the build is fully self-contained.</li>
 <li>Not yet verified: the images have not been built or run on a cluster — that&#39;s
 the very next step.</li>
@@ -147,7 +149,7 @@ the very next step.</li>
 </thead>
 <tbody><tr>
 <td><code>images/base/</code></td>
-<td>The pre-loaded ROS2 + Gazebo + TurtleBot3 workshop</td>
+<td>The pre-loaded <span class="term" data-term="ros2" tabindex="0">ROS2</span> + <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> + TurtleBot3 workshop</td>
 </tr>
 <tr>
 <td><code>images/workspace/</code></td>
@@ -163,9 +165,9 @@ the very next step.</li>
 </tr>
 </tbody></table>
 <h2 id="what-s-next">What&#39;s next</h2><ul>
-<li><input disabled="" type="checkbox"> Copy the gzweb browser viewer (the 3D scene renderer) into <code>sim-web-app/</code></li>
-<li><input disabled="" type="checkbox"> Write the real farm manifest (StatefulSet + Service + Ingress) with the
-proven Host-node seating rule</li>
+<li><input disabled="" type="checkbox"> Copy the <span class="term" data-term="gzweb" tabindex="0">gzweb</span> browser viewer (the 3D scene renderer) into <code>sim-web-app/</code></li>
+<li><input disabled="" type="checkbox"> Write the real farm manifest (StatefulSet + <span class="term" data-term="service" tabindex="0">Service</span> + <span class="term" data-term="ingress" tabindex="0">Ingress</span>) with the
+proven <span class="term" data-term="host" tabindex="0">Host</span>-<span class="term" data-term="node" tabindex="0">node</span> seating rule</li>
 <li><input disabled="" type="checkbox"> Build the images (check disk space first) and deploy them on the test
 cluster</li>
 <li><input disabled="" type="checkbox"> Rehearse the browser paths (<code>/code</code>, <code>/stream</code>, <code>/sim</code>) end to end</li>

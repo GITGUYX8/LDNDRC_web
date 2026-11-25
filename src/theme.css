@@ -251,6 +251,51 @@ code, pre, kbd, samp { font-family: var(--font-mono); font-variant-ligatures: no
 .hovercard.show { opacity:1; transform:none; }.hovercard[hidden] { display:none; }
 .hovercard .hc-meta { display:flex; gap:8px; align-items:center; flex-wrap:wrap; font:700 .62rem var(--font-mono); letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); }.hovercard .hc-dom { font-weight:800; }.hovercard h3 { margin:9px 0 5px; color:var(--text); font-size:1.05rem; }.hovercard p { margin:0; color:var(--text-soft); font-size:.82rem; line-height:1.45; }.hc-actions { display:flex; gap:7px; margin-top:13px; }.hc-actions .btn { min-height:32px; font-size:.72rem; padding:.4rem .65rem; }
 
+/* ---------- jargon terms ---------- */
+
+.term {
+  border-bottom: 1px dotted color-mix(in srgb, var(--text-faint) 70%, transparent);
+  border-radius: 4px;
+  cursor: help;
+  transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+.term:hover, .term:focus-visible {
+  background: color-mix(in srgb, var(--green) 18%, transparent);
+  color: var(--green);
+  border-bottom-color: transparent;
+  outline: none;
+}
+.term-card {
+  position: fixed;
+  z-index: 130;
+  width: min(340px, calc(100vw - 24px));
+  padding: 14px 16px 15px;
+  background: var(--surface);
+  border-radius: 14px;
+  border-top: 3px solid var(--green);
+  box-shadow: var(--card-float);
+  pointer-events: none;
+}
+.term-card[hidden] { display: none; }
+.term-card-head {
+  font: 800 .68rem var(--font-mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 7px;
+}
+.term-card p { margin: 0; color: var(--text-soft); font-size: .84rem; line-height: 1.5; }
+.term-card pre {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  background: var(--bg);
+  border-radius: 8px;
+  color: var(--green);
+  font: .72rem/1.45 var(--font-mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 /* ---------- vim status bar ---------- */
 
 .status-bar {

@@ -6,6 +6,8 @@
 <title>Checkpoint 22 — R4 Steps 1+2: Design Doc + Backend Prerequisites (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-22-r4-prereqs.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -48,18 +50,18 @@
 <div class="prose"><h2 id="context">Context</h2><p>R4 (student frontend) started with its planned step 0/1/2 on branch
 <code>feat/r3-csrf</code>, unpushed. No UI code yet — this checkpoint records the
 spec recovery and the two backend prerequisites UI-1 needs. R3 + R2 are
-live on the real master (checkpoint-21); guest join still deferred.</p>
+live on the real master (checkpoint-21); <span class="term" data-term="guest" tabindex="0">guest</span> join still deferred.</p>
 <h2 id="step-1-uiux-design-md-restored">Step 1 — <code>uiux-design.md</code> restored</h2><p>The 285-line design draft (Sep 1, Mission Control theme, IA, state
 machine, screens, tokens, React+Vite+TS + <code>embed.FS</code> plan, UI-1..3
 phasing) existed at <code>cdac976</code>, vanished from the tree, now lives at
 <code>docs/uiux-design.md</code> verbatim plus a provenance header. Three deltas
 vs current architecture recorded at the top (not silently rewritten):</p>
 <ol>
-<li>Path routing (<code>/code /sim</code>, nginx) → host gateway; the SPA is served
-by the Go binary itself on the control host <code>/</code>, no sidecar.</li>
+<li>Path routing (<code>/code /sim</code>, nginx) → <span class="term" data-term="host" tabindex="0">host</span> <span class="term" data-term="gateway" tabindex="0">gateway</span>; the SPA is served
+by the Go binary itself on the control <span class="term" data-term="host" tabindex="0">host</span> <code>/</code>, no <span class="term" data-term="sidecar" tabindex="0">sidecar</span>.</li>
 <li><code>GET /api/sessions/{id}</code> never refreshed readiness — fixed below.</li>
 <li>Login now returns <code>csrf_token</code> (R3) — SPA keeps it in memory, sends
-<code>X-CSRF-Token</code> on cookie-authed mutations.</li>
+<code>X-CSRF-Token</code> on <span class="term" data-term="cookie" tabindex="0">cookie</span>-authed mutations.</li>
 </ol>
 <h2 id="step-2-backend-micro-fixes-unit-tested-uncommitted-pending-ui-1">Step 2 — backend micro-fixes (unit-tested, uncommitted pending UI-1)</h2><h3 id="2a-get-heals-provisioning-ready-sessions-store-go">2a. <code>Get()</code> heals provisioning → ready (<code>sessions/store.go</code>)</h3><p>The launch stepper polls <code>GET /api/sessions/{id}</code>, which used <code>Get()</code> —
 no readiness probe, so the stepper would spin forever. <code>Get</code> now runs
@@ -73,21 +75,21 @@ ready, stays provisioning when not.</p>
 <code>/api/*</code> and <code>/healthz</code> win by mux specificity (tested).</li>
 <li><code>web/embed.go</code> + placeholder <code>dist/index.html</code> until the Vite build
 replaces it. <code>COPY . .</code> already covers <code>web/</code> — no Dockerfile change.</li>
-<li>Minimal content-type map (html/js/css/json/svg); CSRF guard passes
+<li>Minimal content-type map (html/js/css/json/svg); <span class="term" data-term="csrf" tabindex="0">CSRF</span> guard passes
 safe GETs through untouched.</li>
 </ul>
-<p>Verified: <code>gofmt</code>/<code>vet</code> clean, <code>go test -count=1</code> sessions + httpapi
+<p>Verified: <code>gofmt</code>/<code>vet</code> clean, <code>go test -count=1</code> <span class="term" data-term="session" tabindex="0">sessions</span> + httpapi
 <code>ok</code>, full suite green. Not yet live (ships with the UI-1 image).</p>
-<h2 id="api-surface-the-spa-will-use-all-live-all-verified-earlier">API surface the SPA will use (all live, all verified earlier)</h2><p><code>POST /api/auth/login</code> → <code>{token, csrf_token}</code> + cookie ·
+<h2 id="api-surface-the-spa-will-use-all-live-all-verified-earlier">API surface the SPA will use (all live, all verified earlier)</h2><p><code>POST /api/auth/login</code> → <code>{token, csrf_token}</code> + <span class="term" data-term="cookie" tabindex="0">cookie</span> ·
 <code>POST /api/sessions</code> (202) · <code>GET /api/sessions/{id}</code> (now
-self-healing) · <code>DELETE /api/sessions/{id}</code> · gateway hosts
-(editor-200/desktop-502/no-cookie-401 on the real master).</p>
+self-healing) · <code>DELETE /api/sessions/{id}</code> · <span class="term" data-term="gateway" tabindex="0">gateway</span> <span class="term" data-term="host" tabindex="0">hosts</span>
+(editor-200/desktop-502/no-<span class="term" data-term="cookie" tabindex="0">cookie</span>-401 on the real master).</p>
 <h2 id="next">Next</h2><p>UI-1 scaffold (<code>control-panel/web/</code>, Vite+React+TS: Login → Launch
 stepper → shell with Code/Sim/Split iframes, top bar, rail,
 tokens.css), <code>npm run build</code> into <code>dist/</code>, Go rebuild, live verify:
-login → launch → ready → iframes through the gateway. Then UI-2/UI-3
-per the doc. Toolchain confirmed: node 26 + npm via mise,
-<code>sim-web-app/</code> present for the later gzweb component.</p>
+login → launch → ready → iframes through the <span class="term" data-term="gateway" tabindex="0">gateway</span>. Then UI-2/UI-3
+per the doc. Toolchain confirmed: <span class="term" data-term="node" tabindex="0">node</span> 26 + npm via mise,
+<code>sim-web-app/</code> present for the later <span class="term" data-term="gzweb" tabindex="0">gzweb</span> component.</p>
 </div>
 </div>
 </body>

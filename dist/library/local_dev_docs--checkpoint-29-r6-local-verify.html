@@ -6,6 +6,8 @@
 <title>Checkpoint 29 — R6 Local Contract Verify (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-29-r6-local-verify.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -46,33 +48,33 @@
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-29-r6-local-verify.md · 1.9 KB</div>
 <h1 class="page-title">Checkpoint 29 — R6 Local Contract Verify (detailed)</h1>
 <div class="prose"><h2 id="context">Context</h2><p>Third R6 chunk on <code>feat/r6-workspace-image</code>: prove the 10.2GB
-workspace image boots and satisfies the session contract from
+<span class="term" data-term="workspace-image" tabindex="0">workspace image</span> boots and satisfies the <span class="term" data-term="session" tabindex="0">session</span> contract from
 <code>control-panel/internal/sessions/kubernetes.go</code> (ports 7682/8080/
 9002, readiness <code>GET /</code> on 7682, uid 1000, <code>/home/student</code>) using a
 plain <code>docker run</code> — no cluster involved. No image changes needed.</p>
 <h2 id="verify-observed-container-ws-verify">Verify (observed, container <code>ws-verify</code>)</h2><ul>
-<li><code>id</code> → <code>uid=1000(student) gid=1000(student)</code> ✅ (matches the pod
+<li><code>id</code> → <code>uid=1000(student) gid=1000(student)</code> ✅ (matches the <span class="term" data-term="pod" tabindex="0">pod</span>
 <code>runAsUser: 1000</code>; entrypoint fell back to <code>ROS_DOMAIN_ID=30</code>
 with no <code>POD_NAME</code>, as designed for non-StatefulSet runs).</li>
 <li><code>supervisorctl status</code> → <code>code-server RUNNING</code>, <code>gazebo-web RUNNING</code>, both past <code>startsecs</code> ✅ (no selkies section — deferred
 per checkpoint-28, no restart loop).</li>
 <li><code>:7682/</code> → <strong>302</strong> <code>Location: ./?folder=/home/student/dev_ws</code> →
-<strong>200</strong> VS Code HTML ✅. The 302 is code-server&#39;s normal folder
-redirect under <code>auth: none</code>; kubelet treats ≤399 as success so the
-session readiness probe passes once code-server is up.</li>
+<strong>200</strong> VS Code HTML ✅. The 302 is <span class="term" data-term="code-server" tabindex="0">code-server</span>&#39;s normal folder
+redirect under <code>auth: none</code>; <span class="term" data-term="kubelet" tabindex="0">kubelet</span> treats ≤399 as success so the
+<span class="term" data-term="session" tabindex="0">session</span> readiness probe passes once <span class="term" data-term="code-server" tabindex="0">code-server</span> is up.</li>
 <li><code>:9002/</code> → <strong>404 from a live server</strong> ✅ (port bound, bridge
 <code>RUNNING</code> via <code>gz launch</code> + <code>websocket.gzlaunch</code>; root simply isn&#39;t
 a route on the Harmonic-era bridge — guessed <code>/gazebo</code>, <code>/status</code>,
 <code>/gzweb</code> also 404, which only maps the route table, not a failure).</li>
 <li><code>:8080</code> → <strong>connection refused</strong> ✅-by-design (Selkies deferred;
-gateway <code>desktop</code> will stay 502 exactly like the stand-in).</li>
+<span class="term" data-term="gateway" tabindex="0">gateway</span> <code>desktop</code> will stay 502 exactly like the stand-in).</li>
 </ul>
 <h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>No repo files touched this chunk except this report (staged for
-commit). The 8 join/nodes files + <code>join-cluster.sh</code> untouched/
+commit). The 8 join/<span class="term" data-term="node" tabindex="0">nodes</span> files + <code>join-cluster.sh</code> untouched/
 unstaged; untracked junk left alone. Test container removed.</p>
-<h2 id="next-chunk">Next chunk</h2><p>Immutable tag (<code>:jazzy-harmonic-&lt;sha&gt;</code>) + <code>docker save</code> → operator
+<h2 id="next-chunk">Next chunk</h2><p>Immutable tag (<code>:jazzy-harmonic-&lt;sha&gt;</code>) + <code>docker save</code> → <span class="term" data-term="operator" tabindex="0">operator</span>
 <code>sudo k3s ctr images import</code> → checkpoint-30. Then <code>SESSION_IMAGE</code>
-flip (committed) → live session matrix with real services.</p>
+flip (committed) → live <span class="term" data-term="session" tabindex="0">session</span> matrix with real <span class="term" data-term="service" tabindex="0">services</span>.</p>
 </div>
 </div>
 </body>

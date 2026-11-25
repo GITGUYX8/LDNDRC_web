@@ -6,6 +6,8 @@
 <title>Why DDS never leaves the pod — LDNDRC</title>
 <meta name="description" content="Isolation is a network-namespace property, not a firewall rule.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,25 +52,25 @@
     </div>
     <h1 class="page-title">Why DDS never leaves the pod</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Isolation is a network-namespace property, not a firewall rule.</p>
-    <div class="prose"><p>ROS 2 uses DDS for discovery and message passing. DDS is chatty: it multicasts, it discovers peers automatically, and it assumes a flat network. Put twenty student robots on one LAN and every node sees every other node.</p>
-<p>The platform&#39;s answer is not a firewall rule. It is a <strong>network namespace</strong>.</p>
-<h2 id="the-mechanism">The mechanism</h2><p>A Kubernetes pod shares one network namespace across all its containers. <code>code-server</code>, Selkies, Gazebo, and the ROS processes all see the same <code>localhost</code>. DDS multicast never crosses the pod boundary because, as far as the kernel is concerned, there is nowhere to cross to.</p>
-<p>Flannel — the CNI — carries only HTTP, WebSocket, and WebRTC between pods. No DDS packet ever traverses the overlay.</p>
-<h2 id="defense-in-depth">Defense in depth</h2><p>Namespace isolation alone is enough in theory. The platform adds two more layers anyway:</p>
+    <div class="prose"><p><span class="term" data-term="ros2" tabindex="0">ROS 2</span> uses <span class="term" data-term="dds" tabindex="0">DDS</span> for discovery and message passing. <span class="term" data-term="dds" tabindex="0">DDS</span> is chatty: it multicasts, it discovers peers automatically, and it assumes a flat network. Put twenty student robots on one LAN and every <span class="term" data-term="node" tabindex="0">node</span> sees every other <span class="term" data-term="node" tabindex="0">node</span>.</p>
+<p>The platform&#39;s answer is not a firewall rule. It is a <strong>network <span class="term" data-term="namespace" tabindex="0">namespace</span></strong>.</p>
+<h2 id="the-mechanism">The mechanism</h2><p>A <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> <span class="term" data-term="pod" tabindex="0">pod</span> shares one network <span class="term" data-term="namespace" tabindex="0">namespace</span> across all its containers. <code>code-server</code>, Selkies, <span class="term" data-term="gazebo" tabindex="0">Gazebo</span>, and the ROS processes all see the same <code>localhost</code>. <span class="term" data-term="dds" tabindex="0">DDS</span> <span class="term" data-term="multicast" tabindex="0">multicast</span> never crosses the <span class="term" data-term="pod" tabindex="0">pod</span> boundary because, as far as the kernel is concerned, there is nowhere to cross to.</p>
+<p><span class="term" data-term="flannel" tabindex="0">Flannel</span> — the <span class="term" data-term="cni" tabindex="0">CNI</span> — carries only HTTP, <span class="term" data-term="websocket" tabindex="0">WebSocket</span>, and WebRTC between <span class="term" data-term="pod" tabindex="0">pods</span>. No <span class="term" data-term="dds" tabindex="0">DDS</span> packet ever traverses the overlay.</p>
+<h2 id="defense-in-depth">Defense in depth</h2><p><span class="term" data-term="namespace" tabindex="0">Namespace</span> isolation alone is enough in theory. The platform adds two more layers anyway:</p>
 <ol>
-<li>A <strong>unique <code>ROS_DOMAIN_ID</code> per session pod</strong>. Two pods that somehow shared a network would still not discover each other&#39;s topics.</li>
-<li><code>ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST</code>, which pins discovery to loopback even inside the pod.</li>
+<li>A <strong>unique <code>ROS_DOMAIN_ID</code> per <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span></strong>. Two <span class="term" data-term="pod" tabindex="0">pods</span> that somehow shared a network would still not discover each other&#39;s topics.</li>
+<li><code>ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST</code>, which pins discovery to loopback even inside the <span class="term" data-term="pod" tabindex="0">pod</span>.</li>
 </ol>
 <p>The second layer costs nothing and turns a subtle misconfiguration into a non-event.</p>
-<h2 id="why-not-just-use-separate-vlans">Why not just use separate VLANs?</h2><p>VLANs require switch configuration and physical control of the network. The workshop happens on whatever Wi-Fi the venue has. A pod namespace is a property of the deployment, not of the venue.</p>
+<h2 id="why-not-just-use-separate-vlans">Why not just use separate VLANs?</h2><p>VLANs require switch configuration and physical control of the network. The workshop happens on whatever Wi-Fi the venue has. A <span class="term" data-term="pod" tabindex="0">pod</span> <span class="term" data-term="namespace" tabindex="0">namespace</span> is a property of the <span class="term" data-term="deployment" tabindex="0">deployment</span>, not of the venue.</p>
 <h2 id="what-this-buys">What this buys</h2><ul>
 <li>A student cannot accidentally publish <code>/cmd_vel</code> into another student&#39;s robot.</li>
 <li>Two students can run the same world and the same topic names with no coordination.</li>
-<li>Teardown is <code>DELETE /api/sessions/{id}</code> — the namespace goes with it.</li>
+<li>Teardown is <code>DELETE /api/sessions/{id}</code> — the <span class="term" data-term="namespace" tabindex="0">namespace</span> goes with it.</li>
 </ul>
-<p>The cost is that cross-session collaboration is impossible by construction. If two students need to share a topic, they have to share a session. That is a deliberate limitation, not a missing feature.</p>
+<p>The cost is that cross-<span class="term" data-term="session" tabindex="0">session</span> collaboration is impossible by construction. If two students need to share a topic, they have to share a <span class="term" data-term="session" tabindex="0">session</span>. That is a deliberate limitation, not a missing feature.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc <span class="hljs-built_in">exec</span> &lt;session-pod&gt; -- <span class="hljs-built_in">env</span> | grep ROS_DOMAIN_ID
-kubectl -n ldndrc <span class="hljs-built_in">exec</span> &lt;session-pod&gt; -- <span class="hljs-built_in">env</span> | grep ROS_AUTOMATIC_DISCOVERY_RANGE</code></pre></div><p>Compare the domain IDs of two sessions. They must differ. Then read <a href="ros-domain-id.html" class="topic-link">Unique ROS_DOMAIN_ID per pod</a> for how the value is assigned.</p></div>
+kubectl -n ldndrc <span class="hljs-built_in">exec</span> &lt;session-pod&gt; -- <span class="hljs-built_in">env</span> | grep ROS_AUTOMATIC_DISCOVERY_RANGE</code></pre></div><p>Compare the <span class="term" data-term="domain-id" tabindex="0">domain IDs</span> of two <span class="term" data-term="session" tabindex="0">sessions</span>. They must differ. Then read <a href="ros-domain-id.html" class="topic-link">Unique ROS_DOMAIN_ID per pod</a> for how the value is assigned.</p></div>
     <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>
 <div class="code term"><pre><code class="hljs">kubectl -n ldndrc exec &lt;session-pod&gt; -- env | grep ROS_DOMAIN_ID</code></pre></div></div><div class="source-list"><span class="eyebrow">Sources</span><a href="../library/README.html">README.md</a><a href="../library/local_dev_docs--checkpoint-02-workspace-containers-and-isolation.html">local_dev_docs/checkpoint-02-workspace-containers-and-isolation.md</a></div>
 </div>

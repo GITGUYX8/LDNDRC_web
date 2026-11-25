@@ -6,6 +6,8 @@
 <title>LDNDRC — Frontend UI/UX Design Plan — LDNDRC library</title>
 <meta name="description" content="Source document: docs/uiux-design.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -51,13 +53,13 @@ file lived at repo root, vanished from the tree at some point, and is
 now the R4 build spec. Three deltas vs. current architecture (see
 checkpoint-21 / R4 step-0 report):</p>
 <ol>
-<li>Path routing (<code>/code /sim</code>) → host gateway
+<li>Path routing (<code>/code /sim</code>) → <span class="term" data-term="host" tabindex="0">host</span> <span class="term" data-term="gateway" tabindex="0">gateway</span>
 (<code>editor/desktop/gazebo.ros-platform.local</code>); the SPA is served by
-the Go binary itself (<code>embed.FS</code> on the control host <code>/</code>), no nginx.</li>
+the Go binary itself (<code>embed.FS</code> on the control <span class="term" data-term="host" tabindex="0">host</span> <code>/</code>), no nginx.</li>
 <li><code>GET /api/sessions/{id}</code> did not refresh readiness — fixed for R4
 so the launch stepper terminates.</li>
 <li>Login now also returns <code>csrf_token</code> (R3) — the SPA keeps it in
-memory and sends <code>X-CSRF-Token</code> on cookie-authed mutations.
+memory and sends <code>X-CSRF-Token</code> on <span class="term" data-term="cookie" tabindex="0">cookie</span>-authed mutations.
 The UX layer below (screens, tokens, phasing) is unchanged.</li>
 </ol>
 </blockquote>
@@ -67,8 +69,8 @@ structural inspiration from a reference implementation (React SPA with
 Auth → Workspace → Cockpit flow) but deliberately changes the appearance,
 navigation model, and interaction patterns.</p>
 <hr>
-<h2 id="1-product-framing">1. Product framing</h2><p>LDNDRC gives each student a private, browser-based ROS 2 + Gazebo workspace.
-The frontend is the <em>only</em> thing a student ever sees — the cluster, pods, and
+<h2 id="1-product-framing">1. Product framing</h2><p>LDNDRC gives each student a private, browser-based <span class="term" data-term="ros2" tabindex="0">ROS 2</span> + <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> workspace.
+The frontend is the <em>only</em> thing a student ever sees — the cluster, <span class="term" data-term="pod" tabindex="0">pods</span>, and
 images are invisible. The UI must therefore answer three questions instantly:</p>
 <ol>
 <li><strong>Where am I?</strong> — a branded, recognizable product, not three raw tools.</li>
@@ -87,14 +89,14 @@ images are invisible. The UI must therefore answer three questions instantly:</p
 <tbody><tr>
 <td>Code</td>
 <td><code>/code</code></td>
-<td>code-server (iframe)</td>
+<td><span class="term" data-term="code-server" tabindex="0">code-server</span> (iframe)</td>
 <td>VS Code in the browser</td>
 </tr>
 <tr>
 <td>Sim</td>
 <td><code>/sim</code></td>
-<td>gzweb viewer (<code>sim-web-app</code>)</td>
-<td>3D Gazebo scene over websocket</td>
+<td><span class="term" data-term="gzweb" tabindex="0">gzweb</span> viewer (<code>sim-web-app</code>)</td>
+<td>3D <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> scene over <span class="term" data-term="websocket" tabindex="0">websocket</span></td>
 </tr>
 <tr>
 <td>Desktop</td>
@@ -117,7 +119,7 @@ is one click and instant (tools stay alive in the background).</li>
 window placement, we offer exactly three layouts: <code>Code</code>, <code>Sim</code>, and
 <code>Code | Sim</code> (50/50 split, draggable divider). This covers 95% of real
 workflows (write launch file → watch the robot move) with zero fiddling.</li>
-<li><strong>Status is ambient, not a page.</strong> Session state lives in a persistent top
+<li><strong>Status is ambient, not a page.</strong> <span class="term" data-term="session" tabindex="0">Session</span> state lives in a persistent top
 bar (dot + elapsed time + stop button), visible from every screen. The
 reference hides status behind polling pages; we make it always-on.</li>
 <li><strong>Desktop is an escape hatch, not a peer.</strong> The full Selkies desktop opens in
@@ -125,7 +127,7 @@ a new browser tab (it needs keyboard/mouse capture). The rail shows it as a
 secondary action, keeping the main stage for Code + Sim.</li>
 <li><strong>Light-on-dark &quot;mission control&quot; identity.</strong> Dark theme, but warmer and
 higher-contrast than the reference&#39;s teal-on-black. Accent color and
-typography chosen for long sessions (reduced eye strain, clear focus rings).</li>
+typography chosen for long <span class="term" data-term="session" tabindex="0">sessions</span> (reduced eye strain, clear focus rings).</li>
 </ol>
 <hr>
 <h2 id="3-information-architecture">3. Information architecture</h2><div class="code term" data-lang=""><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs">/                     → redirect to /launch (or /login if unauthenticated)
@@ -182,22 +184,22 @@ admin table can be added later without changing the student IA).</p>
 <hr>
 <h2 id="4-screen-by-screen-design">4. Screen-by-screen design</h2><h3 id="4-1-login-login">4.1 Login (<code>/login</code>)</h3><ul>
 <li>Centered card on a dark canvas with a subtle grid/glow backdrop.</li>
-<li>Brand mark + name + one-line tagline: <em>&quot;ROS 2 &amp; Gazebo in your browser.&quot;</em></li>
+<li>Brand mark + name + one-line tagline: <em>&quot;<span class="term" data-term="ros2" tabindex="0">ROS 2</span> &amp; <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> in your browser.&quot;</em></li>
 <li>Email + password, inline validation, show/hide password toggle.</li>
-<li>Error banner for bad credentials; no page reload (fetch → JWT → store).</li>
+<li>Error banner for bad credentials; no page reload (fetch → <span class="term" data-term="jwt" tabindex="0">JWT</span> → store).</li>
 <li>No sign-up in this phase (accounts are provisioned by the instructor).</li>
 </ul>
 <h3 id="4-2-launch-launch">4.2 Launch (<code>/launch</code>)</h3><p>The &quot;mission control&quot; home. Layout: brand header, then a centered status panel.</p>
 <ul>
 <li><strong>NO_SESSION:</strong> large illustration-free hero — a single glowing
 <strong>Launch workspace</strong> button, with a one-line explainer of what happens
-(&quot;We start a private ROS 2 Jazzy + Gazebo Harmonic environment just for you&quot;).</li>
+(&quot;We start a private <span class="term" data-term="ros2" tabindex="0">ROS 2</span> Jazzy + <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> Harmonic environment just for you&quot;).</li>
 <li><strong>PROVISIONING:</strong> a vertical <strong>stepper</strong> with live states, mapped from the
-Go API&#39;s session/workload status (same progression the reference computes):<ol>
-<li>Creating your session</li>
-<li>Scheduling the workspace pod</li>
+Go API&#39;s <span class="term" data-term="session" tabindex="0">session</span>/workload status (same progression the reference computes):<ol>
+<li>Creating your <span class="term" data-term="session" tabindex="0">session</span></li>
+<li>Scheduling the workspace <span class="term" data-term="pod" tabindex="0">pod</span></li>
 <li>Pulling image &amp; starting containers</li>
-<li>Starting ROS services</li>
+<li>Starting ROS <span class="term" data-term="service" tabindex="0">services</span></li>
 <li>Ready
 Each step: spinner → check. A subtle elapsed timer. Cancel button.</li>
 </ol>
@@ -220,7 +222,7 @@ button with confirm dialog.</li>
 └────┴─────────────────────────────────────────────────────────┘</code></pre></div><p><strong>Top bar (persistent, every screen in <code>/app</code>):</strong></p>
 <ul>
 <li>Left: brand mark + view switcher (segmented control: Code · Sim · Split).</li>
-<li>Right: session status dot (green pulse = Ready), elapsed session timer,
+<li>Right: <span class="term" data-term="session" tabindex="0">session</span> status dot (green pulse = Ready), elapsed <span class="term" data-term="session" tabindex="0">session</span> timer,
 Desktop (opens new tab), Stop (confirm), user menu (sign out).</li>
 </ul>
 <p><strong>Rail (left, 56px, icon-only):</strong></p>
@@ -230,15 +232,15 @@ duplicated for muscle memory; plus a &quot;Reconnect&quot; action if a stream dr
 </ul>
 <p><strong>Stage:</strong></p>
 <ul>
-<li><code>code</code>: code-server iframe, full-bleed.</li>
-<li><code>sim</code>: gzweb viewer (our <code>sim-web-app</code> build) full-bleed, with a small
+<li><code>code</code>: <span class="term" data-term="code-server" tabindex="0">code-server</span> iframe, full-bleed.</li>
+<li><code>sim</code>: <span class="term" data-term="gzweb" tabindex="0">gzweb</span> viewer (our <code>sim-web-app</code> build) full-bleed, with a small
 floating toolbar: reset camera, pause/play sim, reconnect.</li>
 <li><code>split</code>: code left, sim right, draggable divider (persisted to
 <code>localStorage</code>). Both iframes stay mounted when switching views so
-code-server and the gz websocket never reconnect on view change
+<span class="term" data-term="code-server" tabindex="0">code-server</span> and the gz <span class="term" data-term="websocket" tabindex="0">websocket</span> never reconnect on view change
 (CSS visibility toggling, not unmount).</li>
 </ul>
-<p><strong>Connection loss:</strong> if any iframe/websocket drops, a non-blocking toast +
+<p><strong>Connection loss:</strong> if any iframe/<span class="term" data-term="websocket" tabindex="0">websocket</span> drops, a non-blocking toast +
 rail badge offers <strong>Reconnect</strong>; the stage shows a dimmed overlay with a
 single retry button only after 3 failed attempts.</p>
 <h3 id="4-4-desktop-desktop">4.4 Desktop (<code>/desktop</code>)</h3><ul>
@@ -311,12 +313,12 @@ and a floating &quot;Back to workspace&quot; pill. Keyboard capture warning show
 </tr>
 </tbody></table>
 <p>Rationale: violet accent distinguishes LDNDRC from the reference&#39;s teal and
-from code-server&#39;s blue, while staying colorblind-safe against the green/red
-status pair. Status colors are reserved <em>only</em> for session state — never for
+from <span class="term" data-term="code-server" tabindex="0">code-server</span>&#39;s blue, while staying colorblind-safe against the green/red
+status pair. Status colors are reserved <em>only</em> for <span class="term" data-term="session" tabindex="0">session</span> state — never for
 decoration.</p>
 <h3 id="typography">Typography</h3><ul>
 <li>UI: <strong>Inter</strong> (system fallback stack).</li>
-<li>Numeric/timer/code-adjacent: <strong>JetBrains Mono</strong> (matches code-server&#39;s
+<li>Numeric/timer/code-adjacent: <strong>JetBrains Mono</strong> (matches <span class="term" data-term="code-server" tabindex="0">code-server</span>&#39;s
 default mono, so the shell and the IDE feel like one product).</li>
 </ul>
 <h3 id="motion">Motion</h3><ul>
@@ -343,16 +345,16 @@ default mono, so the shell and the IDE feel like one product).</li>
 <tbody><tr>
 <td>Framework</td>
 <td><strong>React + Vite + TypeScript</strong> (SPA)</td>
-<td>gzweb embeds cleanly as a component; reference proves the pattern; small surface (4 routes)</td>
+<td><span class="term" data-term="gzweb" tabindex="0">gzweb</span> embeds cleanly as a component; reference proves the pattern; small surface (4 routes)</td>
 </tr>
 <tr>
 <td>Serving</td>
 <td>Static build embedded in the Go control panel via <code>embed.FS</code>, served at <code>/</code></td>
-<td>one binary, one container, no nginx sidecar</td>
+<td>one binary, one container, no nginx <span class="term" data-term="sidecar" tabindex="0">sidecar</span></td>
 </tr>
 <tr>
 <td>Auth</td>
-<td>JWT from <code>POST /api/auth/login</code>, stored in memory + <code>sessionStorage</code>; <code>Authorization: Bearer</code> on API calls</td>
+<td><span class="term" data-term="jwt" tabindex="0">JWT</span> from <code>POST /api/auth/login</code>, stored in memory + <code>sessionStorage</code>; <code>Authorization: Bearer</code> on API calls</td>
 <td>matches existing Go <code>internal/auth</code></td>
 </tr>
 <tr>
@@ -362,8 +364,8 @@ default mono, so the shell and the IDE feel like one product).</li>
 </tr>
 <tr>
 <td>Tool embedding</td>
-<td>iframes for code-server &amp; Selkies; gzweb as a <strong>mounted component</strong> (not iframe) using our <code>sim-web-app</code> code</td>
-<td>gzweb as component avoids iframe websocket issues and lets us style the toolbar natively</td>
+<td>iframes for <span class="term" data-term="code-server" tabindex="0">code-server</span> &amp; Selkies; <span class="term" data-term="gzweb" tabindex="0">gzweb</span> as a <strong>mounted component</strong> (not iframe) using our <code>sim-web-app</code> code</td>
+<td><span class="term" data-term="gzweb" tabindex="0">gzweb</span> as component avoids iframe <span class="term" data-term="websocket" tabindex="0">websocket</span> issues and lets us style the toolbar natively</td>
 </tr>
 <tr>
 <td>State</td>
@@ -441,7 +443,7 @@ default mono, so the shell and the IDE feel like one product).</li>
 <td>Violet accent, warmer darks, JetBrains Mono for timers</td>
 </tr>
 <tr>
-<td>Admin page (user/session cards)</td>
+<td>Admin page (user/<span class="term" data-term="session" tabindex="0">session</span> cards)</td>
 <td><strong>Defer</strong></td>
 <td>API seams exist; UI in a later phase</td>
 </tr>
@@ -472,14 +474,14 @@ default mono, so the shell and the IDE feel like one product).</li>
 </tr>
 <tr>
 <td><strong>UI-3</strong></td>
-<td>Admin table, instructor view, session metrics</td>
+<td>Admin table, instructor view, <span class="term" data-term="session" tabindex="0">session</span> metrics</td>
 <td>client-go wired (Task 8+)</td>
 </tr>
 </tbody></table>
 <h2 id="9-open-questions">9. Open questions</h2><ol>
 <li><strong>Brand name/mark</strong> — &quot;LDNDRC&quot; wordmark with a <code>◆</code> glyph as placeholder; final logo TBD.</li>
-<li><strong>Sim toolbar controls</strong> — which gzweb controls do we expose (reset camera, pause, stats)? Start minimal: reset camera + reconnect.</li>
-<li><strong>Session idle timeout UX</strong> — do we warn before auto-stop? (Backend policy first, UI banner second.)</li>
+<li><strong>Sim toolbar controls</strong> — which <span class="term" data-term="gzweb" tabindex="0">gzweb</span> controls do we expose (reset camera, pause, stats)? Start minimal: reset camera + reconnect.</li>
+<li><strong><span class="term" data-term="session" tabindex="0">Session</span> idle timeout UX</strong> — do we warn before auto-stop? (Backend policy first, UI banner second.)</li>
 <li><strong>Mobile/tablet</strong> — out of scope for UI-1 (desktop-first, min-width 1024px with a polite &quot;use a larger screen&quot; notice below that).</li>
 </ol>
 </div>

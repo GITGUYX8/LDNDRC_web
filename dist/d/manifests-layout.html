@@ -6,6 +6,8 @@
 <title>The manifests directory — LDNDRC</title>
 <meta name="description" content="Deployment, service, ingress, RBAC, secret example, and Headlamp — one apply each.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -62,37 +64,37 @@
 <tbody><tr>
 <td><code>control-panel-rbac.yaml</code></td>
 <td>ServiceAccount, Role, RoleBinding</td>
-<td>namespace-scoped on purpose</td>
+<td><span class="term" data-term="namespace" tabindex="0">namespace</span>-scoped on purpose</td>
 </tr>
 <tr>
 <td><code>control-panel-deployment.yaml</code></td>
-<td>Deployment</td>
+<td><span class="term" data-term="deployment" tabindex="0">Deployment</span></td>
 <td>image, env, probes, volumes</td>
 </tr>
 <tr>
 <td><code>control-panel-service.yaml</code></td>
-<td>Service</td>
+<td><span class="term" data-term="service" tabindex="0">Service</span></td>
 <td>port <code>8082</code></td>
 </tr>
 <tr>
 <td><code>control-panel-ingress.yaml</code></td>
-<td>Ingress</td>
+<td><span class="term" data-term="ingress" tabindex="0">Ingress</span></td>
 <td>the four hostnames</td>
 </tr>
 <tr>
 <td><code>headlamp.yaml</code></td>
-<td>Deployment + Service</td>
-<td>operator dashboard</td>
+<td><span class="term" data-term="deployment" tabindex="0">Deployment</span> + <span class="term" data-term="service" tabindex="0">Service</span></td>
+<td><span class="term" data-term="operator" tabindex="0">operator</span> dashboard</td>
 </tr>
 <tr>
 <td><code>control-panel-hostnetwork-patch.yaml</code></td>
 <td>patch</td>
-<td>optional, for mDNS on real masters</td>
+<td>optional, for <span class="term" data-term="mdns" tabindex="0">mDNS</span> on real masters</td>
 </tr>
 <tr>
 <td><code>secret.example.yaml</code></td>
 <td>docs</td>
-<td>shape of the JWT secret</td>
+<td>shape of the <span class="term" data-term="jwt" tabindex="0">JWT</span> secret</td>
 </tr>
 </tbody></table>
 <h2 id="the-rule-for-adding-a-file">The rule for adding a file</h2><p>One concern per file, and the filename says which concern. A manifest that both patches and deploys is a manifest nobody can reason about during an incident.</p>

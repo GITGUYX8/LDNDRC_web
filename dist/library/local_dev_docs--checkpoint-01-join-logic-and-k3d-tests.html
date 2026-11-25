@@ -6,6 +6,8 @@
 <title>Checkpoint 01 — Join Logic &amp; k3d Cluster Tests — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-01-join-logic-and-k3d-tests.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,7 +52,7 @@ farm: strong laptops run the heavy simulators, weak laptops just open a browser
 and watch. The problem — you only have one laptop right now. So this checkpoint
 built two things: a &quot;gatekeeper&quot; script that will eventually decide what each
 real laptop is allowed to do, and a <strong>fake miniature version of the whole farm</strong>
-inside Docker containers, so every rule could be rehearsed before real hardware
+inside <span class="term" data-term="docker" tabindex="0">Docker</span> containers, so every rule could be rehearsed before real hardware
 shows up.</p>
 <h2 id="what-got-built">What got built</h2><table>
 <thead>
@@ -73,7 +75,7 @@ shows up.</p>
 <tr>
 <td><code>manifests/test-pod.yaml</code></td>
 <td>The Test Passengers</td>
-<td>Tiny placeholder workloads that must only sit on &quot;Host&quot; laptops</td>
+<td>Tiny placeholder workloads that must only sit on &quot;<span class="term" data-term="host" tabindex="0">Host</span>&quot; laptops</td>
 </tr>
 <tr>
 <td><code>manifests/test-svc.yaml</code></td>
@@ -89,7 +91,7 @@ shows up.</p>
 <h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-bouncer-join-cluster-sh">The Bouncer — <code>join-cluster.sh</code></h3><p>Every real laptop will eventually run this script. It checks three things:
 at least 8 CPU cores (the chip&#39;s worker count), at least 16 GB of RAM
 (short-term memory), and an NVIDIA graphics card. All three must be yes, and
-the laptop joins the farm wearing a &quot;Host&quot; badge. Any single &quot;no&quot; and the
+the laptop joins the farm wearing a &quot;<span class="term" data-term="host" tabindex="0">Host</span>&quot; badge. Any single &quot;no&quot; and the
 script politely says &quot;just use your browser instead.&quot;</p>
 <p>Since there&#39;s only one real laptop, the script accepts pretend answers
 (<code>TEST_CPU=4</code> and friends) so you can rehearse both outcomes without owning
@@ -99,10 +101,10 @@ one (turned away), and two sneaky cases that pass two checks but fail one
 (GPU missing; CPU too weak). Those sneaky cases prove the Bouncer really does
 demand <em>all three</em>, not just most of them.</p>
 <h3 id="the-test-passengers-mailbox-front-door-manifests">The Test Passengers, Mailbox &amp; Front Door — <code>manifests/</code></h3><p>Three small rehearsal pieces for the farm itself. The Test Passengers carry a
-rule: &quot;seat us only on Host-badged machines.&quot; The Mailbox is a permanent
+rule: &quot;seat us only on <span class="term" data-term="host" tabindex="0">Host</span>-badged machines.&quot; The Mailbox is a permanent
 address that always points at them, even as they come and go. The Front Door
 Sign says &quot;anyone asking for <code>/sim</code> gets shown to the Mailbox&quot; — exactly how a
-guest browser will one day reach the real simulation screen.</p>
+<span class="term" data-term="guest" tabindex="0">guest</span> browser will one day reach the real simulation screen.</p>
 <p>One fix mattered here: the Passengers originally just slept, which meant the
 Front Door had a sign pointing at a door nobody answered. They now run a tiny
 one-line web page, so the full browser-to-workload path can be proven.</p>
@@ -121,15 +123,15 @@ A browser asks for ros-platform.local/sim
 Front Door Sign ─► Mailbox ─► Test Passenger (sitting on a Host machine)</code></pre></div><h2 id="proof-it-works">Proof it works</h2><ul>
 <li><strong>Bouncer&#39;s Exam:</strong> 4 out of 4 scenarios judged correctly (all PASS).</li>
 <li><strong>Joining:</strong> a new container joined the fake farm and showed up wearing the
-Host badge, exactly as the Bouncer decided.</li>
-<li><strong>Seating rule:</strong> both Test Passengers landed only on the Host-badged
-machine — never on a Guest or the manager node.</li>
+<span class="term" data-term="host" tabindex="0">Host</span> badge, exactly as the Bouncer decided.</li>
+<li><strong>Seating rule:</strong> both Test Passengers landed only on the <span class="term" data-term="host" tabindex="0">Host</span>-badged
+machine — never on a <span class="term" data-term="guest" tabindex="0">Guest</span> or the manager <span class="term" data-term="node" tabindex="0">node</span>.</li>
 <li><strong>Losing a machine:</strong> two worker containers were forcibly stopped; the farm
 noticed within about a minute, marked them gone, and moved their work onto a
 healthy machine automatically.</li>
 <li><strong>The browser path:</strong> asking for <code>http://ros-platform.local/sim</code> now returns
-a real page (HTTP 200) from a Passenger sitting on the Host machine — the
-exact route a guest&#39;s browser will take to reach a simulation.</li>
+a real page (HTTP 200) from a Passenger sitting on the <span class="term" data-term="host" tabindex="0">Host</span> machine — the
+exact route a <span class="term" data-term="guest" tabindex="0">guest</span>&#39;s browser will take to reach a simulation.</li>
 </ul>
 <h2 id="the-one-liner-version">The one-liner version</h2><table>
 <thead>
@@ -152,9 +154,9 @@ exact route a guest&#39;s browser will take to reach a simulation.</li>
 </tr>
 </tbody></table>
 <h2 id="what-s-next">What&#39;s next</h2><ul>
-<li><input disabled="" type="checkbox"> Build the real simulation container (ROS2 Jazzy + Gazebo Harmonic with
+<li><input disabled="" type="checkbox"> Build the real simulation container (<span class="term" data-term="ros2" tabindex="0">ROS2</span> Jazzy + <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> Harmonic with
 the browser-view plugin)</li>
-<li><input disabled="" type="checkbox"> Write the real farm manifest (the StatefulSet that gives every session
+<li><input disabled="" type="checkbox"> Write the real farm manifest (the StatefulSet that gives every <span class="term" data-term="session" tabindex="0">session</span>
 its own private radio channel, <code>ROS_DOMAIN_ID</code>)</li>
 <li><input disabled="" type="checkbox"> Rehearse the same browser path against the real simulation view instead
 of the placeholder page</li>

@@ -6,6 +6,8 @@
 <title>Checkpoint 6 — Putting the Control Panel Inside K3s — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-06-control-panel-k3s-deployment.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -45,12 +47,12 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-06-control-panel-k3s-deployment.md · 5.8 KB</div>
 <h1 class="page-title">Checkpoint 6 — Putting the Control Panel Inside K3s</h1>
-<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>The session builder could now describe and create a student workspace, but the
-control panel itself still had no K3s home. This checkpoint gave it a small,
+<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>The <span class="term" data-term="session" tabindex="0">session</span> builder could now describe and create a student workspace, but the
+control panel itself still had no <span class="term" data-term="k3s" tabindex="0">K3s</span> home. This checkpoint gave it a small,
 locked-down apartment inside the cluster and documented how to put it there.</p>
-<p>The new deployment uses K3s&#39;s normal Kubernetes API. It does not need cluster
-administrator access: it can manage only the session resources in the <code>ldndrc</code>
-namespace.</p>
+<p>The new <span class="term" data-term="deployment" tabindex="0">deployment</span> uses <span class="term" data-term="k3s" tabindex="0">K3s</span>&#39;s normal <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> API. It does not need cluster
+administrator access: it can manage only the <span class="term" data-term="session" tabindex="0">session</span> resources in the <code>ldndrc</code>
+<span class="term" data-term="namespace" tabindex="0">namespace</span>.</p>
 <h2 id="what-got-built">What got built</h2><table>
 <thead>
 <tr>
@@ -67,12 +69,12 @@ namespace.</p>
 <tr>
 <td><code>manifests/control-panel-rbac.yaml</code></td>
 <td>The Key Ring</td>
-<td>Creates the namespace, ServiceAccount, and narrowly scoped permissions.</td>
+<td>Creates the <span class="term" data-term="namespace" tabindex="0">namespace</span>, ServiceAccount, and narrowly scoped permissions.</td>
 </tr>
 <tr>
 <td><code>manifests/control-panel-deployment.yaml</code></td>
 <td>The Control Room</td>
-<td>Runs one authenticated control-panel replica inside K3s.</td>
+<td>Runs one authenticated control-panel replica inside <span class="term" data-term="k3s" tabindex="0">K3s</span>.</td>
 </tr>
 <tr>
 <td><code>manifests/control-panel-service.yaml</code></td>
@@ -82,12 +84,12 @@ namespace.</p>
 <tr>
 <td><code>manifests/control-panel-secret.example.yaml</code></td>
 <td>The Secret Recipe</td>
-<td>Shows the shape of the JWT Secret without committing a real secret.</td>
+<td>Shows the shape of the <span class="term" data-term="jwt" tabindex="0">JWT</span> Secret without committing a real secret.</td>
 </tr>
 <tr>
 <td><code>control-panel/README.md</code></td>
 <td>The Setup Card</td>
-<td>Explains image building, secret creation, deployment, and checks.</td>
+<td>Explains image building, secret creation, <span class="term" data-term="deployment" tabindex="0">deployment</span>, and checks.</td>
 </tr>
 <tr>
 <td><code>.gitignore</code></td>
@@ -97,54 +99,54 @@ namespace.</p>
 </tbody></table>
 <h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-packing-box-control-panel-dockerfile">The Packing Box — <code>control-panel/Dockerfile</code></h3><p>Think of this as packing the control panel for travel. A Go build stage compiles
 the server into one static Linux binary, then a minimal distroless image carries
-only that binary into K3s.</p>
+only that binary into <span class="term" data-term="k3s" tabindex="0">K3s</span>.</p>
 <p>The runtime exposes port 8082 and runs as the non-root <code>nonroot</code> user. The image
-expects the project image <code>ldndrc/control-panel:dev</code> by default in the K3s
-Deployment.</p>
+expects the project image <code>ldndrc/control-panel:dev</code> by default in the <span class="term" data-term="k3s" tabindex="0">K3s</span>
+<span class="term" data-term="deployment" tabindex="0">Deployment</span>.</p>
 <h3 id="the-key-ring-manifests-control-panel-rbac-yaml">The Key Ring — <code>manifests/control-panel-rbac.yaml</code></h3><p>This is the control panel&#39;s carefully sized key ring. It creates the <code>ldndrc</code>
-namespace and a dedicated ServiceAccount, then allows that account to create,
-inspect, update, and remove only Deployments, Services, PVCs, and Pods in that
-namespace.</p>
+<span class="term" data-term="namespace" tabindex="0">namespace</span> and a dedicated ServiceAccount, then allows that account to create,
+inspect, update, and remove only <span class="term" data-term="deployment" tabindex="0">Deployments</span>, <span class="term" data-term="service" tabindex="0">Services</span>, <span class="term" data-term="pvc" tabindex="0">PVCs</span>, and <span class="term" data-term="pod" tabindex="0">Pods</span> in that
+<span class="term" data-term="namespace" tabindex="0">namespace</span>.</p>
 <p>It does not grant cluster-admin access. That matters because the control panel
-creates student workspaces, but should not be able to alter the whole K3s farm.</p>
-<h3 id="the-control-room-manifests-control-panel-deployment-yaml">The Control Room — <code>manifests/control-panel-deployment.yaml</code></h3><p>This is the small office where the control panel works. It receives the JWT
-secret from Kubernetes, turns on in-cluster mode, and points session creation at
-the <code>ldndrc</code> namespace and the Jazzy/Harmonic workspace image.</p>
+creates student workspaces, but should not be able to alter the whole <span class="term" data-term="k3s" tabindex="0">K3s</span> farm.</p>
+<h3 id="the-control-room-manifests-control-panel-deployment-yaml">The Control Room — <code>manifests/control-panel-deployment.yaml</code></h3><p>This is the small office where the control panel works. It receives the <span class="term" data-term="jwt" tabindex="0">JWT</span>
+secret from <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span>, turns on in-cluster mode, and points <span class="term" data-term="session" tabindex="0">session</span> creation at
+the <code>ldndrc</code> <span class="term" data-term="namespace" tabindex="0">namespace</span> and the Jazzy/Harmonic <span class="term" data-term="workspace-image" tabindex="0">workspace image</span>.</p>
 <p>It checks <code>/healthz</code> before claiming to be ready and keeps checking afterward.
 It also runs with a read-only filesystem, no privilege escalation, dropped
 capabilities, and a RuntimeDefault seccomp profile.</p>
 <h3 id="the-reception-desk-manifests-control-panel-service-yaml">The Reception Desk — <code>manifests/control-panel-service.yaml</code></h3><p>Think of this as the building directory. It gives the control panel a stable
 ClusterIP address named <code>ldndrc-control-panel</code> on port 8082, so the future
-gateway and frontend do not need to know which pod is currently running it.</p>
+<span class="term" data-term="gateway" tabindex="0">gateway</span> and frontend do not need to know which <span class="term" data-term="pod" tabindex="0">pod</span> is currently running it.</p>
 <h3 id="the-secret-recipe-manifests-control-panel-secret-example-yaml">The Secret Recipe — <code>manifests/control-panel-secret.example.yaml</code></h3><p>This is an empty recipe card, not a real password. It documents the Secret
 format for people who prefer applying YAML, while the README gives a safer
 command that generates a random value locally.</p>
 <h3 id="the-vault-lock-gitignore">The Vault Lock — <code>.gitignore</code></h3><p>The real file <code>manifests/control-panel-secret.yaml</code> is now ignored. This makes
-it possible to keep a local Secret manifest without accidentally adding the JWT
+it possible to keep a local Secret manifest without accidentally adding the <span class="term" data-term="jwt" tabindex="0">JWT</span>
 signing key to the repository.</p>
 <h3 id="the-setup-card-control-panel-readme-md">The Setup Card — <code>control-panel/README.md</code></h3><p>This is the runbook for the checkpoint. It covers building the image, importing
-it into a k3d cluster, creating the JWT Secret, applying the manifests, checking
-rollout status, and confirming the ServiceAccount can create session resources.</p>
+it into a <span class="term" data-term="k3d" tabindex="0">k3d</span> cluster, creating the <span class="term" data-term="jwt" tabindex="0">JWT</span> Secret, applying the manifests, checking
+rollout status, and confirming the ServiceAccount can create <span class="term" data-term="session" tabindex="0">session</span> resources.</p>
 <h2 id="how-it-all-connects">How it all connects</h2><ol>
 <li>Build <code>ldndrc/control-panel:dev</code> from the Go control-panel directory.</li>
-<li>Import the image into the K3s or k3d nodes.</li>
-<li>Create the JWT Secret locally, without committing it.</li>
-<li>Apply the namespace and RBAC rules.</li>
-<li>K3s starts the control-panel Deployment with its ServiceAccount.</li>
-<li>The control panel talks to the K3s API and creates one Deployment, Service,
-and PVC for each student session.</li>
-<li>The stable control-panel Service becomes the internal destination for the
-gateway work that comes next.</li>
+<li>Import the image into the <span class="term" data-term="k3s" tabindex="0">K3s</span> or <span class="term" data-term="k3d" tabindex="0">k3d</span> <span class="term" data-term="node" tabindex="0">nodes</span>.</li>
+<li>Create the <span class="term" data-term="jwt" tabindex="0">JWT</span> Secret locally, without committing it.</li>
+<li>Apply the <span class="term" data-term="namespace" tabindex="0">namespace</span> and <span class="term" data-term="rbac" tabindex="0">RBAC</span> rules.</li>
+<li><span class="term" data-term="k3s" tabindex="0">K3s</span> starts the control-panel <span class="term" data-term="deployment" tabindex="0">Deployment</span> with its ServiceAccount.</li>
+<li>The control panel talks to the <span class="term" data-term="k3s" tabindex="0">K3s</span> API and creates one <span class="term" data-term="deployment" tabindex="0">Deployment</span>, <span class="term" data-term="service" tabindex="0">Service</span>,
+and <span class="term" data-term="pvc" tabindex="0">PVC</span> for each student <span class="term" data-term="session" tabindex="0">session</span>.</li>
+<li>The stable control-panel <span class="term" data-term="service" tabindex="0">Service</span> becomes the internal destination for the
+<span class="term" data-term="gateway" tabindex="0">gateway</span> work that comes next.</li>
 </ol>
 <h2 id="proof-it-works">Proof it works</h2><ul>
 <li>All four new YAML files passed Ruby YAML parsing.</li>
 <li><code>git diff --check</code> passed.</li>
 <li>The existing hardware regression test still passed all 4 scenarios.</li>
-<li>Dockerfile validation could not run because access to the Docker daemon was
+<li>Dockerfile validation could not run because access to the <span class="term" data-term="docker" tabindex="0">Docker</span> daemon was
 denied.</li>
 <li>Go compilation and tests remain unverified because <code>go</code> and <code>gofmt</code> are not
 installed in this environment.</li>
-<li>A real K3s rollout and RBAC check are not verified yet because <code>kubectl</code> is
+<li>A real <span class="term" data-term="k3s" tabindex="0">K3s</span> rollout and <span class="term" data-term="rbac" tabindex="0">RBAC</span> check are not verified yet because <code>kubectl</code> is
 not installed and no cluster is connected here.</li>
 </ul>
 <h2 id="the-one-liner-version">The one-liner version</h2><table>
@@ -160,11 +162,11 @@ not installed and no cluster is connected here.</li>
 </tr>
 <tr>
 <td><code>control-panel-rbac.yaml</code></td>
-<td>Gives the server only the K3s keys it needs.</td>
+<td>Gives the server only the <span class="term" data-term="k3s" tabindex="0">K3s</span> keys it needs.</td>
 </tr>
 <tr>
 <td><code>control-panel-deployment.yaml</code></td>
-<td>Runs the server inside K3s with health checks and secret wiring.</td>
+<td>Runs the server inside <span class="term" data-term="k3s" tabindex="0">K3s</span> with health checks and secret wiring.</td>
 </tr>
 <tr>
 <td><code>control-panel-service.yaml</code></td>
@@ -178,11 +180,11 @@ not installed and no cluster is connected here.</li>
 <h2 id="what-s-next">What&#39;s next</h2><ul>
 <li><input disabled="" type="checkbox"> Install the Go and kubectl toolchains and run formatting, dependency, and
 compilation checks.</li>
-<li><input disabled="" type="checkbox"> Build/import the control-panel and workspace images into K3s.</li>
-<li><input disabled="" type="checkbox"> Apply the manifests on a real K3s cluster and verify the ServiceAccount
+<li><input disabled="" type="checkbox"> Build/import the control-panel and <span class="term" data-term="workspace-image" tabindex="0">workspace images</span> into <span class="term" data-term="k3s" tabindex="0">K3s</span>.</li>
+<li><input disabled="" type="checkbox"> Apply the manifests on a real <span class="term" data-term="k3s" tabindex="0">K3s</span> cluster and verify the ServiceAccount
 permissions.</li>
-<li><input disabled="" type="checkbox"> Connect the gateway to each session&#39;s private Service.</li>
-<li><input disabled="" type="checkbox"> Add readiness reconciliation so sessions move from <code>provisioning</code> to
+<li><input disabled="" type="checkbox"> Connect the <span class="term" data-term="gateway" tabindex="0">gateway</span> to each <span class="term" data-term="session" tabindex="0">session</span>&#39;s private <span class="term" data-term="service" tabindex="0">Service</span>.</li>
+<li><input disabled="" type="checkbox"> Add readiness reconciliation so <span class="term" data-term="session" tabindex="0">sessions</span> move from <code>provisioning</code> to
 <code>ready</code> after their workspace is actually available.</li>
 </ul>
 </div>

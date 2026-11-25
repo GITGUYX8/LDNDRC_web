@@ -6,6 +6,8 @@
 <title>Headlamp for cluster sight — LDNDRC</title>
 <meta name="description" content="A visual dashboard so the operator can see pods without memorising kubectl flags.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,16 +52,16 @@
     </div>
     <h1 class="page-title">Headlamp for cluster sight</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">A visual dashboard so the operator can see pods without memorising kubectl flags.</p>
-    <div class="prose"><p>Headlamp is a Kubernetes dashboard deployed as a normal manifest. It exists so the operator can answer &quot;what is actually running?&quot; without composing <code>kubectl</code> output by hand.</p>
+    <div class="prose"><p><span class="term" data-term="headlamp" tabindex="0">Headlamp</span> is a <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> dashboard deployed as a normal manifest. It exists so the <span class="term" data-term="operator" tabindex="0">operator</span> can answer &quot;what is actually running?&quot; without composing <code>kubectl</code> output by hand.</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl apply -f manifests/headlamp.yaml
 kubectl -n ldndrc port-forward svc/ldndrc-headlamp 8080:80 &amp;
 kubectl -n ldndrc create token ldndrc-headlamp --duration=24h</code></pre></div><p>Paste the token into <code>http://localhost:8080</code>.</p>
 <h2 id="what-it-is-good-for">What it is good for</h2><ul>
-<li>Seeing session pods appear and disappear while a class is provisioning.</li>
-<li>Reading events on a <code>Pending</code> pod without switching terminals.</li>
+<li>Seeing <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pods</span> appear and disappear while a class is provisioning.</li>
+<li>Reading events on a <code>Pending</code> <span class="term" data-term="pod" tabindex="0">pod</span> without switching terminals.</li>
 <li>Showing the cluster to someone who does not live in a shell.</li>
 </ul>
-<h2 id="what-it-is-not">What it is not</h2><p>It is not the student-facing UI, and it is not exposed to Guests. It is an operator tool, reachable by port-forward only. The &quot;glass wall&quot; metaphor in the journey report is literal: you can see in, students cannot.</p>
+<h2 id="what-it-is-not">What it is not</h2><p>It is not the student-facing UI, and it is not exposed to <span class="term" data-term="guest" tabindex="0">Guests</span>. It is an <span class="term" data-term="operator" tabindex="0">operator</span> tool, reachable by port-forward only. The &quot;glass wall&quot; metaphor in the journey report is literal: you can see in, students cannot.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc get svc ldndrc-headlamp</code></pre></div></div>
     <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>
 <div class="code term"><pre><code class="hljs">kubectl -n ldndrc get svc ldndrc-headlamp</code></pre></div></div><div class="source-list"><span class="eyebrow">Sources</span><a href="../library/README.html">README.md</a><a href="../library/local_dev_docs--checkpoint-10-headlamp-visuals.html">local_dev_docs/checkpoint-10-headlamp-visuals.md</a></div>

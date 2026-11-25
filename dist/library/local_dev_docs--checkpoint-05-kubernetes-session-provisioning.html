@@ -6,6 +6,8 @@
 <title>Checkpoint 5 — The Per-Student Kubernetes Workspace — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-05-kubernetes-session-provisioning.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -45,14 +47,14 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-05-kubernetes-session-provisioning.md · 7.0 KB</div>
 <h1 class="page-title">Checkpoint 5 — The Per-Student Kubernetes Workspace</h1>
-<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>The earlier design had three shared workspace pods. That was not enough for the
-real promise of LDNDRC: each student needs their own private ROS 2 room, their
+<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>The earlier design had three shared workspace <span class="term" data-term="pod" tabindex="0">pods</span>. That was not enough for the
+real promise of LDNDRC: each student needs their own private <span class="term" data-term="ros2" tabindex="0">ROS 2</span> room, their
 own files, and their own browser connections. This checkpoint connected the
-session idea to K3s by teaching the control panel how one session should become
-one Kubernetes workspace.</p>
+<span class="term" data-term="session" tabindex="0">session</span> idea to <span class="term" data-term="k3s" tabindex="0">K3s</span> by teaching the control panel how one <span class="term" data-term="session" tabindex="0">session</span> should become
+one <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> workspace.</p>
 <p>The implementation follows the useful pattern from the reference project: one
-session gets one Deployment, one Service, and one home-directory storage claim.
-The Kubernetes part is kept behind a small doorway so the rest of the control
+<span class="term" data-term="session" tabindex="0">session</span> gets one <span class="term" data-term="deployment" tabindex="0">Deployment</span>, one <span class="term" data-term="service" tabindex="0">Service</span>, and one home-directory storage claim.
+The <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> part is kept behind a small doorway so the rest of the control
 panel can still be tested without a live cluster.</p>
 <h2 id="what-got-built">What got built</h2><table>
 <thead>
@@ -65,94 +67,94 @@ panel can still be tested without a live cluster.</p>
 <tbody><tr>
 <td><code>control-panel/go.mod</code></td>
 <td>The Tool List</td>
-<td>Adds the official Kubernetes client libraries needed to talk to K3s.</td>
+<td>Adds the official <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> client libraries needed to talk to <span class="term" data-term="k3s" tabindex="0">K3s</span>.</td>
 </tr>
 <tr>
 <td><code>control-panel/internal/sessions/store.go</code></td>
-<td>The Session Register</td>
+<td>The <span class="term" data-term="session" tabindex="0">Session</span> Register</td>
 <td>Tracks who owns each workspace, its status, and its private ROS channel.</td>
 </tr>
 <tr>
 <td><code>control-panel/internal/sessions/kubernetes.go</code></td>
 <td>The Workspace Builder</td>
-<td>Creates and removes the Deployment, Service, and PVC for a session.</td>
+<td>Creates and removes the <span class="term" data-term="deployment" tabindex="0">Deployment</span>, <span class="term" data-term="service" tabindex="0">Service</span>, and <span class="term" data-term="pvc" tabindex="0">PVC</span> for a <span class="term" data-term="session" tabindex="0">session</span>.</td>
 </tr>
 <tr>
 <td><code>control-panel/cmd/server/main.go</code></td>
 <td>The Switchboard</td>
-<td>Uses the Kubernetes builder when the control panel is running inside K3s, while retaining local test mode.</td>
+<td>Uses the <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> builder when the control panel is running inside <span class="term" data-term="k3s" tabindex="0">K3s</span>, while retaining local test mode.</td>
 </tr>
 <tr>
 <td><code>control-panel/internal/sessions/store_test.go</code></td>
-<td>The Session Register Exam</td>
-<td>Checks ownership, duplicate sessions, lifecycle rules, and provisioning failures.</td>
+<td>The <span class="term" data-term="session" tabindex="0">Session</span> Register Exam</td>
+<td>Checks ownership, duplicate <span class="term" data-term="session" tabindex="0">sessions</span>, lifecycle rules, and provisioning failures.</td>
 </tr>
 <tr>
 <td><code>control-panel/internal/sessions/kubernetes_test.go</code></td>
-<td>The K3s Blueprint Exam</td>
-<td>Uses a fake Kubernetes client to inspect the resources that would be created.</td>
+<td>The <span class="term" data-term="k3s" tabindex="0">K3s</span> Blueprint Exam</td>
+<td>Uses a fake <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> client to inspect the resources that would be created.</td>
 </tr>
 </tbody></table>
-<h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-tool-list-control-panel-go-mod">The Tool List — <code>control-panel/go.mod</code></h3><p>Think of this as adding the official vocabulary for speaking to Kubernetes.
-The project now includes <code>client-go</code> and its API types, which work with K3s
-because K3s exposes the normal Kubernetes API rather than a private one.</p>
+<h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-tool-list-control-panel-go-mod">The Tool List — <code>control-panel/go.mod</code></h3><p>Think of this as adding the official vocabulary for speaking to <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span>.
+The project now includes <code>client-go</code> and its API types, which work with <span class="term" data-term="k3s" tabindex="0">K3s</span>
+because <span class="term" data-term="k3s" tabindex="0">K3s</span> exposes the normal <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> API rather than a private one.</p>
 <h3 id="the-session-register-control-panel-internal-sessions-store-go">The Session Register — <code>control-panel/internal/sessions/store.go</code></h3><p>This is the receptionist who keeps the seating chart. It records the student,
-the generated workload and Service names, the ROS domain number, and whether
+the generated workload and <span class="term" data-term="service" tabindex="0">Service</span> names, the ROS domain number, and whether
 the workspace is provisioning, ready, stopping, stopped, or broken.</p>
-<p>It allows only one active session per user, refuses cross-user lookups, and
-allocates ROS domain IDs from 100 through 232 without reusing an active one.
+<p>It allows only one active <span class="term" data-term="session" tabindex="0">session</span> per user, refuses cross-user lookups, and
+allocates ROS <span class="term" data-term="domain-id" tabindex="0">domain IDs</span> from 100 through 232 without reusing an active one.
 The store can call a <code>Provisioner</code>, but the default local version stays in
-memory so unit tests do not need a K3s cluster.</p>
+memory so unit tests do not need a <span class="term" data-term="k3s" tabindex="0">K3s</span> cluster.</p>
 <h3 id="the-workspace-builder-control-panel-internal-sessions-kubernetes-go">The Workspace Builder — <code>control-panel/internal/sessions/kubernetes.go</code></h3><p>Think of this as a small construction crew that prepares one apartment for one
-student. For every session it creates a PersistentVolumeClaim (the student’s
-locker), a single-replica Deployment (the workspace itself), and a private
-ClusterIP Service (the address for that workspace).</p>
+student. For every <span class="term" data-term="session" tabindex="0">session</span> it creates a PersistentVolumeClaim (the student’s
+locker), a single-replica <span class="term" data-term="deployment" tabindex="0">Deployment</span> (the workspace itself), and a private
+ClusterIP <span class="term" data-term="service" tabindex="0">Service</span> (the address for that workspace).</p>
 <p>The generated workspace keeps the project’s isolation rules: it receives its
 own <code>ROS_DOMAIN_ID</code>, sets <code>ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST</code>, and is
-placed only on a Host-labelled laptop. It also carries the reusable reference
+placed only on a <span class="term" data-term="host" tabindex="0">Host</span>-labelled laptop. It also carries the reusable reference
 defaults for a non-root user, dropped capabilities, readiness checking, CPU and
-memory limits, and a one-GPU request for NVIDIA time-slicing.</p>
-<p>Deleting a session removes its Deployment, Service, and home PVC. If resource
+memory limits, and a one-GPU request for NVIDIA <span class="term" data-term="gpu-timeslicing" tabindex="0">time-slicing</span>.</p>
+<p>Deleting a <span class="term" data-term="session" tabindex="0">session</span> removes its <span class="term" data-term="deployment" tabindex="0">Deployment</span>, <span class="term" data-term="service" tabindex="0">Service</span>, and home <span class="term" data-term="pvc" tabindex="0">PVC</span>. If resource
 creation fails part way through, resources already created in that attempt are
-cleaned up and the session is marked as an error.</p>
-<h3 id="the-switchboard-control-panel-cmd-server-main-go">The Switchboard — <code>control-panel/cmd/server/main.go</code></h3><p>This is the decision point between workshop mode and K3s mode. When the
-control panel sees the in-cluster Kubernetes setting, it builds a Kubernetes
-provisioner and uses it for sessions. Without that setting, it uses the
+cleaned up and the <span class="term" data-term="session" tabindex="0">session</span> is marked as an error.</p>
+<h3 id="the-switchboard-control-panel-cmd-server-main-go">The Switchboard — <code>control-panel/cmd/server/main.go</code></h3><p>This is the decision point between workshop mode and <span class="term" data-term="k3s" tabindex="0">K3s</span> mode. When the
+control panel sees the in-cluster <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> setting, it builds a <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span>
+provisioner and uses it for <span class="term" data-term="session" tabindex="0">sessions</span>. Without that setting, it uses the
 in-memory store, which keeps local development possible while the cluster is
 not available.</p>
-<p>The default image is the project’s Jazzy/Harmonic workspace image, and the
-namespace, image, home-storage size, and GPU count can be configured with
+<p>The default image is the project’s Jazzy/Harmonic <span class="term" data-term="workspace-image" tabindex="0">workspace image</span>, and the
+<span class="term" data-term="namespace" tabindex="0">namespace</span>, image, home-storage size, and GPU count can be configured with
 environment variables.</p>
 <h3 id="the-session-register-exam-control-panel-internal-sessions-store-test-go">The Session Register Exam — <code>control-panel/internal/sessions/store_test.go</code></h3><p>These tests give the register fake students and fake construction crews. They
 check that Alice cannot read Bob’s workspace, that Alice cannot create two
 active workspaces, that valid status changes work, and that a failed builder
-leaves a useful <code>error</code> session instead of pretending everything is fine.</p>
-<h3 id="the-k3s-blueprint-exam-control-panel-internal-sessions-kubernetes-test-go">The K3s Blueprint Exam — <code>control-panel/internal/sessions/kubernetes_test.go</code></h3><p>This test uses a fake Kubernetes API instead of a real cluster. It asks the
-builder to prepare a sample session, then inspects the resulting objects to
-confirm that the Deployment, Service, and PVC exist and that the important
+leaves a useful <code>error</code> <span class="term" data-term="session" tabindex="0">session</span> instead of pretending everything is fine.</p>
+<h3 id="the-k3s-blueprint-exam-control-panel-internal-sessions-kubernetes-test-go">The K3s Blueprint Exam — <code>control-panel/internal/sessions/kubernetes_test.go</code></h3><p>This test uses a fake <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> API instead of a real cluster. It asks the
+builder to prepare a sample <span class="term" data-term="session" tabindex="0">session</span>, then inspects the resulting objects to
+confirm that the <span class="term" data-term="deployment" tabindex="0">Deployment</span>, <span class="term" data-term="service" tabindex="0">Service</span>, and <span class="term" data-term="pvc" tabindex="0">PVC</span> exist and that the important
 settings are present: the private ROS channel, localhost-only discovery, and
 the NVIDIA GPU request.</p>
 <h2 id="how-it-all-connects">How it all connects</h2><ol>
 <li>A logged-in user asks the control panel for a workspace.</li>
-<li>The Session Register creates a unique session ID and ROS domain number.</li>
-<li>The Workspace Builder creates one Deployment, one Service, and one home PVC
-in K3s.</li>
-<li>The Deployment runs the existing single workspace container with
-code-server, Selkies, and the Gazebo WebSocket bridge under supervisord.</li>
-<li>The Service gives the future gateway a stable, session-specific address.</li>
-<li>The PVC keeps the student’s home directory separate from other sessions.</li>
-<li>The session remains marked <code>provisioning</code> until the upcoming status and
-gateway work confirms that the workspace is ready.</li>
+<li>The <span class="term" data-term="session" tabindex="0">Session</span> Register creates a unique <span class="term" data-term="session" tabindex="0">session</span> ID and ROS domain number.</li>
+<li>The Workspace Builder creates one <span class="term" data-term="deployment" tabindex="0">Deployment</span>, one <span class="term" data-term="service" tabindex="0">Service</span>, and one home <span class="term" data-term="pvc" tabindex="0">PVC</span>
+in <span class="term" data-term="k3s" tabindex="0">K3s</span>.</li>
+<li>The <span class="term" data-term="deployment" tabindex="0">Deployment</span> runs the existing single workspace container with
+<span class="term" data-term="code-server" tabindex="0">code-server</span>, Selkies, and the <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> <span class="term" data-term="websocket" tabindex="0">WebSocket</span> bridge under supervisord.</li>
+<li>The <span class="term" data-term="service" tabindex="0">Service</span> gives the future <span class="term" data-term="gateway" tabindex="0">gateway</span> a stable, <span class="term" data-term="session" tabindex="0">session</span>-specific address.</li>
+<li>The <span class="term" data-term="pvc" tabindex="0">PVC</span> keeps the student’s home directory separate from other <span class="term" data-term="session" tabindex="0">sessions</span>.</li>
+<li>The <span class="term" data-term="session" tabindex="0">session</span> remains marked <code>provisioning</code> until the upcoming status and
+<span class="term" data-term="gateway" tabindex="0">gateway</span> work confirms that the workspace is ready.</li>
 </ol>
 <h2 id="proof-it-works">Proof it works</h2><ul>
 <li><code>git diff --check</code> passed with no whitespace errors.</li>
 <li>The existing hardware test still passed all 4 scenarios.</li>
-<li>The new tests were written around the Go fake Kubernetes client and cover
-Deployment, Service, PVC, ROS isolation, and GPU settings.</li>
+<li>The new tests were written around the Go fake <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> client and cover
+<span class="term" data-term="deployment" tabindex="0">Deployment</span>, <span class="term" data-term="service" tabindex="0">Service</span>, <span class="term" data-term="pvc" tabindex="0">PVC</span>, ROS isolation, and GPU settings.</li>
 <li>The Go tests were <strong>not run</strong> because <code>go</code> and <code>gofmt</code> are not installed in
 this environment.</li>
-<li>A real K3s deployment was <strong>not run yet</strong>. The control panel still needs
-Kubernetes RBAC, namespace setup, and gateway routing before an end-to-end
+<li>A real <span class="term" data-term="k3s" tabindex="0">K3s</span> <span class="term" data-term="deployment" tabindex="0">deployment</span> was <strong>not run yet</strong>. The control panel still needs
+<span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> <span class="term" data-term="rbac" tabindex="0">RBAC</span>, <span class="term" data-term="namespace" tabindex="0">namespace</span> setup, and <span class="term" data-term="gateway" tabindex="0">gateway</span> routing before an end-to-end
 cluster rehearsal is meaningful.</li>
 </ul>
 <h2 id="the-one-liner-version">The one-liner version</h2><table>
@@ -164,33 +166,33 @@ cluster rehearsal is meaningful.</li>
 </thead>
 <tbody><tr>
 <td><code>store.go</code></td>
-<td>Keeps every student’s session, ownership, status, and ROS channel straight.</td>
+<td>Keeps every student’s <span class="term" data-term="session" tabindex="0">session</span>, ownership, status, and ROS channel straight.</td>
 </tr>
 <tr>
 <td><code>kubernetes.go</code></td>
-<td>Turns one session into one isolated K3s workspace with storage and GPU access.</td>
+<td>Turns one <span class="term" data-term="session" tabindex="0">session</span> into one isolated <span class="term" data-term="k3s" tabindex="0">K3s</span> workspace with storage and GPU access.</td>
 </tr>
 <tr>
 <td><code>main.go</code></td>
-<td>Chooses real K3s provisioning in-cluster and lightweight local mode elsewhere.</td>
+<td>Chooses real <span class="term" data-term="k3s" tabindex="0">K3s</span> provisioning in-cluster and lightweight local mode elsewhere.</td>
 </tr>
 <tr>
 <td><code>kubernetes_test.go</code></td>
-<td>Checks the K3s workspace blueprint without needing a cluster.</td>
+<td>Checks the <span class="term" data-term="k3s" tabindex="0">K3s</span> workspace blueprint without needing a cluster.</td>
 </tr>
 <tr>
 <td><code>store_test.go</code></td>
-<td>Proves students cannot collide with or enter one another’s sessions.</td>
+<td>Proves students cannot collide with or enter one another’s <span class="term" data-term="session" tabindex="0">sessions</span>.</td>
 </tr>
 </tbody></table>
 <h2 id="what-s-next">What’s next</h2><ul>
-<li><input disabled="" type="checkbox"> Add Kubernetes RBAC and a control-panel Deployment/Service for K3s.</li>
-<li><input disabled="" type="checkbox"> Connect the gateway to each session’s Service and proxy HTTP/WebSocket
+<li><input disabled="" type="checkbox"> Add <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> <span class="term" data-term="rbac" tabindex="0">RBAC</span> and a control-panel <span class="term" data-term="deployment" tabindex="0">Deployment</span>/<span class="term" data-term="service" tabindex="0">Service</span> for <span class="term" data-term="k3s" tabindex="0">K3s</span>.</li>
+<li><input disabled="" type="checkbox"> Connect the <span class="term" data-term="gateway" tabindex="0">gateway</span> to each <span class="term" data-term="session" tabindex="0">session</span>’s <span class="term" data-term="service" tabindex="0">Service</span> and proxy HTTP/<span class="term" data-term="websocket" tabindex="0">WebSocket</span>
 traffic only for the owning user.</li>
 <li><input disabled="" type="checkbox"> Add readiness/status reconciliation so <code>provisioning</code> becomes <code>ready</code>
 after the workspace actually starts.</li>
-<li><input disabled="" type="checkbox"> Run the full flow on K3s with the reusable Jazzy/Harmonic workspace image.</li>
-<li><input disabled="" type="checkbox"> Replace the remaining shared StatefulSet routing path after per-session
+<li><input disabled="" type="checkbox"> Run the full flow on <span class="term" data-term="k3s" tabindex="0">K3s</span> with the reusable Jazzy/Harmonic <span class="term" data-term="workspace-image" tabindex="0">workspace image</span>.</li>
+<li><input disabled="" type="checkbox"> Replace the remaining shared StatefulSet routing path after per-<span class="term" data-term="session" tabindex="0">session</span>
 routing is verified.</li>
 </ul>
 </div>

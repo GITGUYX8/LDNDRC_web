@@ -6,6 +6,8 @@
 <title>Unique ROS_DOMAIN_ID per pod — LDNDRC</title>
 <meta name="description" content="Defense in depth: the namespace already isolates, the domain ID makes it obvious.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,19 +52,19 @@
     </div>
     <h1 class="page-title">Unique ROS_DOMAIN_ID per pod</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Defense in depth: the namespace already isolates, the domain ID makes it obvious.</p>
-    <div class="prose"><p>If pod namespaces already isolate DDS, why give each session a different <code>ROS_DOMAIN_ID</code>? Because isolation you cannot see is isolation you cannot verify.</p>
-<h2 id="assigning-the-value">Assigning the value</h2><p>The panel derives a domain ID per session and injects it into the pod environment. The value is unique across active sessions and stable for the life of the session, so a restarted container keeps talking to the same graph.</p>
+    <div class="prose"><p>If <span class="term" data-term="pod" tabindex="0">pod</span> <span class="term" data-term="namespace" tabindex="0">namespaces</span> already isolate <span class="term" data-term="dds" tabindex="0">DDS</span>, why give each <span class="term" data-term="session" tabindex="0">session</span> a different <code>ROS_DOMAIN_ID</code>? Because isolation you cannot see is isolation you cannot verify.</p>
+<h2 id="assigning-the-value">Assigning the value</h2><p>The panel derives a <span class="term" data-term="domain-id" tabindex="0">domain ID</span> per <span class="term" data-term="session" tabindex="0">session</span> and injects it into the <span class="term" data-term="pod" tabindex="0">pod</span> environment. The value is unique across active <span class="term" data-term="session" tabindex="0">sessions</span> and stable for the life of the <span class="term" data-term="session" tabindex="0">session</span>, so a restarted container keeps talking to the same graph.</p>
 <p>Two more variables travel with it:</p>
 <div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">ROS_DOMAIN_ID=&lt;unique per session&gt;
 ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST
-RMW_IMPLEMENTATION=&lt;pinned&gt;</code></pre></div><p><code>LOCALHOST</code> is the important one. Even if two pods somehow shared a network namespace — a mistake in a manifest, a host-network patch, a debugging override — their DDS discovery would still not cross loopback.</p>
-<h2 id="why-not-random">Why not random?</h2><p>Random IDs collide. With a small integer space and a workshop of twenty laptops, collisions are likely enough to matter. The panel allocates and tracks them, so two live sessions never share a value.</p>
-<h2 id="what-a-student-sees">What a student sees</h2><p>Nothing. <code>turtlebot3-sim</code> starts Gazebo, and its topics are visible to the student&#39;s own terminal. Peers on other laptops are invisible. The domain ID is infrastructure, not a setting.</p>
-<h2 id="the-debugging-consequence">The debugging consequence</h2><p>If a student says &quot;my node cannot see the topic&quot;, the answer is never &quot;another student stole it&quot;. It is one of:</p>
+RMW_IMPLEMENTATION=&lt;pinned&gt;</code></pre></div><p><code>LOCALHOST</code> is the important one. Even if two <span class="term" data-term="pod" tabindex="0">pods</span> somehow shared a network <span class="term" data-term="namespace" tabindex="0">namespace</span> — a mistake in a manifest, a <span class="term" data-term="host" tabindex="0">host</span>-network patch, a debugging override — their <span class="term" data-term="dds" tabindex="0">DDS</span> discovery would still not cross loopback.</p>
+<h2 id="why-not-random">Why not random?</h2><p>Random IDs collide. With a small integer space and a workshop of twenty laptops, collisions are likely enough to matter. The panel allocates and tracks them, so two live <span class="term" data-term="session" tabindex="0">sessions</span> never share a value.</p>
+<h2 id="what-a-student-sees">What a student sees</h2><p>Nothing. <code>turtlebot3-sim</code> starts <span class="term" data-term="gazebo" tabindex="0">Gazebo</span>, and its topics are visible to the student&#39;s own terminal. Peers on other laptops are invisible. The <span class="term" data-term="domain-id" tabindex="0">domain ID</span> is infrastructure, not a setting.</p>
+<h2 id="the-debugging-consequence">The debugging consequence</h2><p>If a student says &quot;my <span class="term" data-term="node" tabindex="0">node</span> cannot see the topic&quot;, the answer is never &quot;another student stole it&quot;. It is one of:</p>
 <ul>
-<li>the node was launched in a different shell without the pod environment</li>
+<li>the <span class="term" data-term="node" tabindex="0">node</span> was launched in a different shell without the <span class="term" data-term="pod" tabindex="0">pod</span> environment</li>
 <li>the discovery range was overridden</li>
-<li>Gazebo is not running (see <a href="gazebo-gzweb.html" class="topic-link">Gazebo over a websocket</a>)</li>
+<li><span class="term" data-term="gazebo" tabindex="0">Gazebo</span> is not running (see <a href="gazebo-gzweb.html" class="topic-link">Gazebo over a websocket</a>)</li>
 </ul>
 <p>That narrows a whole class of support questions to three causes.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc <span class="hljs-built_in">exec</span> &lt;session-pod&gt; -- bash -c <span class="hljs-string">&#x27;echo $ROS_DOMAIN_ID&#x27;</span>

@@ -6,6 +6,8 @@
 <title>Checkpoint 15 — The Join Binary: Engine, Dashboard, and Black Box — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-15-join-binary.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,7 +52,7 @@ hand and hoping. This checkpoint built the other half of that handshake: a
 small program called <code>ldndrc-join</code> that runs on the <em>joining</em> laptop. It
 checks whether the machine is strong enough, phones home to ask permission,
 waits politely for a human to approve, then installs everything itself.</p>
-<p>Think of it as a self-driving guest pass. The laptop proves it belongs, asks
+<p>Think of it as a self-driving <span class="term" data-term="guest" tabindex="0">guest</span> pass. The laptop proves it belongs, asks
 at the door, and only comes in when someone says yes.</p>
 <h2 id="what-got-built">What got built</h2><table>
 <thead>
@@ -63,7 +65,7 @@ at the door, and only comes in when someone says yes.</p>
 <tbody><tr>
 <td><code>internal/join/hardware.go</code></td>
 <td>The Rulebook</td>
-<td>The strength bars (8 cores, 16 GB, NVIDIA, driver 535+) and the verdict: Host or Guest, no exceptions</td>
+<td>The strength bars (8 cores, 16 GB, NVIDIA, driver 535+) and the verdict: <span class="term" data-term="host" tabindex="0">Host</span> or <span class="term" data-term="guest" tabindex="0">Guest</span>, no exceptions</td>
 </tr>
 <tr>
 <td><code>internal/join/detect_linux.go</code></td>
@@ -78,7 +80,7 @@ at the door, and only comes in when someone says yes.</p>
 <tr>
 <td><code>internal/join/detect_darwin.go</code></td>
 <td>The Mac Doorman</td>
-<td>Macs are always Guests — it just hands them the browser address</td>
+<td>Macs are always <span class="term" data-term="guest" tabindex="0">Guests</span> — it just hands them the browser address</td>
 </tr>
 <tr>
 <td><code>internal/join/discover.go</code></td>
@@ -129,7 +131,7 @@ documented). It also accepts pretend answers (<code>TEST_CPU=12</code> and frien
 we can rehearse without owning ten laptops.</p>
 <h3 id="the-doormen-detect-windows-go-detect-darwin-go">The Doormen — <code>detect_windows.go</code> + <code>detect_darwin.go</code></h3><p>The Windows doorman measures the <em>physical</em> laptop, not the virtual machine
 hiding inside it — otherwise a weak laptop could disguise itself. The Mac
-doorman has the easiest job: every Mac is a Guest, so it just hands over
+doorman has the easiest job: every Mac is a <span class="term" data-term="guest" tabindex="0">Guest</span>, so it just hands over
 the browser address and wishes you a nice day.</p>
 <h3 id="the-bloodhound-discover-go">The Bloodhound — <code>discover.go</code></h3><p>Nobody wants to type IP addresses. The bloodhound sniffs the local network
 for the master&#39;s announcement and finds it alone in about 3 seconds. If the
@@ -140,7 +142,7 @@ gets back an ID. Then it calls back every 5 seconds: still waiting? Still
 waiting? Approved? The secret token it eventually receives lives only in
 memory — never saved to disk, never printed. When approval finally arrives,
 it also confirms the master is reachable before celebrating.</p>
-<h3 id="the-mechanic-install-linux-go">The Mechanic — <code>install_linux.go</code></h3><p>Installs the graphics toolkit and the cluster agent wearing the Host badge.
+<h3 id="the-mechanic-install-linux-go">The Mechanic — <code>install_linux.go</code></h3><p>Installs the graphics toolkit and the cluster agent wearing the <span class="term" data-term="host" tabindex="0">Host</span> badge.
 Two strict rules: it never runs silently (you always say yes first), and
 the secret token never appears in any log or error message. We proved the
 token-redaction with tests.</p>
@@ -158,8 +160,8 @@ the exact same two log lines the old shell script printed — byte for byte,
 so all existing tests keep passing.</p>
 <h2 id="how-it-all-connects">How it all connects</h2><ol>
 <li>You run <code>ldndrc-join</code> on a laptop.</li>
-<li>The Inspector measures the machine; the Rulebook pronounces Host or Guest.</li>
-<li>Guests get the browser address; Hosts continue.</li>
+<li>The Inspector measures the machine; the Rulebook pronounces <span class="term" data-term="host" tabindex="0">Host</span> or <span class="term" data-term="guest" tabindex="0">Guest</span>.</li>
+<li><span class="term" data-term="guest" tabindex="0">Guests</span> get the browser address; <span class="term" data-term="host" tabindex="0">Hosts</span> continue.</li>
 <li>The Bloodhound finds the master; the Phone Call registers and waits.</li>
 <li>A human approves on the dashboard (or via API for now).</li>
 <li>The secret token arrives; the Mechanic installs everything.</li>
@@ -192,7 +194,7 @@ tidily denied afterwards.</li>
 </tr>
 <tr>
 <td><code>detect_*.go</code></td>
-<td>Three doormen who actually measure you (Macs get waved to Guest).</td>
+<td>Three doormen who actually measure you (Macs get waved to <span class="term" data-term="guest" tabindex="0">Guest</span>).</td>
 </tr>
 <tr>
 <td><code>discover.go</code></td>

@@ -6,6 +6,8 @@
 <title>JWT, cookies, and CSRF stamps — LDNDRC</title>
 <meta name="description" content="Two credentials for two jobs: a bearer token for the API, a stamped cookie for the gateway.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -52,15 +54,15 @@
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Two credentials for two jobs: a bearer token for the API, a stamped cookie for the gateway.</p>
     <div class="prose"><p>The platform uses two credentials for two different jobs, and most of the confusing bugs in its history came from mixing them up.</p>
 <h2 id="credential-one-the-jwt">Credential one: the JWT</h2><p><code>POST /api/auth/login</code> returns a signed token with a 24-hour TTL. It is sent as <code>Authorization: Bearer &lt;token&gt;</code> on API calls. It is stateless: the panel verifies the signature and does not look anything up.</p>
-<p>This is the operator and student <em>API</em> credential. It never reaches the browser as a cookie.</p>
-<h2 id="credential-two-the-session-cookie">Credential two: the session cookie</h2><p>The same login response also sets a cookie scoped to <code>COOKIE_DOMAIN=.ros-platform.local</code>. That cookie is what makes one login cover four hostnames. It is what the gateway reads when a student opens <code>editor.ros-platform.local</code>.</p>
-<p>The cookie is not the JWT. It is a separate, signed value whose only job is to identify the user to the gateway.</p>
-<h2 id="the-csrf-stamp">The CSRF stamp</h2><p>A cookie-authenticated request is vulnerable to cross-site forgery: another site can make the browser send the cookie. The defence is a third value, <code>csrf_token</code>, returned at login and held in memory by the SPA.</p>
-<p>Every cookie-authenticated <strong>mutation</strong> must carry it:</p>
+<p>This is the <span class="term" data-term="operator" tabindex="0">operator</span> and student <em>API</em> credential. It never reaches the browser as a <span class="term" data-term="cookie" tabindex="0">cookie</span>.</p>
+<h2 id="credential-two-the-session-cookie">Credential two: the session cookie</h2><p>The same login response also sets a <span class="term" data-term="cookie" tabindex="0">cookie</span> scoped to <code>COOKIE_DOMAIN=.ros-platform.local</code>. That <span class="term" data-term="cookie" tabindex="0">cookie</span> is what makes one login cover four hostnames. It is what the <span class="term" data-term="gateway" tabindex="0">gateway</span> reads when a student opens <code>editor.ros-platform.local</code>.</p>
+<p>The <span class="term" data-term="cookie" tabindex="0">cookie</span> is not the <span class="term" data-term="jwt" tabindex="0">JWT</span>. It is a separate, signed value whose only job is to identify the user to the <span class="term" data-term="gateway" tabindex="0">gateway</span>.</p>
+<h2 id="the-csrf-stamp">The CSRF stamp</h2><p>A <span class="term" data-term="cookie" tabindex="0">cookie</span>-authenticated request is vulnerable to cross-site forgery: another site can make the browser send the <span class="term" data-term="cookie" tabindex="0">cookie</span>. The defence is a third value, <code>csrf_token</code>, returned at login and held in memory by the SPA.</p>
+<p>Every <span class="term" data-term="cookie" tabindex="0">cookie</span>-authenticated <strong>mutation</strong> must carry it:</p>
 <div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">X-CSRF-Token: &lt;csrf_token&gt;</code></pre></div><p>Reads do not need it. Creation, stopping, approval, and denial do.</p>
-<h2 id="the-bug-worth-remembering">The bug worth remembering</h2><p>The CSRF check was applied too broadly and caught <code>/api/auth/login</code> itself. A returning visitor with an old cookie got <code>403</code> instead of a new login — locked out by the security feature meant to protect them.</p>
-<p>The fix was to exempt login from the check while keeping it on every mutation. The roadmap keeps this visible as R3&#39;s &quot;one small fix left&quot; until the deployment was verified live.</p>
-<h2 id="why-the-join-endpoint-is-different">Why the join endpoint is different</h2><p><code>POST /api/nodes/register</code> is intentionally unauthenticated: a stranger&#39;s laptop has no credential yet. It is protected by rate limiting and an optional pre-shared <code>JOIN_KEY</code>, not by CSRF. See <a href="nodes-api.html" class="topic-link">Register, approve, poll</a>.</p>
+<h2 id="the-bug-worth-remembering">The bug worth remembering</h2><p>The <span class="term" data-term="csrf" tabindex="0">CSRF</span> check was applied too broadly and caught <code>/api/auth/login</code> itself. A returning visitor with an old <span class="term" data-term="cookie" tabindex="0">cookie</span> got <code>403</code> instead of a new login — locked out by the security feature meant to protect them.</p>
+<p>The fix was to exempt login from the check while keeping it on every mutation. The roadmap keeps this visible as R3&#39;s &quot;one small fix left&quot; until the <span class="term" data-term="deployment" tabindex="0">deployment</span> was verified live.</p>
+<h2 id="why-the-join-endpoint-is-different">Why the join endpoint is different</h2><p><code>POST /api/nodes/register</code> is intentionally unauthenticated: a stranger&#39;s laptop has no credential yet. It is protected by rate limiting and an optional pre-shared <code>JOIN_KEY</code>, not by <span class="term" data-term="csrf" tabindex="0">CSRF</span>. See <a href="nodes-api.html" class="topic-link">Register, approve, poll</a>.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-comment"># no token → expect 401</span>
 curl -s -o /dev/null -w <span class="hljs-string">&#x27;%{http_code}\n&#x27;</span> -X POST http://127.0.0.1:8082/api/sessions
 

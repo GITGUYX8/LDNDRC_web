@@ -6,6 +6,8 @@
 <title>Daily operations cheatsheet — LDNDRC</title>
 <meta name="description" content="Is it up, read the logs, test the gateway, and the if-X-run-Y table.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,7 +52,7 @@
     </div>
     <h1 class="page-title">Daily operations cheatsheet</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Is it up, read the logs, test the gateway, and the if-X-run-Y table.</p>
-    <div class="prose"><p>The commands an operator actually types, in the order they are needed during a session. This topic is the distilled index; the full table lives in the library.</p>
+    <div class="prose"><p>The commands an <span class="term" data-term="operator" tabindex="0">operator</span> actually types, in the order they are needed during a <span class="term" data-term="session" tabindex="0">session</span>. This topic is the distilled index; the full table lives in the library.</p>
 <h2 id="is-it-up">Is it up?</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc get pods
 curl -s http://127.0.0.1:8082/healthz</code></pre></div><h2 id="read-the-logs">Read the logs</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc logs deploy/ldndrc-control-panel -f
 kubectl -n ldndrc logs &lt;session-pod&gt; -c workspace -f</code></pre></div><h2 id="test-the-money-path">Test the money path</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">curl -s -o /dev/null -w <span class="hljs-string">&#x27;%{http_code}\n&#x27;</span> \
@@ -63,15 +65,15 @@ kubectl -n ldndrc logs &lt;session-pod&gt; -c workspace -f</code></pre></div><h2
 </tr>
 </thead>
 <tbody><tr>
-<td>Pod <code>Pending</code></td>
+<td><span class="term" data-term="pod" tabindex="0">Pod</span> <code>Pending</code></td>
 <td><code>kubectl -n ldndrc describe pod &lt;pod&gt;</code></td>
 </tr>
 <tr>
-<td>Gateway <code>503</code></td>
+<td><span class="term" data-term="gateway" tabindex="0">Gateway</span> <code>503</code></td>
 <td><code>kubectl -n ldndrc get deploy</code></td>
 </tr>
 <tr>
-<td>Gateway <code>502</code></td>
+<td><span class="term" data-term="gateway" tabindex="0">Gateway</span> <code>502</code></td>
 <td><code>kubectl -n ldndrc get pods</code></td>
 </tr>
 <tr>
@@ -80,14 +82,14 @@ kubectl -n ldndrc logs &lt;session-pod&gt; -c workspace -f</code></pre></div><h2
 </tr>
 <tr>
 <td>Sim blank</td>
-<td><code>supervisorctl status</code> inside the pod</td>
+<td><code>supervisorctl status</code> inside the <span class="term" data-term="pod" tabindex="0">pod</span></td>
 </tr>
 <tr>
-<td>Node never joins</td>
+<td><span class="term" data-term="node" tabindex="0">Node</span> never joins</td>
 <td><code>kubectl get nodes</code> and <code>K3S_JOIN_URL</code></td>
 </tr>
 </tbody></table>
-<h2 id="the-rule">The rule</h2><p>Never debug two layers at once. Confirm the pod, then the service, then the gateway, then the browser — in that order. See <a href="gateway-proxy.html" class="topic-link">The cookie gateway</a> for what each status code means.</p></div>
+<h2 id="the-rule">The rule</h2><p>Never debug two layers at once. Confirm the <span class="term" data-term="pod" tabindex="0">pod</span>, then the <span class="term" data-term="service" tabindex="0">service</span>, then the <span class="term" data-term="gateway" tabindex="0">gateway</span>, then the browser — in that order. See <a href="gateway-proxy.html" class="topic-link">The cookie gateway</a> for what each status code means.</p></div>
     <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>
 <div class="code term"><pre><code class="hljs">./local_dev_docs/cheatsheet.md</code></pre></div></div><div class="source-list"><span class="eyebrow">Sources</span><a href="../library/local_dev_docs--cheatsheet.html">local_dev_docs/cheatsheet.md</a></div>
 </div>

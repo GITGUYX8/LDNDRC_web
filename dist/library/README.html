@@ -6,6 +6,8 @@
 <title>LDNDRC — Local Dynamic Node Discovery ROS Cluster — LDNDRC library</title>
 <meta name="description" content="Source document: README.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -45,7 +47,7 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · README.md · 21.4 KB</div>
 <h1 class="page-title">LDNDRC — Local Dynamic Node Discovery ROS Cluster</h1>
-<div class="prose"><p>A local-first, browser-accessible robotics simulation platform on a dynamic K3s cluster. High-end laptops (<strong>Hosts</strong>) contribute CPU/RAM/GPU to run isolated ROS 2 + Gazebo simulations; low-end laptops (<strong>Guests</strong>) act as thin clients — code, 3D sim, and desktop, all in the browser. No cloud, no dedicated server, just the LAN.</p>
+<div class="prose"><p>A local-first, browser-accessible robotics simulation platform on a dynamic <span class="term" data-term="k3s" tabindex="0">K3s</span> cluster. High-end laptops (<strong><span class="term" data-term="host" tabindex="0">Hosts</span></strong>) contribute CPU/RAM/GPU to run isolated <span class="term" data-term="ros2" tabindex="0">ROS 2</span> + <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> simulations; low-end laptops (<strong><span class="term" data-term="guest" tabindex="0">Guests</span></strong>) act as thin clients — code, 3D sim, and desktop, all in the browser. No cloud, no dedicated server, just the LAN.</p>
 <p><strong>Who does what:</strong></p>
 <table>
 <thead>
@@ -56,19 +58,19 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><strong>Host</strong></td>
+<td><strong><span class="term" data-term="host" tabindex="0">Host</span></strong></td>
 <td>Gaming/workstation laptop (≥8 cores, ≥16GB RAM, NVIDIA GPU)</td>
 <td>Runs <code>./join-cluster.sh</code>, stays plugged in, contributes compute</td>
 </tr>
 <tr>
-<td><strong>Guest</strong></td>
+<td><strong><span class="term" data-term="guest" tabindex="0">Guest</span></strong></td>
 <td>Any laptop with Chrome/Firefox</td>
-<td>Opens browser URLs, writes ROS 2 code, drives the sim — installs nothing</td>
+<td>Opens browser URLs, writes <span class="term" data-term="ros2" tabindex="0">ROS 2</span> code, drives the sim — installs nothing</td>
 </tr>
 <tr>
-<td><strong>Operator</strong></td>
+<td><strong><span class="term" data-term="operator" tabindex="0">Operator</span></strong></td>
 <td>Master laptop (static LAN IP)</td>
-<td>Runs K3s + control panel, approves Host join requests, manages sessions</td>
+<td>Runs <span class="term" data-term="k3s" tabindex="0">K3s</span> + control panel, approves <span class="term" data-term="host" tabindex="0">Host</span> join requests, manages <span class="term" data-term="session" tabindex="0">sessions</span></td>
 </tr>
 </tbody></table>
 <h2 id="architecture">Architecture</h2><h3 id="system-overview">System Overview</h3><div class="mermaid-diagram" data-mermaid="flowchart TB
@@ -133,47 +135,47 @@
 </thead>
 <tbody><tr>
 <td>Orchestration</td>
-<td>K3s (lightweight Kubernetes)</td>
-<td>Cluster state, scheduling, pod lifecycle on laptops</td>
+<td><span class="term" data-term="k3s" tabindex="0">K3s</span> (lightweight <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span>)</td>
+<td>Cluster state, scheduling, <span class="term" data-term="pod" tabindex="0">pod</span> lifecycle on laptops</td>
 </tr>
 <tr>
 <td>Container Runtime</td>
-<td>Containerd</td>
-<td>Bundled with K3s</td>
+<td><span class="term" data-term="containerd" tabindex="0">Containerd</span></td>
+<td>Bundled with <span class="term" data-term="k3s" tabindex="0">K3s</span></td>
 </tr>
 <tr>
-<td>Networking (CNI)</td>
-<td>Flannel</td>
-<td>Pod-to-pod HTTP/WebSocket/WebRTC only — DDS never leaves pod localhost</td>
+<td>Networking (<span class="term" data-term="cni" tabindex="0">CNI</span>)</td>
+<td><span class="term" data-term="flannel" tabindex="0">Flannel</span></td>
+<td><span class="term" data-term="pod" tabindex="0">Pod</span>-to-<span class="term" data-term="pod" tabindex="0">pod</span> HTTP/<span class="term" data-term="websocket" tabindex="0">WebSocket</span>/WebRTC only — <span class="term" data-term="dds" tabindex="0">DDS</span> never leaves <span class="term" data-term="pod" tabindex="0">pod</span> localhost</td>
 </tr>
 <tr>
-<td>Ingress</td>
-<td>Traefik (bundled in K3s)</td>
-<td>Host-based routing to the control panel</td>
+<td><span class="term" data-term="ingress" tabindex="0">Ingress</span></td>
+<td><span class="term" data-term="traefik" tabindex="0">Traefik</span> (bundled in <span class="term" data-term="k3s" tabindex="0">K3s</span>)</td>
+<td><span class="term" data-term="host" tabindex="0">Host</span>-based routing to the control panel</td>
 </tr>
 <tr>
 <td>GPU Management</td>
-<td>NVIDIA GPU Operator</td>
-<td>Driver setup + time-slicing (<code>replicas: 4</code>) on consumer GeForce GPUs</td>
+<td>NVIDIA GPU <span class="term" data-term="operator" tabindex="0">Operator</span></td>
+<td>Driver setup + <span class="term" data-term="gpu-timeslicing" tabindex="0">time-slicing</span> (<code>replicas: 4</code>) on consumer GeForce GPUs</td>
 </tr>
 <tr>
 <td>Auto-Discovery</td>
 <td><code>join-cluster.sh</code> (<code>TEST_*</code> overrides, <code>test-join.sh</code>)</td>
-<td>Hardware gatekeeper: Host (≥8 cores, ≥16GB RAM, NVIDIA GPU) vs Guest</td>
+<td>Hardware gatekeeper: <span class="term" data-term="host" tabindex="0">Host</span> (≥8 cores, ≥16GB RAM, NVIDIA GPU) vs <span class="term" data-term="guest" tabindex="0">Guest</span></td>
 </tr>
 <tr>
 <td>Robotics Core</td>
-<td>ROS 2 (Jazzy)</td>
-<td>Per-session middleware, unique <code>ROS_DOMAIN_ID</code> per pod</td>
+<td><span class="term" data-term="ros2" tabindex="0">ROS 2</span> (Jazzy)</td>
+<td>Per-<span class="term" data-term="session" tabindex="0">session</span> middleware, unique <code>ROS_DOMAIN_ID</code> per <span class="term" data-term="pod" tabindex="0">pod</span></td>
 </tr>
 <tr>
 <td>Simulation</td>
-<td>Gazebo Sim Harmonic</td>
+<td><span class="term" data-term="gazebo" tabindex="0">Gazebo</span> Sim Harmonic</td>
 <td>Headless physics + <code>websocket_server</code> plugin on <code>:9002</code></td>
 </tr>
 <tr>
 <td>3D Web View</td>
-<td>gzweb (npm, Three.js WebGL)</td>
+<td><span class="term" data-term="gzweb" tabindex="0">gzweb</span> (npm, Three.js WebGL)</td>
 <td><code>sim-web-app/</code> viewer, also usable as standalone test harness</td>
 </tr>
 <tr>
@@ -183,24 +185,24 @@
 </tr>
 <tr>
 <td>Code Editor</td>
-<td>code-server</td>
+<td><span class="term" data-term="code-server" tabindex="0">code-server</span></td>
 <td>VS Code in the browser, persistent integrated terminals</td>
 </tr>
 <tr>
 <td>Control Panel</td>
-<td>Go (<code>client-go</code>, JWT, <code>net/http</code>)</td>
-<td>Sessions, auth, node onboarding, WebSocket gateway — single static binary</td>
+<td>Go (<code>client-go</code>, <span class="term" data-term="jwt" tabindex="0">JWT</span>, <code>net/http</code>)</td>
+<td><span class="term" data-term="session" tabindex="0">Sessions</span>, auth, <span class="term" data-term="node" tabindex="0">node</span> onboarding, <span class="term" data-term="websocket" tabindex="0">WebSocket</span> <span class="term" data-term="gateway" tabindex="0">gateway</span> — single static binary</td>
 </tr>
 </tbody></table>
 <h2 id="prerequisites">Prerequisites</h2><ul>
-<li><strong>Master/operator machine:</strong> <code>docker</code>, <code>kubectl</code>, <code>k3d</code> (for the local demo) — via <code>mise install go@latest kubectl@latest k3d@latest</code>, or system packages. Docker group membership so containers run without sudo:<div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-built_in">sudo</span> usermod -aG docker <span class="hljs-variable">$USER</span>
+<li><strong>Master/<span class="term" data-term="operator" tabindex="0">operator</span> machine:</strong> <code>docker</code>, <code>kubectl</code>, <code>k3d</code> (for the local demo) — via <code>mise install go@latest kubectl@latest k3d@latest</code>, or system packages. <span class="term" data-term="docker" tabindex="0">Docker</span> group membership so containers run without sudo:<div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-built_in">sudo</span> usermod -aG docker <span class="hljs-variable">$USER</span>
 <span class="hljs-built_in">sudo</span> systemctl <span class="hljs-built_in">enable</span> --now docker
 newgrp docker   <span class="hljs-comment"># or log out and back in</span>
 docker ps       <span class="hljs-comment"># must work without sudo</span></code></pre></div></li>
-<li><strong>Host laptops:</strong> Ubuntu/Debian Linux, ≥8 CPU cores, ≥16GB RAM, NVIDIA GPU (driver ≥535, 550+ recommended), ≥25GB free disk, sudo access, LAN reachability to the master.</li>
-<li><strong>Guest laptops:</strong> only a modern browser (Chrome/Firefox with WebGL).</li>
+<li><strong><span class="term" data-term="host" tabindex="0">Host</span> laptops:</strong> Ubuntu/Debian Linux, ≥8 CPU cores, ≥16GB RAM, NVIDIA GPU (driver ≥535, 550+ recommended), ≥25GB free disk, sudo access, LAN reachability to the master.</li>
+<li><strong><span class="term" data-term="guest" tabindex="0">Guest</span> laptops:</strong> only a modern browser (Chrome/Firefox with WebGL).</li>
 </ul>
-<h2 id="path-a-full-local-demo-on-one-laptop-fastest-10-min">Path A — Full Local Demo on One Laptop (fastest, ~10 min)</h2><p>Runs the whole stack via k3d: cluster, control panel, demo session, ingress, Headlamp. Uses the tiny <code>demo-standin</code> image with <code>SESSION_GPU_LIMIT=0</code> (no GPU needed). Full runbook: <code>docs/local-cluster-headlamp.md</code>.</p>
+<h2 id="path-a-full-local-demo-on-one-laptop-fastest-10-min">Path A — Full Local Demo on One Laptop (fastest, ~10 min)</h2><p>Runs the whole stack via <span class="term" data-term="k3d" tabindex="0">k3d</span>: cluster, control panel, demo <span class="term" data-term="session" tabindex="0">session</span>, <span class="term" data-term="ingress" tabindex="0">ingress</span>, <span class="term" data-term="headlamp" tabindex="0">Headlamp</span>. Uses the tiny <code>demo-standin</code> image with <code>SESSION_GPU_LIMIT=0</code> (no GPU needed). Full runbook: <code>docs/local-cluster-headlamp.md</code>.</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-comment"># 1. Create the cluster</span>
 k3d cluster create ldndrc -p <span class="hljs-string">&quot;80:80@loadbalancer&quot;</span> -p <span class="hljs-string">&quot;443:443@loadbalancer&quot;</span>
 kubectl get nodes
@@ -218,7 +220,7 @@ kubectl apply -f manifests/control-panel-rbac.yaml
 kubectl apply -f manifests/control-panel-deployment.yaml
 kubectl apply -f manifests/control-panel-service.yaml
 kubectl apply -f manifests/control-panel-ingress.yaml
-kubectl -n ldndrc rollout status deployment/ldndrc-control-panel</code></pre></div><p>Check RBAC scope (expect <code>yes</code>, <code>yes</code>, <code>no</code>):</p>
+kubectl -n ldndrc rollout status deployment/ldndrc-control-panel</code></pre></div><p>Check <span class="term" data-term="rbac" tabindex="0">RBAC</span> scope (expect <code>yes</code>, <code>yes</code>, <code>no</code>):</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc auth can-i create deployments \
   --as=system:serviceaccount:ldndrc:ldndrc-control-panel
 kubectl -n ldndrc auth can-i delete persistentvolumeclaims \
@@ -226,7 +228,7 @@ kubectl -n ldndrc auth can-i delete persistentvolumeclaims \
 kubectl -n ldndrc auth can-i list nodes \
   --as=system:serviceaccount:ldndrc:ldndrc-control-panel</code></pre></div><p>Expose locally and verify:</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc port-forward svc/ldndrc-control-panel 8082:8082 &amp;
-curl http://127.0.0.1:8082/healthz   <span class="hljs-comment"># {&quot;status&quot;:&quot;ok&quot;}</span></code></pre></div><p>Create a session and test the gateway:</p>
+curl http://127.0.0.1:8082/healthz   <span class="hljs-comment"># {&quot;status&quot;:&quot;ok&quot;}</span></code></pre></div><p>Create a <span class="term" data-term="session" tabindex="0">session</span> and test the <span class="term" data-term="gateway" tabindex="0">gateway</span>:</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">TOKEN=$(curl -s -X POST http://127.0.0.1:8082/api/auth/login \
   -H <span class="hljs-string">&#x27;Content-Type: application/json&#x27;</span> \
   -d <span class="hljs-string">&#x27;{&quot;username&quot;:&quot;bob&quot;,&quot;password&quot;:&quot;secret123&quot;}&#x27;</span> | python3 -c <span class="hljs-string">&quot;import sys,json; print(json.load(sys.stdin)[&#x27;token&#x27;])&quot;</span>)
@@ -239,10 +241,10 @@ COOKIE=$(curl -s -D - -o /dev/null -X POST http://127.0.0.1:8082/api/auth/login 
   -d <span class="hljs-string">&#x27;{&quot;username&quot;:&quot;bob&quot;,&quot;password&quot;:&quot;secret123&quot;}&#x27;</span> \
   | grep -i <span class="hljs-string">&quot;^Set-Cookie:&quot;</span> | <span class="hljs-built_in">head</span> -1 | sed <span class="hljs-string">&#x27;s/^Set-Cookie: //; s/;.*//&#x27;</span>)
 curl -s -o /dev/null -w <span class="hljs-string">&quot;%{http_code}\n&quot;</span> -H <span class="hljs-string">&quot;Host: editor.ros-platform.local&quot;</span> -H <span class="hljs-string">&quot;Cookie: <span class="hljs-variable">$COOKIE</span>&quot;</span> http://127.0.0.1:8082/
-curl -s -o /dev/null -w <span class="hljs-string">&quot;%{http_code}\n&quot;</span> -H <span class="hljs-string">&quot;Host: editor.ros-platform.local&quot;</span> http://127.0.0.1:8082/</code></pre></div><p>Optional — Headlamp dashboard:</p>
+curl -s -o /dev/null -w <span class="hljs-string">&quot;%{http_code}\n&quot;</span> -H <span class="hljs-string">&quot;Host: editor.ros-platform.local&quot;</span> http://127.0.0.1:8082/</code></pre></div><p>Optional — <span class="term" data-term="headlamp" tabindex="0">Headlamp</span> dashboard:</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl apply -f manifests/headlamp.yaml
 kubectl -n ldndrc port-forward svc/ldndrc-headlamp 8080:80 &amp;
-kubectl -n ldndrc create token ldndrc-headlamp --duration=24h  <span class="hljs-comment"># paste into http://localhost:8080</span></code></pre></div><p>Teardown (removes cluster, workloads, PVC data, secrets):</p>
+kubectl -n ldndrc create token ldndrc-headlamp --duration=24h  <span class="hljs-comment"># paste into http://localhost:8080</span></code></pre></div><p>Teardown (removes cluster, workloads, <span class="term" data-term="pvc" tabindex="0">PVC</span> data, secrets):</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">k3d cluster delete ldndrc</code></pre></div><h2 id="path-b-real-lan-cluster-master-host-laptops">Path B — Real LAN Cluster (master + Host laptops)</h2><h3 id="1-master-laptop-static-lan-ip-e-g-192-168-1-50-sleep-disabled">1. Master laptop (static LAN IP, e.g. <code>192.168.1.50</code>, sleep disabled)</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">curl -sfL https://get.k3s.io | sh -
 <span class="hljs-built_in">cat</span> /var/lib/rancher/k3s/server/node-token</code></pre></div><h3 id="2-host-laptops-join-qualifying-hardware-joins-the-rest-stay-guests">2. Host laptops join (qualifying hardware joins, the rest stay Guests)</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-built_in">export</span> MASTER_IP=192.168.1.50
 <span class="hljs-built_in">export</span> NODE_TOKEN=&lt;token-from-master&gt;
@@ -260,25 +262,25 @@ curl -O http://&lt;master-ip&gt;:8082/portal/joining-cluster.sh   <span class="h
 bash joining-cluster.sh      <span class="hljs-comment"># registers + waits for instructor approval</span>
 ./test-joining.sh            <span class="hljs-comment"># detection-logic regression tests, no network</span></code></pre></div><p>The script registers the laptop (idempotent — safe to re-run), polls until the
 instructor allows or denies it in the Instructor console, then tries to switch Wi-Fi to
-the cluster network (manual instructions as fallback). Approved Hosts are offered the
-K3s agent install. The counter on the portal updates live; only <em>served</em> downloads are
-counted — details and the gateway-enforcement follow-up contract live in
+the cluster network (manual instructions as fallback). Approved <span class="term" data-term="host" tabindex="0">Hosts</span> are offered the
+<span class="term" data-term="k3s" tabindex="0">K3s</span> agent install. The counter on the portal updates live; only <em>served</em> downloads are
+counted — details and the <span class="term" data-term="gateway" tabindex="0">gateway</span>-enforcement follow-up contract live in
 <code>docs/lan-onboarding-portal.md</code>.</p>
 <p>To make the network <em>actually</em> feel captive (OS &quot;sign in to network&quot; prompt), run the
 onboarding-AP harness — it starts the panel + redirect trap and prints the three root
 steps (hotspot, dnsmasq, nftables):</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">./tools/captive-portal/run.sh start    <span class="hljs-comment"># unprivileged half, then the printed root block</span>
 ./tools/captive-portal/run.sh status   <span class="hljs-comment"># panel / trap / hotspot / portal URL</span>
-./test-captive-trap.sh                 <span class="hljs-comment"># redirect contract, no root, ~2s</span></code></pre></div><p>The harness is a workshop/demo rig, not gateway enforcement — see
+./test-captive-trap.sh                 <span class="hljs-comment"># redirect contract, no root, ~2s</span></code></pre></div><p>The harness is a workshop/demo rig, not <span class="term" data-term="gateway" tabindex="0">gateway</span> enforcement — see
 <code>tools/captive-portal/README.md</code>.</p>
-<h3 id="3-gpu-sharing-production-hosts">3. GPU sharing (production Hosts)</h3><p>Install the NVIDIA GPU Operator, then enable time-slicing so one consumer GPU serves ~4 session pods (<code>plan.md</code> §Phase 2 has the exact ConfigMap + <code>ClusterPolicy</code> patch). Session pods request <code>nvidia.com/gpu: 1</code> each; set <code>SESSION_GPU_LIMIT=1</code> in the control-panel Deployment.</p>
+<h3 id="3-gpu-sharing-production-hosts">3. GPU sharing (production Hosts)</h3><p>Install the NVIDIA GPU <span class="term" data-term="operator" tabindex="0">Operator</span>, then enable <span class="term" data-term="gpu-timeslicing" tabindex="0">time-slicing</span> so one consumer GPU serves ~4 <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pods</span> (<code>plan.md</code> §Phase 2 has the exact <span class="term" data-term="configmap" tabindex="0">ConfigMap</span> + <code>ClusterPolicy</code> patch). <span class="term" data-term="session" tabindex="0">Session</span> <span class="term" data-term="pod" tabindex="0">pods</span> request <code>nvidia.com/gpu: 1</code> each; set <code>SESSION_GPU_LIMIT=1</code> in the control-panel <span class="term" data-term="deployment" tabindex="0">Deployment</span>.</p>
 <h3 id="4-deploy-the-control-panel-same-manifests-as-path-a">4. Deploy the control panel (same manifests as Path A)</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl create namespace ldndrc
 kubectl -n ldndrc create secret generic ldndrc-control-panel \
   --from-literal=JWT_SECRET=<span class="hljs-string">&quot;<span class="hljs-subst">$(openssl rand -hex 32)</span>&quot;</span>
 kubectl apply -f manifests/control-panel-rbac.yaml
 kubectl apply -f manifests/control-panel-deployment.yaml
 kubectl apply -f manifests/control-panel-service.yaml
-kubectl apply -f manifests/control-panel-ingress.yaml</code></pre></div><p>Make the four hostnames resolve to the Traefik entry point (DNS or <code>/etc/hosts</code> on Guest machines):</p>
+kubectl apply -f manifests/control-panel-ingress.yaml</code></pre></div><p>Make the four hostnames resolve to the <span class="term" data-term="traefik" tabindex="0">Traefik</span> entry point (DNS or <code>/etc/hosts</code> on <span class="term" data-term="guest" tabindex="0">Guest</span> machines):</p>
 <div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">control.ros-platform.local
 editor.ros-platform.local
 desktop.ros-platform.local
@@ -290,7 +292,7 @@ TOKEN=$(curl -s -X POST <span class="hljs-variable">$BASE</span>/api/auth/login 
 curl -s -X POST <span class="hljs-variable">$BASE</span>/api/sessions -H <span class="hljs-string">&quot;Authorization: Bearer <span class="hljs-variable">$TOKEN</span>&quot;</span>   <span class="hljs-comment"># 202, status: provisioning</span>
 curl -s <span class="hljs-variable">$BASE</span>/api/sessions -H <span class="hljs-string">&quot;Authorization: Bearer <span class="hljs-variable">$TOKEN</span>&quot;</span>           <span class="hljs-comment"># poll until status: ready</span>
 curl -s <span class="hljs-variable">$BASE</span>/api/sessions/&lt;<span class="hljs-built_in">id</span>&gt; -H <span class="hljs-string">&quot;Authorization: Bearer <span class="hljs-variable">$TOKEN</span>&quot;</span>      <span class="hljs-comment"># detail</span>
-curl -s -X DELETE <span class="hljs-variable">$BASE</span>/api/sessions/&lt;<span class="hljs-built_in">id</span>&gt; -H <span class="hljs-string">&quot;Authorization: Bearer <span class="hljs-variable">$TOKEN</span>&quot;</span>  <span class="hljs-comment"># removes Deployment+Service+PVC</span></code></pre></div><p>Each session provisions a <strong>Deployment + Service + home PVC</strong> in the <code>ldndrc</code> namespace (created by the panel&#39;s ServiceAccount via namespace-scoped RBAC). The gateway starts routing only once the session is <code>ready</code> (Deployment reports an available replica).</p>
+curl -s -X DELETE <span class="hljs-variable">$BASE</span>/api/sessions/&lt;<span class="hljs-built_in">id</span>&gt; -H <span class="hljs-string">&quot;Authorization: Bearer <span class="hljs-variable">$TOKEN</span>&quot;</span>  <span class="hljs-comment"># removes Deployment+Service+PVC</span></code></pre></div><p>Each <span class="term" data-term="session" tabindex="0">session</span> provisions a <strong><span class="term" data-term="deployment" tabindex="0">Deployment</span> + <span class="term" data-term="service" tabindex="0">Service</span> + home <span class="term" data-term="pvc" tabindex="0">PVC</span></strong> in the <code>ldndrc</code> <span class="term" data-term="namespace" tabindex="0">namespace</span> (created by the panel&#39;s ServiceAccount via <span class="term" data-term="namespace" tabindex="0">namespace</span>-scoped <span class="term" data-term="rbac" tabindex="0">RBAC</span>). The <span class="term" data-term="gateway" tabindex="0">gateway</span> starts routing only once the <span class="term" data-term="session" tabindex="0">session</span> is <code>ready</code> (<span class="term" data-term="deployment" tabindex="0">Deployment</span> reports an available replica).</p>
 <h3 id="nodes-register-approve-poll-joined">Nodes: register → approve → poll → joined</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-comment"># laptop -&gt; register (unauthenticated, rate-limited, optional JOIN_KEY)</span>
 curl -X POST <span class="hljs-variable">$BASE</span>/api/nodes/register -H <span class="hljs-string">&#x27;Content-Type: application/json&#x27;</span> \
   -d <span class="hljs-string">&#x27;{&quot;hostname&quot;:&quot;laptop-a&quot;,&quot;os&quot;:&quot;linux&quot;,&quot;arch&quot;:&quot;amd64&quot;,&quot;cpu&quot;:12,&quot;ram_gb&quot;:32,&quot;gpu&quot;:&quot;NVIDIA RTX&quot;}&#x27;</span>
@@ -302,7 +304,7 @@ curl -X POST <span class="hljs-variable">$BASE</span>/api/nodes/&lt;<span class=
 
 <span class="hljs-comment"># laptop -&gt; poll until approved; first poll mints the one-time K3s token</span>
 curl <span class="hljs-variable">$BASE</span>/api/nodes/&lt;<span class="hljs-built_in">id</span>&gt;
-<span class="hljs-comment"># -&gt; {&quot;status&quot;:&quot;approved&quot;,&quot;k3s_url&quot;:&quot;https://192.168.1.50:6443&quot;,&quot;k3s_token&quot;:&quot;K10...&quot;,&quot;node_name&quot;:&quot;ldndrc-&lt;id&gt;&quot;}</span></code></pre></div><p>A 5s in-cluster watcher labels Ready nodes <code>role=host</code> and marks them <code>joined</code>. Requires the nodes RBAC, the <code>NODES_DB</code> volume, and <code>K3S_JOIN_URL</code> set to the master&#39;s reachable address — without it, approved polls answer 503. (<code>control-panel/README.md</code> has the full walkthrough.)</p>
+<span class="hljs-comment"># -&gt; {&quot;status&quot;:&quot;approved&quot;,&quot;k3s_url&quot;:&quot;https://192.168.1.50:6443&quot;,&quot;k3s_token&quot;:&quot;K10...&quot;,&quot;node_name&quot;:&quot;ldndrc-&lt;id&gt;&quot;}</span></code></pre></div><p>A 5s in-cluster watcher labels Ready <span class="term" data-term="node" tabindex="0">nodes</span> <code>role=host</code> and marks them <code>joined</code>. Requires the <span class="term" data-term="node" tabindex="0">nodes</span> <span class="term" data-term="rbac" tabindex="0">RBAC</span>, the <code>NODES_DB</code> volume, and <code>K3S_JOIN_URL</code> set to the master&#39;s reachable address — without it, approved polls answer 503. (<code>control-panel/README.md</code> has the full walkthrough.)</p>
 <h3 id="control-panel-configuration-env-vars">Control-panel configuration (env vars)</h3><table>
 <thead>
 <tr>
@@ -314,7 +316,7 @@ curl <span class="hljs-variable">$BASE</span>/api/nodes/&lt;<span class="hljs-bu
 <tbody><tr>
 <td><code>JWT_SECRET</code></td>
 <td>— (required, exits if unset)</td>
-<td>Signs auth tokens (24h TTL) + session cookie</td>
+<td>Signs auth tokens (24h TTL) + <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 </tr>
 <tr>
 <td><code>CONTROL_PANEL_PORT</code></td>
@@ -324,27 +326,27 @@ curl <span class="hljs-variable">$BASE</span>/api/nodes/&lt;<span class="hljs-bu
 <tr>
 <td><code>SESSION_NAMESPACE</code></td>
 <td><code>ldndrc</code></td>
-<td>Where session workloads are provisioned</td>
+<td>Where <span class="term" data-term="session" tabindex="0">session</span> workloads are provisioned</td>
 </tr>
 <tr>
 <td><code>SESSION_IMAGE</code></td>
 <td><code>ldndrc/ros2-gz:jazzy-harmonic-10f1f10c</code></td>
-<td>Session image, immutable sha tag (demo deploys override to <code>ldndrc/demo-standin:dev</code>)</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> image, immutable sha tag (demo deploys override to <code>ldndrc/demo-standin:dev</code>)</td>
 </tr>
 <tr>
 <td><code>SESSION_HOME_STORAGE</code></td>
 <td><code>5Gi</code></td>
-<td>Home PVC size per session</td>
+<td>Home <span class="term" data-term="pvc" tabindex="0">PVC</span> size per <span class="term" data-term="session" tabindex="0">session</span></td>
 </tr>
 <tr>
 <td><code>SESSION_GPU_LIMIT</code></td>
 <td><code>1</code></td>
-<td><code>nvidia.com/gpu</code> per session (<code>0</code> = schedule without GPU, for demos)</td>
+<td><code>nvidia.com/gpu</code> per <span class="term" data-term="session" tabindex="0">session</span> (<code>0</code> = schedule without GPU, for demos)</td>
 </tr>
 <tr>
 <td><code>NODES_DB</code></td>
 <td><code>/var/lib/ldndrc/nodes.json</code></td>
-<td>Onboarding DB (emptyDir in demo; a PVC later)</td>
+<td>Onboarding DB (emptyDir in demo; a <span class="term" data-term="pvc" tabindex="0">PVC</span> later)</td>
 </tr>
 <tr>
 <td><code>K3S_JOIN_URL</code></td>
@@ -354,12 +356,12 @@ curl <span class="hljs-variable">$BASE</span>/api/nodes/&lt;<span class="hljs-bu
 <tr>
 <td><code>COOKIE_DOMAIN</code></td>
 <td><code>.ros-platform.local</code></td>
-<td>Cookie shared across all four subdomains</td>
+<td><span class="term" data-term="cookie" tabindex="0">Cookie</span> shared across all four subdomains</td>
 </tr>
 <tr>
 <td><code>GATEWAY_HOST_SUFFIX</code></td>
 <td><code>ros-platform.local</code></td>
-<td>Host suffix the gateway routes on</td>
+<td><span class="term" data-term="host" tabindex="0">Host</span> suffix the <span class="term" data-term="gateway" tabindex="0">gateway</span> routes on</td>
 </tr>
 <tr>
 <td><code>JOIN_KEY</code></td>
@@ -372,23 +374,23 @@ curl <span class="hljs-variable">$BASE</span>/api/nodes/&lt;<span class="hljs-bu
 <td><code>true</code> auto-approves registrations (dev only)</td>
 </tr>
 </tbody></table>
-<h2 id="guest-guide-the-four-browser-tabs">Guest Guide — the Four Browser Tabs</h2><p>All tool hosts go through the control panel gateway: cookie auth first, then reverse-proxy to <strong>your</strong> ready session&#39;s Service. <code>COOKIE_DOMAIN=.ros-platform.local</code> makes one login work everywhere.</p>
+<h2 id="guest-guide-the-four-browser-tabs">Guest Guide — the Four Browser Tabs</h2><p>All tool <span class="term" data-term="host" tabindex="0">hosts</span> go through the control panel <span class="term" data-term="gateway" tabindex="0">gateway</span>: <span class="term" data-term="cookie" tabindex="0">cookie</span> auth first, then reverse-proxy to <strong>your</strong> ready <span class="term" data-term="session" tabindex="0">session</span>&#39;s <span class="term" data-term="service" tabindex="0">Service</span>. <code>COOKIE_DOMAIN=.ros-platform.local</code> makes one login work everywhere.</p>
 <table>
 <thead>
 <tr>
 <th>URL</th>
 <th>Serves</th>
-<th>Upstream in your pod</th>
+<th>Upstream in your <span class="term" data-term="pod" tabindex="0">pod</span></th>
 </tr>
 </thead>
 <tbody><tr>
 <td><code>control.ros-platform.local</code></td>
-<td>Control panel (sessions, login)</td>
+<td>Control panel (<span class="term" data-term="session" tabindex="0">sessions</span>, login)</td>
 <td>Control panel itself</td>
 </tr>
 <tr>
 <td><code>editor.ros-platform.local</code></td>
-<td>code-server — VS Code + terminal</td>
+<td><span class="term" data-term="code-server" tabindex="0">code-server</span> — VS Code + terminal</td>
 <td>port <code>7682</code></td>
 </tr>
 <tr>
@@ -398,22 +400,22 @@ curl <span class="hljs-variable">$BASE</span>/api/nodes/&lt;<span class="hljs-bu
 </tr>
 <tr>
 <td><code>gazebo.ros-platform.local</code></td>
-<td>Gazebo 3D view (gzweb WebSocket viewer)</td>
+<td><span class="term" data-term="gazebo" tabindex="0">Gazebo</span> 3D view (<span class="term" data-term="gzweb" tabindex="0">gzweb</span> <span class="term" data-term="websocket" tabindex="0">WebSocket</span> viewer)</td>
 <td>port <code>9002</code></td>
 </tr>
 </tbody></table>
 <h3 id="your-first-simulation-inside-the-editor-terminal">Your first simulation (inside the editor terminal)</h3><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">turtlebot3-sim            <span class="hljs-comment"># obstacle world (default, model: burger)</span>
 turtlebot3-sim empty      <span class="hljs-comment"># empty world + one TurtleBot3</span>
 turtlebot3-sim house      <span class="hljs-comment"># house world</span>
-TURTLEBOT3_MODEL=waffle_pi turtlebot3-sim house</code></pre></div><p>Then open the <strong>gazebo</strong> tab — the scene streams in. Drive it from another terminal:</p>
+TURTLEBOT3_MODEL=waffle_pi turtlebot3-sim house</code></pre></div><p>Then open the <strong><span class="term" data-term="gazebo" tabindex="0">gazebo</span></strong> tab — the scene streams in. Drive it from another terminal:</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">turtlebot3-teleop.sh</code></pre></div><p>Rules of the road:</p>
 <ul>
-<li><strong>One Gazebo server per workspace.</strong> A second <code>gz sim</code> creates a duplicate world/robot that confuses the viewer. Stop the first with <code>Ctrl-C</code>, or force-relaunch with <code>turtlebot3-sim --force [world]</code>.</li>
-<li>Gazebo Sim itself is <strong>not supervised</strong> — you launch it in the foreground so you see its logs and choose your world. <code>code-server</code>, <code>selkies</code>, and <code>gazebo-web</code> are supervised and restart on their own.</li>
+<li><strong>One <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> server per workspace.</strong> A second <code>gz sim</code> creates a duplicate world/robot that confuses the viewer. Stop the first with <code>Ctrl-C</code>, or force-relaunch with <code>turtlebot3-sim --force [world]</code>.</li>
+<li><span class="term" data-term="gazebo" tabindex="0">Gazebo</span> Sim itself is <strong>not supervised</strong> — you launch it in the foreground so you see its logs and choose your world. <code>code-server</code>, <code>selkies</code>, and <code>gazebo-web</code> are supervised and restart on their own.</li>
 <li>For a custom SDF world: <code>gz sim -s -v 3 ~/dev_ws/src/my_workshop/worlds/maze.sdf -r</code>, and make sure it includes the <code>SceneBroadcaster</code> plugin so there is scene data to stream.</li>
-<li>Set <code>TURTLEBOT3_GAZEBO_GUI=true</code> only if you want Gazebo rendered in the IceWM desktop tab instead of the browser viewer.</li>
+<li>Set <code>TURTLEBOT3_GAZEBO_GUI=true</code> only if you want <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> rendered in the IceWM desktop tab instead of the browser viewer.</li>
 </ul>
-<p>Gateway errors are plain and diagnosable: <code>401</code> = log in first, <code>404</code> = no active session (create one), <code>503</code> = session still <code>provisioning</code> (wait for <code>ready</code>), <code>502</code> = session pod unhealthy (tell the operator).</p>
+<p><span class="term" data-term="gateway" tabindex="0">Gateway</span> errors are plain and diagnosable: <code>401</code> = log in first, <code>404</code> = no active <span class="term" data-term="session" tabindex="0">session</span> (create one), <code>503</code> = <span class="term" data-term="session" tabindex="0">session</span> still <code>provisioning</code> (wait for <code>ready</code>), <code>502</code> = <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span> unhealthy (tell the <span class="term" data-term="operator" tabindex="0">operator</span>).</p>
 <h2 id="troubleshooting">Troubleshooting</h2><table>
 <thead>
 <tr>
@@ -423,43 +425,43 @@ TURTLEBOT3_MODEL=waffle_pi turtlebot3-sim house</code></pre></div><p>Then open t
 </tr>
 </thead>
 <tbody><tr>
-<td>Session pod <code>Pending</code>, <code>didn&#39;t match node affinity</code></td>
-<td>No node labeled <code>role=host</code></td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> <span class="term" data-term="pod" tabindex="0">pod</span> <code>Pending</code>, <code>didn&#39;t match node affinity</code></td>
+<td>No <span class="term" data-term="node" tabindex="0">node</span> labeled <code>role=host</code></td>
 <td><code>kubectl label node &lt;node&gt; node-role.kubernetes.io/role=host</code></td>
 </tr>
 <tr>
-<td>Session pod <code>Pending</code>, <code>Insufficient nvidia.com/gpu</code></td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> <span class="term" data-term="pod" tabindex="0">pod</span> <code>Pending</code>, <code>Insufficient nvidia.com/gpu</code></td>
 <td>GPU requested, none present</td>
 <td>Expected unless <code>SESSION_GPU_LIMIT=0</code> (demo default)</td>
 </tr>
 <tr>
-<td>Session pod <code>ImagePullBackOff</code></td>
-<td>Image missing from nodes</td>
-<td>Re-run <code>k3d image import</code> (Path A) or push to the registry Hosts pull from</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> <span class="term" data-term="pod" tabindex="0">pod</span> <code>ImagePullBackOff</code></td>
+<td>Image missing from <span class="term" data-term="node" tabindex="0">nodes</span></td>
+<td>Re-run <code>k3d image import</code> (Path A) or push to the registry <span class="term" data-term="host" tabindex="0">Hosts</span> pull from</td>
 </tr>
 <tr>
-<td>Session stuck <code>provisioning</code>, gateway <code>503</code></td>
-<td>Deployment has no available replica yet</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> stuck <code>provisioning</code>, <span class="term" data-term="gateway" tabindex="0">gateway</span> <code>503</code></td>
+<td><span class="term" data-term="deployment" tabindex="0">Deployment</span> has no available replica yet</td>
 <td><code>kubectl -n ldndrc describe pod &lt;session-pod&gt;</code>, read events</td>
 </tr>
 <tr>
-<td>Gateway <code>401</code> on tool hosts</td>
-<td>Missing/expired cookie</td>
+<td><span class="term" data-term="gateway" tabindex="0">Gateway</span> <code>401</code> on tool <span class="term" data-term="host" tabindex="0">hosts</span></td>
+<td>Missing/expired <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 <td>Log in again at <code>control.ros-platform.local</code></td>
 </tr>
 <tr>
-<td>Gateway <code>502</code></td>
-<td>Session Service unreachable</td>
-<td>Check the session pod is <code>Running</code>; <code>DELETE</code> + recreate the session</td>
+<td><span class="term" data-term="gateway" tabindex="0">Gateway</span> <code>502</code></td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> <span class="term" data-term="service" tabindex="0">Service</span> unreachable</td>
+<td>Check the <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span> is <code>Running</code>; <code>DELETE</code> + recreate the <span class="term" data-term="session" tabindex="0">session</span></td>
 </tr>
 <tr>
-<td>Node poll <code>503 join URL not configured</code></td>
+<td><span class="term" data-term="node" tabindex="0">Node</span> poll <code>503 join URL not configured</code></td>
 <td><code>K3S_JOIN_URL</code> unset</td>
 <td>Set it to the master&#39;s reachable <code>https://&lt;ip&gt;:6443</code> and redeploy</td>
 </tr>
 <tr>
 <td>Port-forward dies after a rollout</td>
-<td>Forward was tied to the old pod</td>
+<td>Forward was tied to the old <span class="term" data-term="pod" tabindex="0">pod</span></td>
 <td>Re-run the <code>port-forward</code> commands</td>
 </tr>
 <tr>
@@ -468,9 +470,9 @@ TURTLEBOT3_MODEL=waffle_pi turtlebot3-sim house</code></pre></div><p>Then open t
 <td><code>k3d cluster list</code>; recreate if missing</td>
 </tr>
 <tr>
-<td>Gazebo viewer stays blank</td>
+<td><span class="term" data-term="gazebo" tabindex="0">Gazebo</span> viewer stays blank</td>
 <td>No scene data or bridge down</td>
-<td>World needs <code>SceneBroadcaster</code>; check <code>supervisorctl status</code> + <code>/tmp/gazebo-web.err.log</code> in the pod; confirm <code>:9002</code> is proxied</td>
+<td>World needs <code>SceneBroadcaster</code>; check <code>supervisorctl status</code> + <code>/tmp/gazebo-web.err.log</code> in the <span class="term" data-term="pod" tabindex="0">pod</span>; confirm <code>:9002</code> is proxied</td>
 </tr>
 </tbody></table>
 <h2 id="project-structure">Project Structure</h2><div class="code term" data-lang=""><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs">├── plan.md                 # Full design doc: overview, stack, ASCII arch, phased build plan
@@ -498,27 +500,27 @@ TURTLEBOT3_MODEL=waffle_pi turtlebot3-sim house</code></pre></div><p>Then open t
 <tbody><tr>
 <td><code>POST</code></td>
 <td><code>/api/auth/login</code></td>
-<td>Issue JWT + session cookie (any non-empty password today — TODO: real credential check)</td>
+<td>Issue <span class="term" data-term="jwt" tabindex="0">JWT</span> + <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="cookie" tabindex="0">cookie</span> (any non-empty password today — TODO: real credential check)</td>
 </tr>
 <tr>
 <td><code>POST</code></td>
 <td><code>/api/sessions</code></td>
-<td>Provision a workspace pod (202 <code>provisioning</code> → <code>ready</code>)</td>
+<td>Provision a workspace <span class="term" data-term="pod" tabindex="0">pod</span> (202 <code>provisioning</code> → <code>ready</code>)</td>
 </tr>
 <tr>
 <td><code>GET</code></td>
 <td><code>/api/sessions</code></td>
-<td>List sessions (status, node)</td>
+<td>List <span class="term" data-term="session" tabindex="0">sessions</span> (status, <span class="term" data-term="node" tabindex="0">node</span>)</td>
 </tr>
 <tr>
 <td><code>GET</code></td>
 <td><code>/api/sessions/{id}</code></td>
-<td>Session detail</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> detail</td>
 </tr>
 <tr>
 <td><code>DELETE</code></td>
 <td><code>/api/sessions/{id}</code></td>
-<td>Tear down a session</td>
+<td>Tear down a <span class="term" data-term="session" tabindex="0">session</span></td>
 </tr>
 <tr>
 <td><code>POST</code></td>
@@ -528,22 +530,22 @@ TURTLEBOT3_MODEL=waffle_pi turtlebot3-sim house</code></pre></div><p>Then open t
 <tr>
 <td><code>GET</code></td>
 <td><code>/api/nodes</code></td>
-<td>List join requests (operator, JWT)</td>
+<td>List join requests (<span class="term" data-term="operator" tabindex="0">operator</span>, <span class="term" data-term="jwt" tabindex="0">JWT</span>)</td>
 </tr>
 <tr>
 <td><code>GET</code></td>
 <td><code>/api/nodes/{id}</code></td>
-<td>Poll status; mints the short-lived K3s token once when approved</td>
+<td>Poll status; mints the short-lived <span class="term" data-term="k3s" tabindex="0">K3s</span> token once when approved</td>
 </tr>
 <tr>
 <td><code>POST</code></td>
 <td><code>/api/nodes/{id}/approve</code></td>
-<td>Operator approves (JWT)</td>
+<td><span class="term" data-term="operator" tabindex="0">Operator</span> approves (<span class="term" data-term="jwt" tabindex="0">JWT</span>)</td>
 </tr>
 <tr>
 <td><code>POST</code></td>
 <td><code>/api/nodes/{id}/deny</code></td>
-<td>Operator denies with reason (JWT)</td>
+<td><span class="term" data-term="operator" tabindex="0">Operator</span> denies with reason (<span class="term" data-term="jwt" tabindex="0">JWT</span>)</td>
 </tr>
 <tr>
 <td><code>POST</code></td>
@@ -573,7 +575,7 @@ TURTLEBOT3_MODEL=waffle_pi turtlebot3-sim house</code></pre></div><p>Then open t
 <tr>
 <td><code>GET</code></td>
 <td><code>/api/downloads/stats</code></td>
-<td>Counter detail: requests + unique-device estimate (JWT)</td>
+<td>Counter detail: requests + unique-device estimate (<span class="term" data-term="jwt" tabindex="0">JWT</span>)</td>
 </tr>
 <tr>
 <td><code>GET</code></td>
@@ -583,12 +585,12 @@ TURTLEBOT3_MODEL=waffle_pi turtlebot3-sim house</code></pre></div><p>Then open t
 <tr>
 <td><code>WS</code></td>
 <td><code>/ws/{session}</code></td>
-<td>WebSocket proxy into a pod (code-server / gzweb / Selkies)</td>
+<td><span class="term" data-term="websocket" tabindex="0">WebSocket</span> proxy into a <span class="term" data-term="pod" tabindex="0">pod</span> (<span class="term" data-term="code-server" tabindex="0">code-server</span> / <span class="term" data-term="gzweb" tabindex="0">gzweb</span> / Selkies)</td>
 </tr>
 </tbody></table>
-<p>Host onboarding details and curl examples live in <code>control-panel/README.md</code>; the Gazebo viewer workflow lives in <code>sim-web-app/README.md</code>.</p>
-<h2 id="isolation-model">Isolation Model</h2><p>Each session pod is a <strong>fully isolated ROS 2 environment</strong>: all containers share one pod network namespace so DDS discovery/multicast stays on <code>localhost</code>, with a unique <code>ROS_DOMAIN_ID</code> per pod as defense-in-depth (<code>ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST</code> pins it further). Flannel carries only HTTP, WebSocket, and WebRTC — no DDS packet ever traverses the overlay, so cross-pod topic discovery is impossible by design. See <code>plan.md</code> §3.</p>
-<h2 id="status">Status</h2><p>Built incrementally across 43 checkpoints (<code>local_dev_docs/</code>); <code>docs/roadmap.md</code> is the done-vs-remaining map. Live on K3s with the demo stand-in image; production sessions use the full Jazzy/Harmonic workspace image with GPU (<code>SESSION_GPU_LIMIT=1</code>). The zero-touch <code>ldndrc-join</code> TUI binary (Bubble Tea, spec in <code>docs/host-joiner-tui-spec.md</code>) is a <strong>proposal</strong> — <code>join-cluster.sh</code> remains the current path.</p>
+<p><span class="term" data-term="host" tabindex="0">Host</span> onboarding details and curl examples live in <code>control-panel/README.md</code>; the <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> viewer workflow lives in <code>sim-web-app/README.md</code>.</p>
+<h2 id="isolation-model">Isolation Model</h2><p>Each <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span> is a <strong>fully isolated <span class="term" data-term="ros2" tabindex="0">ROS 2</span> environment</strong>: all containers share one <span class="term" data-term="pod" tabindex="0">pod</span> network <span class="term" data-term="namespace" tabindex="0">namespace</span> so <span class="term" data-term="dds" tabindex="0">DDS</span> discovery/<span class="term" data-term="multicast" tabindex="0">multicast</span> stays on <code>localhost</code>, with a unique <code>ROS_DOMAIN_ID</code> per <span class="term" data-term="pod" tabindex="0">pod</span> as defense-in-depth (<code>ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST</code> pins it further). <span class="term" data-term="flannel" tabindex="0">Flannel</span> carries only HTTP, <span class="term" data-term="websocket" tabindex="0">WebSocket</span>, and WebRTC — no <span class="term" data-term="dds" tabindex="0">DDS</span> packet ever traverses the overlay, so cross-<span class="term" data-term="pod" tabindex="0">pod</span> topic discovery is impossible by design. See <code>plan.md</code> §3.</p>
+<h2 id="status">Status</h2><p>Built incrementally across 43 checkpoints (<code>local_dev_docs/</code>); <code>docs/roadmap.md</code> is the done-vs-remaining map. Live on <span class="term" data-term="k3s" tabindex="0">K3s</span> with the demo stand-in image; production <span class="term" data-term="session" tabindex="0">sessions</span> use the full Jazzy/Harmonic <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> with GPU (<code>SESSION_GPU_LIMIT=1</code>). The zero-touch <code>ldndrc-join</code> TUI binary (Bubble Tea, spec in <code>docs/host-joiner-tui-spec.md</code>) is a <strong>proposal</strong> — <code>join-cluster.sh</code> remains the current path.</p>
 <h2 id="contributing">Contributing</h2><p>Read <a href="CONTRIBUTING.html"><code>CONTRIBUTING.md</code></a> before your first change. It covers setup, the verification matrix, conventions, and what will not be merged. The docs site under <code>docs-site/</code> is the same material as a guided concept map with a <code>Verify</code> command on every topic.</p>
 </div>
 </div>

@@ -6,6 +6,8 @@
 <title>LDNDRC — Detailed Project Report (Technical Appendix) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/detailed-project-report.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -45,9 +47,9 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/detailed-project-report.md · 16.0 KB</div>
 <h1 class="page-title">LDNDRC — Detailed Project Report (Technical Appendix)</h1>
-<div class="prose"><p><strong>Date:</strong> 2026-10-13 · <strong>Branch:</strong> <code>main@299702f</code> · <strong>Cluster:</strong> real K3s organizer <code>hari</code> (K3s <code>v1.36.4+k3s1</code>, <code>192.168.1.37:6443</code>)
+<div class="prose"><p><strong>Date:</strong> 2026-10-13 · <strong>Branch:</strong> <code>main@299702f</code> · <strong>Cluster:</strong> real <span class="term" data-term="k3s" tabindex="0">K3s</span> organizer <code>hari</code> (<span class="term" data-term="k3s" tabindex="0">K3s</span> <code>v1.36.4+k3s1</code>, <code>192.168.1.37:6443</code>)
 <strong>Merges:</strong> <code>d9d9a28</code> (<code>feat/r3-csrf</code>: R2/R3/R4) + <code>e5fe6cb</code> (<code>feat/r6-workspace-image</code>: CP-27…CP-38) · <strong>Releases:</strong> <code>v0.1.0</code>, <code>v0.2.0</code> (<code>ldndrc-join</code>)
-<strong>Session picture:</strong> <code>ldndrc/ros2-gz:jazzy-harmonic-10f1f10c</code> (10.8GB, Selkies 2.0.0, Fuel-seeded)</p>
+<strong><span class="term" data-term="session" tabindex="0">Session</span> picture:</strong> <code>ldndrc/ros2-gz:jazzy-harmonic-10f1f10c</code> (10.8GB, Selkies 2.0.0, Fuel-seeded)</p>
 <blockquote>
 <p>How to read this doc (new contributor): this is the <em>appendix</em>. The friendly
 story lives in <code>docs/project-journey-report.md</code> (final-vs-now, mind-map,
@@ -58,13 +60,13 @@ hold the raw proofs. Terms in (brackets) match the journey doc&#39;s glossary.</
 </blockquote>
 <hr>
 <h2 id="1-project-identity">1. Project identity</h2><p><em>Plain words: a classroom of laptops becomes a robot school with no cloud.
-Strong laptops (Hosts) share power and run sealed robot boxes; weak laptops
-(Guests) just use a browser; one laptop (Master) organizes.</em></p>
-<p>LDNDRC (Local Dynamic Node Discovery ROS Cluster) is a local-first,
-browser-accessible robotics simulation platform: consumer laptops form a K3s
-cluster (K3s: lightweight organizer deciding what runs where), strong laptops
-(&quot;Hosts&quot;) run isolated per-user ROS 2 workspaces (ROS 2: robot brain;
-workspace: sealed box with editor + sim + desktop), weak laptops (&quot;Guests&quot;)
+Strong laptops (<span class="term" data-term="host" tabindex="0">Hosts</span>) share power and run sealed robot boxes; weak laptops
+(<span class="term" data-term="guest" tabindex="0">Guests</span>) just use a browser; one laptop (Master) organizes.</em></p>
+<p>LDNDRC (Local Dynamic <span class="term" data-term="node" tabindex="0">Node</span> Discovery ROS Cluster) is a local-first,
+browser-accessible robotics simulation platform: consumer laptops form a <span class="term" data-term="k3s" tabindex="0">K3s</span>
+cluster (<span class="term" data-term="k3s" tabindex="0">K3s</span>: lightweight organizer deciding what runs where), strong laptops
+(&quot;<span class="term" data-term="host" tabindex="0">Hosts</span>&quot;) run isolated per-user <span class="term" data-term="ros2" tabindex="0">ROS 2</span> workspaces (<span class="term" data-term="ros2" tabindex="0">ROS 2</span>: robot brain;
+workspace: sealed box with editor + sim + desktop), weak laptops (&quot;<span class="term" data-term="guest" tabindex="0">Guests</span>&quot;)
 use a browser. No cloud, no dedicated servers.</p>
 <h2 id="2-architecture-as-built">2. Architecture as built</h2><p><em>Plain words: your laptop talks to the front door, the desk checks your
 wristband and serves the website, the organizer starts your sealed box,
@@ -82,12 +84,12 @@ K3s API (organizer&#x27;s controls, driven with client-go: the Go remote): per-b
   Deployment (recipe) + Service (address, doors 7682/8080/9002) + home PVC (5GB private disk);
   join tickets as Secrets (15-min passwords); laptop labels; health checks; restart re-read
 Headlamp (glass wall, token key): operator sees everything
-mDNS (Wi-Fi shout &quot;_ldndrc-master._tcp&quot;): organizer announces itself on hari:8082</code></pre></div><p>Key facts, precisely: one Deployment + Service + PVC per box with a unique
+mDNS (Wi-Fi shout &quot;_ldndrc-master._tcp&quot;): organizer announces itself on hari:8082</code></pre></div><p>Key facts, precisely: one <span class="term" data-term="deployment" tabindex="0">Deployment</span> + <span class="term" data-term="service" tabindex="0">Service</span> + <span class="term" data-term="pvc" tabindex="0">PVC</span> per box with a unique
 <code>ROS_DOMAIN_ID</code> (channel number so boxes can&#39;t hear each other) and
 <code>ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST</code> (robots talk inside their own box
-only); Host-only placing via <code>node-role.kubernetes.io/role</code> (label: this
+only); <span class="term" data-term="host" tabindex="0">Host</span>-only placing via <code>node-role.kubernetes.io/role</code> (label: this
 laptop shares power); graphics optional (<code>SESSION_GPU_LIMIT=0</code> on plain-CPU
-today, <code>&quot;1&quot;</code> on NVIDIA hosts); browsers use wristband cookie + <code>X-CSRF-Token</code>
+today, <code>&quot;1&quot;</code> on NVIDIA <span class="term" data-term="host" tabindex="0">hosts</span>); browsers use wristband <span class="term" data-term="cookie" tabindex="0">cookie</span> + <code>X-CSRF-Token</code>
 stamp on changes, scripts use Bearer pass; box addresses dialed as FQDN
 (trailing dot — skips the Wi-Fi&#39;s wildcard-DNS trap found in CP20);
 organizer updates use delete-old-first (door <code>:8082</code> fits one copy);
@@ -109,7 +111,7 @@ who may join, which door leads where, and how new organizers are found.</em></p>
 </tr>
 <tr>
 <td><code>internal/auth</code></td>
-<td>Sign/verify passes (JWT), set/check/clear wristband cookie, make/check click stamps (<code>IssueCSRF</code>/<code>VerifyCSRF</code>: HMAC fingerprint)</td>
+<td>Sign/verify passes (<span class="term" data-term="jwt" tabindex="0">JWT</span>), set/check/clear wristband <span class="term" data-term="cookie" tabindex="0">cookie</span>, make/check click stamps (<code>IssueCSRF</code>/<code>VerifyCSRF</code>: HMAC fingerprint)</td>
 <td>Done, live</td>
 </tr>
 <tr>
@@ -119,7 +121,7 @@ who may join, which door leads where, and how new organizers are found.</em></p>
 </tr>
 <tr>
 <td><code>internal/sessions</code></td>
-<td>Notebook store (<code>SESSIONS_DB</code>, default <code>/var/lib/ldndrc/sessions.json</code>) + organizer driver (Deployment/Service/PVC, robot env, GPU-if-asked, health probes, safe user IDs); <code>Get()</code> re-checks starting→ready</td>
+<td>Notebook store (<code>SESSIONS_DB</code>, default <code>/var/lib/ldndrc/sessions.json</code>) + organizer driver (<span class="term" data-term="deployment" tabindex="0">Deployment</span>/<span class="term" data-term="service" tabindex="0">Service</span>/<span class="term" data-term="pvc" tabindex="0">PVC</span>, robot env, GPU-if-asked, health probes, safe user IDs); <code>Get()</code> re-checks starting→ready</td>
 <td>Done, live</td>
 </tr>
 <tr>
@@ -205,7 +207,7 @@ launch button, code + sim side by side, full-screen desktop, teacher cards.</em>
 </tr>
 </tbody></table>
 <p>Sim frame shows the sim-data door today; the pretty 3D piece from
-<code>sim-web-app/</code> (gzweb: browser-drawn 3D) is the viewer slice.</p>
+<code>sim-web-app/</code> (<span class="term" data-term="gzweb" tabindex="0">gzweb</span>: browser-drawn 3D) is the viewer slice.</p>
 <h3 id="3-3-robot-world-picture-images">3.3 Robot-world picture (<code>images/</code>)</h3><p><em>Plain words: the frozen 10.8GB hard drive every sealed box boots from —
 robot brain, 3D physics, editor, screen sharing, practice models included.</em></p>
 <table>
@@ -239,10 +241,10 @@ warm (shared layers), Wi-Fi 1–4 min + unpack 1–3 min ≈ 5–10 min per new
 laptop once, then kept; shelf-mirror worth it at ~5 laptops.</p>
 <h3 id="3-4-recipes-manifests">3.4 Recipes (<code>manifests/</code>)</h3><p><em>Plain words: the cluster&#39;s paperwork — who may touch what, the desk&#39;s
 settings, the four web names, the teacher&#39;s glass wall.</em></p>
-<p>Least-power permissions (RBAC: boxes in <code>ldndrc</code>, tickets in <code>kube-system</code>,
-laptop reads cluster-wide), desk Deployment/Service/Ingress (4 names,
+<p>Least-power permissions (<span class="term" data-term="rbac" tabindex="0">RBAC</span>: boxes in <code>ldndrc</code>, tickets in <code>kube-system</code>,
+laptop reads cluster-wide), desk <span class="term" data-term="deployment" tabindex="0">Deployment</span>/<span class="term" data-term="service" tabindex="0">Service</span>/<span class="term" data-term="ingress" tabindex="0">Ingress</span> (4 names,
 <code>SESSION_IMAGE</code> = <code>jazzy-harmonic-10f1f10c</code>, <code>SESSIONS_DB</code> + <code>NODES_DB</code>
-settings), secret example (never real keys), Headlamp set, organizer-network
+settings), secret example (never real keys), <span class="term" data-term="headlamp" tabindex="0">Headlamp</span> set, organizer-network
 patch for real masters (apply with <code>kubectl patch</code>, never <code>apply</code> the
 fragment — it is a snippet, not a full paper). Known stale line: Selkies
 &quot;waiting/502&quot; note predates the 200-live proof (tidy with login fix).
@@ -305,12 +307,12 @@ Practice cluster <code>ldndrc</code> parked (rollback kept). Leftovers: 2 clearl
 test laptop rows (no delete-button exists yet), pre-check workloads orphaned
 by delete-old-first restarts (full-memory step ends this).</p>
 <h2 id="6-key-choices-log-short-chosen-dropped">6. Key choices log (short: chosen → dropped)</h2><p><em>Plain words: the branch-by-branch decisions — details live in journey §5.</em></p>
-<p>Go desk → not Node · per-student boxes → not shared room · cookie+names →
-not old paths · desk inside cluster → not systemd · 15-min Secrets → not
+<p>Go desk → not <span class="term" data-term="node" tabindex="0">Node</span> · per-student boxes → not shared room · <span class="term" data-term="cookie" tabindex="0">cookie</span>+names →
+not old paths · desk inside cluster → not <span class="term" data-term="systemd" tabindex="0">systemd</span> · 15-min Secrets → not
 manual tokens · GPU-optional → not faked capacity · tiny picture first →
 not 10GB day one · text screens → not heavy apps · HMAC stamps → not
 nothing · notebook+adopt/mark-stopped → not silent delete · site inside Go
-file → not sidecar · cards Admin → not plain table · Selkies 2.0 behind
+file → not <span class="term" data-term="sidecar" tabindex="0">sidecar</span> · cards Admin → not plain table · Selkies 2.0 behind
 flag → not dead 1.6.2 · pre-pack 2 models → not download at start · frozen
 tags + <code>$HOME</code> pack → not moving tag + <code>/tmp</code> · two tracks, one merge.</p>
 <h2 id="7-known-limits-nothing-hidden">7. Known limits (nothing hidden)</h2><ul>
@@ -321,8 +323,8 @@ temporary shelf — full-memory step moves them to disk; graceful-update
 flag still default).</li>
 <li>Recipe comment stale (&quot;Selkies waiting/502&quot;, really 200-live).</li>
 <li>No pretty sim viewer yet (data frame today).</li>
-<li>No guest full-join yet (practice cluster couldn&#39;t take real agents; real
-organizer waits for the paired run). Guest hearing the shout pending.</li>
+<li>No <span class="term" data-term="guest" tabindex="0">guest</span> full-join yet (practice cluster couldn&#39;t take real agents; real
+organizer waits for the paired run). <span class="term" data-term="guest" tabindex="0">Guest</span> hearing the shout pending.</li>
 <li>No encryption yet (trusted Wi-Fi assumed); click-stamps are the only
 browser armor so far (R7: encryption, walls, limits, graphs).</li>
 <li>Windows/WSL2 unproven on hardware; shelf-mirror/pre-load measured (CP38)
@@ -334,7 +336,7 @@ not built; slimming/speed-packing parked; light picture parked.</li>
 delete-old-first rollout + live proof; tidy stale Selkies line.</li>
 <li><strong>Full memory</strong> (0.5–2 days): notebooks → disk/DB; graceful desk updates;
 prove redeploy loses nothing.</li>
-<li><strong>Pretty viewer</strong> (0.5 day): gzweb piece into the site; <code>world</code>/<code>house</code>
+<li><strong>Pretty viewer</strong> (0.5 day): <span class="term" data-term="gzweb" tabindex="0">gzweb</span> piece into the site; <code>world</code>/<code>house</code>
 smoke. Optional: see-everyone Admin feed; glass-wall teacher lock.</li>
 <li><strong>Two-laptop join</strong> (days, second laptop): full acceptance run — ask →
 approve → ticket → real install → marked-joined → box runs there; no-path;

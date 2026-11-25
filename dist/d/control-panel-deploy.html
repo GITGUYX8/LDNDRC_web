@@ -6,6 +6,8 @@
 <title>Deploying the control panel — LDNDRC</title>
 <meta name="description" content="A Go binary, namespace-scoped RBAC, and four manifests.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,7 +52,7 @@
     </div>
     <h1 class="page-title">Deploying the control panel</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">A Go binary, namespace-scoped RBAC, and four manifests.</p>
-    <div class="prose"><p>The control panel is a single Go binary. It is the only stateful brain in the system: it authenticates users, provisions sessions, proxies tool traffic, and approves laptops. Deploying it is four manifests and one secret.</p>
+    <div class="prose"><p>The control panel is a single Go binary. It is the only stateful brain in the system: it authenticates users, provisions <span class="term" data-term="session" tabindex="0">sessions</span>, proxies tool traffic, and approves laptops. Deploying it is four manifests and one secret.</p>
 <h2 id="what-gets-applied">What gets applied</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl create namespace ldndrc
 kubectl -n ldndrc create secret generic ldndrc-control-panel \
   --from-literal=JWT_SECRET=<span class="hljs-string">&quot;<span class="hljs-subst">$(openssl rand -hex 32)</span>&quot;</span>
@@ -58,14 +60,14 @@ kubectl -n ldndrc create secret generic ldndrc-control-panel \
 kubectl apply -f manifests/control-panel-rbac.yaml
 kubectl apply -f manifests/control-panel-deployment.yaml
 kubectl apply -f manifests/control-panel-service.yaml
-kubectl apply -f manifests/control-panel-ingress.yaml</code></pre></div><h2 id="the-rbac-decision-that-matters">The RBAC decision that matters</h2><p>The panel&#39;s ServiceAccount is <strong>namespace-scoped</strong>. It can create and delete Deployments, Services, and PVCs in <code>ldndrc</code>. It cannot list nodes cluster-wide, and it cannot touch other namespaces.</p>
-<p>That is enforced by a set of <code>auth can-i</code> checks that are part of the deployment checklist:</p>
+kubectl apply -f manifests/control-panel-ingress.yaml</code></pre></div><h2 id="the-rbac-decision-that-matters">The RBAC decision that matters</h2><p>The panel&#39;s ServiceAccount is <strong><span class="term" data-term="namespace" tabindex="0">namespace</span>-scoped</strong>. It can create and delete <span class="term" data-term="deployment" tabindex="0">Deployments</span>, <span class="term" data-term="service" tabindex="0">Services</span>, and <span class="term" data-term="pvc" tabindex="0">PVCs</span> in <code>ldndrc</code>. It cannot list <span class="term" data-term="node" tabindex="0">nodes</span> cluster-wide, and it cannot touch other <span class="term" data-term="namespace" tabindex="0">namespaces</span>.</p>
+<p>That is enforced by a set of <code>auth can-i</code> checks that are part of the <span class="term" data-term="deployment" tabindex="0">deployment</span> checklist:</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc auth can-i create deployments \
   --as=system:serviceaccount:ldndrc:ldndrc-control-panel   <span class="hljs-comment"># expect: yes</span>
 kubectl -n ldndrc auth can-i delete persistentvolumeclaims \
   --as=system:serviceaccount:ldndrc:ldndrc-control-panel   <span class="hljs-comment"># expect: yes</span>
 kubectl -n ldndrc auth can-i list nodes \
-  --as=system:serviceaccount:ldndrc:ldndrc-control-panel   <span class="hljs-comment"># expect: no</span></code></pre></div><p>The third one is the one people get wrong. The node onboarding feature needs a separate, narrowly-scoped nodes permission — not a cluster-admin shortcut.</p>
+  --as=system:serviceaccount:ldndrc:ldndrc-control-panel   <span class="hljs-comment"># expect: no</span></code></pre></div><p>The third one is the one people get wrong. The <span class="term" data-term="node" tabindex="0">node</span> onboarding feature needs a separate, narrowly-scoped <span class="term" data-term="node" tabindex="0">nodes</span> permission — not a cluster-admin shortcut.</p>
 <h2 id="configuration-is-environment-variables">Configuration is environment variables</h2><p>Everything the panel needs to know is injected, not baked in:</p>
 <table>
 <thead>
@@ -76,19 +78,19 @@ kubectl -n ldndrc auth can-i list nodes \
 </thead>
 <tbody><tr>
 <td><code>JWT_SECRET</code></td>
-<td>Signs tokens and the gateway cookie; the process exits if unset</td>
+<td>Signs tokens and the <span class="term" data-term="gateway" tabindex="0">gateway</span> <span class="term" data-term="cookie" tabindex="0">cookie</span>; the process exits if unset</td>
 </tr>
 <tr>
 <td><code>SESSION_IMAGE</code></td>
-<td>Which workspace image to run</td>
+<td>Which <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> to run</td>
 </tr>
 <tr>
 <td><code>SESSION_HOME_STORAGE</code></td>
-<td>PVC size per student, default <code>5Gi</code></td>
+<td><span class="term" data-term="pvc" tabindex="0">PVC</span> size per student, default <code>5Gi</code></td>
 </tr>
 <tr>
 <td><code>SESSION_GPU_LIMIT</code></td>
-<td><code>1</code> for real Hosts, <code>0</code> for the demo</td>
+<td><code>1</code> for real <span class="term" data-term="host" tabindex="0">Hosts</span>, <code>0</code> for the demo</td>
 </tr>
 <tr>
 <td><code>K3S_JOIN_URL</code></td>
@@ -96,12 +98,12 @@ kubectl -n ldndrc auth can-i list nodes \
 </tr>
 <tr>
 <td><code>COOKIE_DOMAIN</code></td>
-<td><code>.ros-platform.local</code>, so one login covers four hosts</td>
+<td><code>.ros-platform.local</code>, so one login covers four <span class="term" data-term="host" tabindex="0">hosts</span></td>
 </tr>
 </tbody></table>
 <h2 id="rolling-it-out">Rolling it out</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc rollout status deployment/ldndrc-control-panel
 kubectl -n ldndrc port-forward svc/ldndrc-control-panel 8082:8082 &amp;
-curl -s http://127.0.0.1:8082/healthz</code></pre></div><p>On a one-service-port cluster the rollout can briefly have zero available replicas. That is why the panel&#39;s persistence and probe settings are not cosmetic — see <a href="durable-state.html" class="topic-link">Surviving a redeploy</a> for what happens when they are wrong.</p>
+curl -s http://127.0.0.1:8082/healthz</code></pre></div><p>On a one-<span class="term" data-term="service" tabindex="0">service</span>-port cluster the rollout can briefly have zero available replicas. That is why the panel&#39;s persistence and probe settings are not cosmetic — see <a href="durable-state.html" class="topic-link">Surviving a redeploy</a> for what happens when they are wrong.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc rollout status deployment/ldndrc-control-panel
 kubectl -n ldndrc get deploy,svc,ingress</code></pre></div></div>
     <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>

@@ -6,6 +6,8 @@
 <title>The captive onboarding portal — LDNDRC</title>
 <meta name="description" content="Join the Wi-Fi, get a real page instead of a dead internet, download the agent.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -51,7 +53,7 @@
     <h1 class="page-title">The captive onboarding portal</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Join the Wi-Fi, get a real page instead of a dead internet, download the agent.</p>
     <div class="prose"><p>A laptop that has never joined the cluster cannot download anything from the cluster. That is the chicken-and-egg problem the onboarding portal solves.</p>
-<h2 id="the-setup">The setup</h2><p>The master hosts a <strong>separate onboarding Wi-Fi</strong>, distinct from the cluster router. A laptop joins it and expects internet. Instead it gets a real page served by the control panel — the OS may even show its &quot;sign in to network&quot; prompt, because the redirect trap makes the network behave like a captive portal.</p>
+<h2 id="the-setup">The setup</h2><p>The master <span class="term" data-term="host" tabindex="0">hosts</span> a <strong>separate onboarding Wi-Fi</strong>, distinct from the cluster router. A laptop joins it and expects internet. Instead it gets a real page served by the control panel — the OS may even show its &quot;sign in to network&quot; prompt, because the redirect trap makes the network behave like a <span class="term" data-term="captive-portal" tabindex="0">captive portal</span>.</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-comment"># on the joining laptop — no internet required</span>
 curl http://&lt;master-ip&gt;:8082/portal
 curl -O http://&lt;master-ip&gt;:8082/portal/joining-cluster.sh    <span class="hljs-comment"># Linux/macOS</span>
@@ -61,7 +63,7 @@ curl -O http://&lt;master-ip&gt;:8082/portal/joining-cluster.ps1</code></pre></d
 <li>The instructor sees the request in the console and approves or denies it.</li>
 <li>The script polls until approved, then tries to switch Wi-Fi to the cluster network.</li>
 <li>If the switch fails, it prints manual instructions rather than pretending.</li>
-<li>Approved Hosts are offered the K3s agent install.</li>
+<li>Approved <span class="term" data-term="host" tabindex="0">Hosts</span> are offered the <span class="term" data-term="k3s" tabindex="0">K3s</span> agent install.</li>
 </ol>
 <h2 id="the-download-counter">The download counter</h2><p>The portal shows a live count of <strong>served</strong> downloads. The semantics are deliberately narrow:</p>
 <ul>
@@ -70,9 +72,9 @@ curl -O http://&lt;master-ip&gt;:8082/portal/joining-cluster.ps1</code></pre></d
 <li>no device identifiers are stored</li>
 <li>the public endpoint exposes only aggregate numbers</li>
 </ul>
-<p><code>/api/downloads/stats</code> gives requests plus a unique-device estimate and requires a JWT.</p>
-<h2 id="what-this-is-and-is-not">What this is and is not</h2><p>The <code>tools/captive-portal/run.sh</code> harness starts the panel plus the redirect trap and prints the three root steps: hotspot, dnsmasq, nftables. It is a <strong>workshop rig</strong>, not gateway enforcement. A laptop can still reach the cluster router if it knows the SSID.</p>
-<p>Gateway enforcement is a designed follow-up, not shipped. The map reflects that in the topic&#39;s status.</p>
+<p><code>/api/downloads/stats</code> gives requests plus a unique-device estimate and requires a <span class="term" data-term="jwt" tabindex="0">JWT</span>.</p>
+<h2 id="what-this-is-and-is-not">What this is and is not</h2><p>The <code>tools/captive-portal/run.sh</code> harness starts the panel plus the redirect trap and prints the three root steps: hotspot, dnsmasq, nftables. It is a <strong>workshop rig</strong>, not <span class="term" data-term="gateway" tabindex="0">gateway</span> enforcement. A laptop can still reach the cluster router if it knows the SSID.</p>
+<p><span class="term" data-term="gateway" tabindex="0">Gateway</span> enforcement is a designed follow-up, not shipped. The map reflects that in the topic&#39;s status.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">./tools/captive-portal/run.sh status
 ./test-captive-trap.sh
 curl -s http://&lt;master-ip&gt;:8082/api/downloads/count</code></pre></div></div>

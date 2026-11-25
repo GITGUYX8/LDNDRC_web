@@ -6,6 +6,8 @@
 <title>Checkpoint 23 — R4 UI-1 + UI-2: Student SPA Scaffold (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-23-r4-ui1-ui2.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,18 +52,18 @@ backend prerequisites (design doc restored, <code>Get()</code> self-heal, embedd
 serving with placeholder). This checkpoint builds the actual student
 frontend: UI-1 (Login → Launch stepper → Workspace shell) plus UI-2 polish
 (Desktop wrapper, reconnect, split persistence, a11y/motion) per
-<code>docs/uiux-design.md</code> §§4–6,8. Scope per operator: UI-1+UI-2, dirty
-join/nodes files left untouched, commit locally, no push.</p>
+<code>docs/uiux-design.md</code> §§4–6,8. Scope per <span class="term" data-term="operator" tabindex="0">operator</span>: UI-1+UI-2, dirty
+join/<span class="term" data-term="node" tabindex="0">nodes</span> files left untouched, commit locally, no push.</p>
 <h2 id="what-shipped-uncommitted-until-this-checkpoint-s-commit">What shipped (uncommitted until this checkpoint&#39;s commit)</h2><h3 id="ui-1-control-panel-web-scaffold-vite-react-18-ts">UI-1 — <code>control-panel/web/</code> scaffold (Vite + React 18 + TS)</h3><ul>
 <li><code>package.json</code> / <code>vite.config.ts</code> / <code>tsconfig.json</code> / <code>index.html</code>:
 React 18.3 + react-router-dom 6 + Vite 5, <code>base: &quot;/&quot;</code> (served from the
-control host root), dev proxy for <code>/api</code> + <code>/healthz</code> → <code>:8082</code>.</li>
-<li><code>src/api.ts</code>: fetch wrapper — Bearer token on all session calls,
-<code>X-CSRF-Token</code> on mutations, <code>credentials: &quot;include&quot;</code> for the session
-cookie; <code>login()</code> returns <code>{token, csrf_token}</code>.</li>
-<li><code>src/auth.tsx</code>: memory-first token/csrf/user state with sessionStorage
+control <span class="term" data-term="host" tabindex="0">host</span> root), dev proxy for <code>/api</code> + <code>/healthz</code> → <code>:8082</code>.</li>
+<li><code>src/api.ts</code>: fetch wrapper — Bearer token on all <span class="term" data-term="session" tabindex="0">session</span> calls,
+<code>X-CSRF-Token</code> on mutations, <code>credentials: &quot;include&quot;</code> for the <span class="term" data-term="session" tabindex="0">session</span>
+<span class="term" data-term="cookie" tabindex="0">cookie</span>; <code>login()</code> returns <code>{token, csrf_token}</code>.</li>
+<li><code>src/auth.tsx</code>: memory-first token/<span class="term" data-term="csrf" tabindex="0">csrf</span>/user state with sessionStorage
 mirror (reload-safe), cross-tab sign-out.</li>
-<li><code>src/gateway.ts</code>: host-gateway URL helper — <code>control.ros-platform.local</code>
+<li><code>src/gateway.ts</code>: <span class="term" data-term="host" tabindex="0">host</span>-<span class="term" data-term="gateway" tabindex="0">gateway</span> URL helper — <code>control.ros-platform.local</code>
 → <code>editor|gazebo|desktop.ros-platform.local</code> (path routing is legacy).
 Unknown suffix (localhost/IP dev) yields <code>&quot;&quot;</code> and an honest banner.</li>
 <li><code>src/App.tsx</code>: <code>/</code> → <code>/launch</code> or <code>/login</code>; <code>/login /launch /app /desktop</code> with auth gate; SPA fallback already covered by <code>spa.go</code>.</li>
@@ -76,7 +78,7 @@ Cancel = DELETE) → READY tool cards + Open workspace → ERROR panel with
 Desktop-new-tab + Stop-confirm + user menu), 56px icon rail (real
 <code>&lt;button&gt;</code>s), stage with Code iframe (<code>editor</code>) / Sim iframe (<code>gazebo</code>)
 / Split with draggable divider. Both iframes stay <strong>mounted</strong> across
-view switches (CSS visibility, hidden-pane trick) so code-server and sim
+view switches (CSS visibility, hidden-pane trick) so <span class="term" data-term="code-server" tabindex="0">code-server</span> and sim
 sockets never reconnect on view change.</li>
 <li><code>styles.css</code>: Mission Control tokens verbatim (<code>--bg #0b0e14</code>, <code>--accent #7c6cf5</code>, …), Inter + JetBrains Mono, 150–200ms ease-out, 2px accent
 focus rings, status dot + text label.</li>
@@ -90,9 +92,9 @@ bump; dimmed-empty states with retry when the suffix is unknown.</li>
 arrows on the divider); <code>prefers-reduced-motion</code> disables pulse and
 transitions; below-1024px view-switch buttons (desktop-first per design
 open question 4).</li>
-<li>Sim is an <strong>iframe</strong> to the gazebo gateway host in UI-1/UI-2 (fast,
-matches the CP22 &quot;iframes&quot; note). The mounted gzweb component from
-<code>sim-web-app/</code> is deferred to R6 alongside the real workspace image.</li>
+<li>Sim is an <strong>iframe</strong> to the <span class="term" data-term="gazebo" tabindex="0">gazebo</span> <span class="term" data-term="gateway" tabindex="0">gateway</span> <span class="term" data-term="host" tabindex="0">host</span> in UI-1/UI-2 (fast,
+matches the CP22 &quot;iframes&quot; note). The mounted <span class="term" data-term="gzweb" tabindex="0">gzweb</span> component from
+<code>sim-web-app/</code> is deferred to R6 alongside the real <span class="term" data-term="workspace-image" tabindex="0">workspace image</span>.</li>
 </ul>
 <h3 id="build-integration">Build integration</h3><ul>
 <li><code>npm run build</code> → <code>web/dist/</code> (<code>index.html</code> + 1 JS 188KB/59.9KB gzip +
@@ -110,27 +112,27 @@ output is reproducible.</li>
 <h2 id="proofs">Proofs</h2><ul>
 <li><code>tsc</code> + <code>vite build</code> green (46 modules).</li>
 <li><code>gofmt -l</code> clean, <code>go vet ./...</code> clean, <code>go test -count=1 ./...</code> all
-<code>ok</code> (auth, discovery, gateway, httpapi, join, nodes, sessions).</li>
+<code>ok</code> (auth, discovery, <span class="term" data-term="gateway" tabindex="0">gateway</span>, httpapi, join, <span class="term" data-term="node" tabindex="0">nodes</span>, <span class="term" data-term="session" tabindex="0">sessions</span>).</li>
 <li>Local server smoke (in-memory provisioner, no cluster): <code>/</code>, <code>/login</code>,
 <code>/app?view=code</code> all serve the built SPA; <code>/healthz</code> ok;
 <code>/api/sessions</code> 401 without bearer; login → token (153 chars) →
 <code>POST /api/sessions</code> 202 provisioning → list/get round-trip.</li>
-<li>Dirty-tree discipline: the 8 join/nodes modifications + <code>join-cluster.sh</code>
+<li>Dirty-tree discipline: the 8 join/<span class="term" data-term="node" tabindex="0">nodes</span> modifications + <code>join-cluster.sh</code>
 flagged in checkpoint-21 are <strong>unmodified and unstaged</strong>; untracked junk
 (<code>ldndrc-join-linux-amd64</code>, <code>session-ses_f638.md</code>,
 <code>ldndrc-workshop-design.md</code>) left alone.</li>
 </ul>
-<h2 id="api-surface-the-spa-uses-unchanged-all-live">API surface the SPA uses (unchanged, all live)</h2><p><code>POST /api/auth/login</code> → <code>{token, csrf_token}</code> + cookie ·
+<h2 id="api-surface-the-spa-uses-unchanged-all-live">API surface the SPA uses (unchanged, all live)</h2><p><code>POST /api/auth/login</code> → <code>{token, csrf_token}</code> + <span class="term" data-term="cookie" tabindex="0">cookie</span> ·
 <code>POST /api/sessions</code> (202) · <code>GET /api/sessions</code> · <code>GET /api/sessions/{id}</code>
-(self-healing) · <code>DELETE /api/sessions/{id}</code> · gateway hosts
-(editor-7682/gazebo-9002/desktop-8080, cookie-authed, 401/404/503/502
+(self-healing) · <code>DELETE /api/sessions/{id}</code> · <span class="term" data-term="gateway" tabindex="0">gateway</span> <span class="term" data-term="host" tabindex="0">hosts</span>
+(editor-7682/<span class="term" data-term="gazebo" tabindex="0">gazebo</span>-9002/desktop-8080, <span class="term" data-term="cookie" tabindex="0">cookie</span>-authed, 401/404/503/502
 mapping) · <code>GET /</code> SPA fallback for <code>/login /launch /app /desktop</code>.</p>
 <h2 id="next-live-verify-on-the-real-master-not-done-in-this-run">Next (live verify on the real master, not done in this run)</h2><p>Rebuild image → <code>ctr import</code> → <strong>delete-old-first</strong> rollout (hostNetwork
 <code>:8082</code> deadlock, never plain <code>rollout restart</code>) → via
 <code>control.ros-platform.local</code>: login → launch → stepper to ready via
-gateway visit → editor iframe 200 + stand-in body, desktop 502-by-design,
-no-cookie 401, cookie POST without <code>X-CSRF-Token</code> 403. Then UI-3 (admin
-table) per the design doc; R2-final (nodes → PVC/DB); panel Deployment
+<span class="term" data-term="gateway" tabindex="0">gateway</span> visit → editor iframe 200 + stand-in body, desktop 502-by-design,
+no-<span class="term" data-term="cookie" tabindex="0">cookie</span> 401, <span class="term" data-term="cookie" tabindex="0">cookie</span> POST without <code>X-CSRF-Token</code> 403. Then UI-3 (admin
+table) per the design doc; R2-final (<span class="term" data-term="node" tabindex="0">nodes</span> → <span class="term" data-term="pvc" tabindex="0">PVC</span>/DB); panel <span class="term" data-term="deployment" tabindex="0">Deployment</span>
 <code>maxUnavailable: 1</code>.</p>
 </div>
 </div>

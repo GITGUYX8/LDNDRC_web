@@ -6,6 +6,8 @@
 <title>Checkpoint 9 — Live K3s Verification of Sessions and Gateway — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-09-live-k3s-verification.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -45,15 +47,15 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-09-live-k3s-verification.md · 5.4 KB</div>
 <h1 class="page-title">Checkpoint 9 — Live K3s Verification of Sessions and Gateway</h1>
-<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>Until now every claim about Kubernetes was backed by unit tests with a fake
-client. This checkpoint put the real thing underneath: a live K3s cluster
-(via k3d) on this machine, the actual control-panel container, and real HTTP
-requests exercising login, provisioning, ownership, teardown, and gateway
+<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>Until now every claim about <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> was backed by unit tests with a fake
+client. This checkpoint put the real thing underneath: a live <span class="term" data-term="k3s" tabindex="0">K3s</span> cluster
+(via <span class="term" data-term="k3d" tabindex="0">k3d</span>) on this machine, the actual control-panel container, and real HTTP
+requests exercising login, provisioning, ownership, teardown, and <span class="term" data-term="gateway" tabindex="0">gateway</span>
 enforcement. The cluster behaved exactly as the manifests and code promised —
 including refusing to schedule work where it should not run.</p>
 <p>Think of it as the first rehearsal with a real stage instead of a scale
-model. The actors (sessions, gateway, RBAC) all hit their marks; the missing
-set piece is the workspace image itself, which is too heavy to build here.</p>
+model. The actors (<span class="term" data-term="session" tabindex="0">sessions</span>, <span class="term" data-term="gateway" tabindex="0">gateway</span>, <span class="term" data-term="rbac" tabindex="0">RBAC</span>) all hit their marks; the missing
+set piece is the <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> itself, which is too heavy to build here.</p>
 <h2 id="what-got-built">What got built</h2><table>
 <thead>
 <tr>
@@ -63,24 +65,24 @@ set piece is the workspace image itself, which is too heavy to build here.</p>
 </tr>
 </thead>
 <tbody><tr>
-<td>k3d cluster <code>ldndrc</code></td>
+<td><span class="term" data-term="k3d" tabindex="0">k3d</span> cluster <code>ldndrc</code></td>
 <td>The Rehearsal Stage</td>
-<td>Single-node K3s v1.35.5 cluster with Traefik ports 80/443 published.</td>
+<td>Single-<span class="term" data-term="node" tabindex="0">node</span> <span class="term" data-term="k3s" tabindex="0">K3s</span> v1.35.5 cluster with <span class="term" data-term="traefik" tabindex="0">Traefik</span> ports 80/443 published.</td>
 </tr>
 <tr>
 <td><code>ldndrc/control-panel:dev</code> image</td>
 <td>The Touring Company</td>
-<td>Control-panel binary built by Docker and imported into the cluster.</td>
+<td>Control-panel binary built by <span class="term" data-term="docker" tabindex="0">Docker</span> and imported into the cluster.</td>
 </tr>
 <tr>
-<td>Live namespace + RBAC + Secret</td>
+<td>Live <span class="term" data-term="namespace" tabindex="0">namespace</span> + <span class="term" data-term="rbac" tabindex="0">RBAC</span> + Secret</td>
 <td>The Locked Dressing Rooms</td>
-<td>Real <code>ldndrc</code> namespace, dedicated ServiceAccount, scoped Role, JWT Secret.</td>
+<td>Real <code>ldndrc</code> <span class="term" data-term="namespace" tabindex="0">namespace</span>, dedicated ServiceAccount, scoped Role, <span class="term" data-term="jwt" tabindex="0">JWT</span> Secret.</td>
 </tr>
 <tr>
 <td><code>control-panel-ingress.yaml</code> applied</td>
 <td>The New Signposts</td>
-<td>Four hostnames routed through Traefik to the control panel.</td>
+<td>Four hostnames routed through <span class="term" data-term="traefik" tabindex="0">Traefik</span> to the control panel.</td>
 </tr>
 <tr>
 <td>This report</td>
@@ -90,44 +92,44 @@ set piece is the workspace image itself, which is too heavy to build here.</p>
 </tbody></table>
 <p>No application code changed in this checkpoint. The working tree still holds
 the checkpoint-08 changes (gofmt, <code>go mod tidy</code>, README fixes) uncommitted.</p>
-<h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-rehearsal-stage-k3d-cluster">The Rehearsal Stage — k3d cluster</h3><p>k3d 5.9.0 (installed user-local via mise, no sudo) created a one-server K3s
+<h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-rehearsal-stage-k3d-cluster">The Rehearsal Stage — k3d cluster</h3><p><span class="term" data-term="k3d" tabindex="0">k3d</span> 5.9.0 (installed user-local via mise, no sudo) created a one-server <span class="term" data-term="k3s" tabindex="0">K3s</span>
 cluster with the loadbalancer publishing 80/443 to the laptop. <code>kubectl</code>
-1.37.0 (also via mise) talks to it. Docker became usable after the user ran
+1.37.0 (also via mise) talks to it. <span class="term" data-term="docker" tabindex="0">Docker</span> became usable after the user ran
 the sudo commands (group membership + daemon start).</p>
 <h3 id="the-touring-company-image-build-and-import">The Touring Company — image build and import</h3><p><code>docker build -t ldndrc/control-panel:dev ./control-panel</code> succeeded and
-<code>k3d image import</code> placed it on the cluster node, so the Deployment&#39;s
+<code>k3d image import</code> placed it on the cluster <span class="term" data-term="node" tabindex="0">node</span>, so the <span class="term" data-term="deployment" tabindex="0">Deployment</span>&#39;s
 <code>IfNotPresent</code> pull never needed a registry.</p>
 <h3 id="the-locked-dressing-rooms-rbac-proof">The Locked Dressing Rooms — RBAC proof</h3><p><code>auth can-i</code> checks against the control-panel ServiceAccount returned <code>yes</code>
-for creating Deployments and deleting PVCs in <code>ldndrc</code>, and <code>no</code> for
-cluster-scoped node reads. The provisioner has exactly the keys it needs.</p>
-<h3 id="the-signposts-ingress-proof">The Signposts — ingress proof</h3><p>With the ingress applied, requests to port 80 with <code>Host: editor.ros-platform.local</code> reach the gateway: valid cookie on a provisioning
-session → 503; no cookie → 401. The <code>control</code> hostname reaches the API
+for creating <span class="term" data-term="deployment" tabindex="0">Deployments</span> and deleting <span class="term" data-term="pvc" tabindex="0">PVCs</span> in <code>ldndrc</code>, and <code>no</code> for
+cluster-scoped <span class="term" data-term="node" tabindex="0">node</span> reads. The provisioner has exactly the keys it needs.</p>
+<h3 id="the-signposts-ingress-proof">The Signposts — ingress proof</h3><p>With the <span class="term" data-term="ingress" tabindex="0">ingress</span> applied, requests to port 80 with <code>Host: editor.ros-platform.local</code> reach the <span class="term" data-term="gateway" tabindex="0">gateway</span>: valid <span class="term" data-term="cookie" tabindex="0">cookie</span> on a provisioning
+<span class="term" data-term="session" tabindex="0">session</span> → 503; no <span class="term" data-term="cookie" tabindex="0">cookie</span> → 401. The <code>control</code> hostname reaches the API
 (404 on <code>/</code> is expected — no frontend route exists yet).</p>
 <h2 id="how-it-all-connects">How it all connects</h2><ol>
-<li>Browser logs in → control panel signs JWT, sets <code>ldndrc_session</code> cookie.</li>
-<li><code>POST /api/sessions</code> → real Deployment + Service + PVC appear in K3s.</li>
-<li>Scheduler evaluates Host label and GPU request before placing pods.</li>
-<li>Gateway resolves the user&#39;s ready session to its private Service.</li>
-<li><code>DELETE /api/sessions/{id}</code> → Deployment, Service, and PVC disappear.</li>
+<li>Browser logs in → control panel signs <span class="term" data-term="jwt" tabindex="0">JWT</span>, sets <code>ldndrc_session</code> <span class="term" data-term="cookie" tabindex="0">cookie</span>.</li>
+<li><code>POST /api/sessions</code> → real <span class="term" data-term="deployment" tabindex="0">Deployment</span> + <span class="term" data-term="service" tabindex="0">Service</span> + <span class="term" data-term="pvc" tabindex="0">PVC</span> appear in <span class="term" data-term="k3s" tabindex="0">K3s</span>.</li>
+<li>Scheduler evaluates <span class="term" data-term="host" tabindex="0">Host</span> label and GPU request before placing <span class="term" data-term="pod" tabindex="0">pods</span>.</li>
+<li><span class="term" data-term="gateway" tabindex="0">Gateway</span> resolves the user&#39;s ready <span class="term" data-term="session" tabindex="0">session</span> to its private <span class="term" data-term="service" tabindex="0">Service</span>.</li>
+<li><code>DELETE /api/sessions/{id}</code> → <span class="term" data-term="deployment" tabindex="0">Deployment</span>, <span class="term" data-term="service" tabindex="0">Service</span>, and <span class="term" data-term="pvc" tabindex="0">PVC</span> disappear.</li>
 </ol>
 <h2 id="proof-it-works">Proof it works</h2><p>Observed live on the cluster:</p>
 <ul>
 <li><code>rollout status deployment/ldndrc-control-panel</code> → successfully rolled out,
-pod 1/1 Running.</li>
+<span class="term" data-term="pod" tabindex="0">pod</span> 1/1 Running.</li>
 <li><code>curl :8082/healthz</code> → <code>{&quot;status&quot;:&quot;ok&quot;}</code>.</li>
-<li>Alice session create → Deployment <code>ros2-session-1c1c7298267a</code>, Service with
-ports 7682/8080/9002, PVC <code>-home</code> — all present in <code>kubectl get</code>.</li>
-<li>Bob session create → second Deployment/Service/PVC with <code>rosDomainId</code> 101
-(Alice had 100). Alice&#39;s <code>GET /api/sessions</code> lists only her session.</li>
-<li>Fresh cluster, no <code>role=host</code> label → pods Pending with
-<code>didn&#39;t match Pod&#39;s node affinity/selector</code>. Host scheduling enforced.</li>
-<li>After labeling the node <code>role=host</code> → scheduler advances to
-<code>Insufficient nvidia.com/gpu</code>. GPU request enforced (k3d node has no GPU).</li>
-<li>Gateway via port-forward with Alice cookie on editor host → 503
-(provisioning, not ready). No cookie → 401. Other hosts → API as usual.</li>
-<li>Gateway via Traefik <code>:80</code> with Bob cookie → 503; no cookie → 401.</li>
-<li>Alice session delete → status <code>stopped</code>, and her Deployment, Service, and
-PVC are gone from the cluster; Bob&#39;s resources untouched.</li>
+<li>Alice <span class="term" data-term="session" tabindex="0">session</span> create → <span class="term" data-term="deployment" tabindex="0">Deployment</span> <code>ros2-session-1c1c7298267a</code>, <span class="term" data-term="service" tabindex="0">Service</span> with
+ports 7682/8080/9002, <span class="term" data-term="pvc" tabindex="0">PVC</span> <code>-home</code> — all present in <code>kubectl get</code>.</li>
+<li>Bob <span class="term" data-term="session" tabindex="0">session</span> create → second <span class="term" data-term="deployment" tabindex="0">Deployment</span>/<span class="term" data-term="service" tabindex="0">Service</span>/<span class="term" data-term="pvc" tabindex="0">PVC</span> with <code>rosDomainId</code> 101
+(Alice had 100). Alice&#39;s <code>GET /api/sessions</code> lists only her <span class="term" data-term="session" tabindex="0">session</span>.</li>
+<li>Fresh cluster, no <code>role=host</code> label → <span class="term" data-term="pod" tabindex="0">pods</span> Pending with
+<code>didn&#39;t match Pod&#39;s node affinity/selector</code>. <span class="term" data-term="host" tabindex="0">Host</span> scheduling enforced.</li>
+<li>After labeling the <span class="term" data-term="node" tabindex="0">node</span> <code>role=host</code> → scheduler advances to
+<code>Insufficient nvidia.com/gpu</code>. GPU request enforced (<span class="term" data-term="k3d" tabindex="0">k3d</span> <span class="term" data-term="node" tabindex="0">node</span> has no GPU).</li>
+<li><span class="term" data-term="gateway" tabindex="0">Gateway</span> via port-forward with Alice <span class="term" data-term="cookie" tabindex="0">cookie</span> on editor <span class="term" data-term="host" tabindex="0">host</span> → 503
+(provisioning, not ready). No <span class="term" data-term="cookie" tabindex="0">cookie</span> → 401. Other <span class="term" data-term="host" tabindex="0">hosts</span> → API as usual.</li>
+<li><span class="term" data-term="gateway" tabindex="0">Gateway</span> via <span class="term" data-term="traefik" tabindex="0">Traefik</span> <code>:80</code> with Bob <span class="term" data-term="cookie" tabindex="0">cookie</span> → 503; no <span class="term" data-term="cookie" tabindex="0">cookie</span> → 401.</li>
+<li>Alice <span class="term" data-term="session" tabindex="0">session</span> delete → status <code>stopped</code>, and her <span class="term" data-term="deployment" tabindex="0">Deployment</span>, <span class="term" data-term="service" tabindex="0">Service</span>, and
+<span class="term" data-term="pvc" tabindex="0">PVC</span> are gone from the cluster; Bob&#39;s resources untouched.</li>
 <li><code>test-join.sh</code> → 4 passed, 0 failed.</li>
 <li><code>go test ./...</code>, <code>go vet</code>, <code>go build</code>, <code>gofmt</code> → all green (checkpoint 8).</li>
 </ul>
@@ -140,35 +142,35 @@ PVC are gone from the cluster; Bob&#39;s resources untouched.</li>
 </thead>
 <tbody><tr>
 <td>Live cluster</td>
-<td>Real K3s runs the control panel and provisions per-user resources.</td>
+<td>Real <span class="term" data-term="k3s" tabindex="0">K3s</span> runs the control panel and provisions per-user resources.</td>
 </tr>
 <tr>
-<td>RBAC</td>
-<td>Scoped exactly right: sessions yes, cluster reads no.</td>
+<td><span class="term" data-term="rbac" tabindex="0">RBAC</span></td>
+<td>Scoped exactly right: <span class="term" data-term="session" tabindex="0">sessions</span> yes, cluster reads no.</td>
 </tr>
 <tr>
 <td>Scheduler</td>
-<td>Refuses non-Host nodes and GPU-less nodes, as designed.</td>
+<td>Refuses non-<span class="term" data-term="host" tabindex="0">Host</span> <span class="term" data-term="node" tabindex="0">nodes</span> and GPU-less <span class="term" data-term="node" tabindex="0">nodes</span>, as designed.</td>
 </tr>
 <tr>
-<td>Gateway</td>
+<td><span class="term" data-term="gateway" tabindex="0">Gateway</span></td>
 <td>Live 503/401 behavior matches the unit tests.</td>
 </tr>
 <tr>
 <td>Teardown</td>
-<td>Deleting a session removes all three of its K3s resources.</td>
+<td>Deleting a <span class="term" data-term="session" tabindex="0">session</span> removes all three of its <span class="term" data-term="k3s" tabindex="0">K3s</span> resources.</td>
 </tr>
 </tbody></table>
 <h2 id="what-s-next">What&#39;s next</h2><ul>
-<li><input disabled="" type="checkbox"> Build the Jazzy/Harmonic workspace image (heavy; needs disk + time) and
-import it so a session can reach <code>ready</code> end to end.</li>
+<li><input disabled="" type="checkbox"> Build the Jazzy/Harmonic <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> (heavy; needs disk + time) and
+import it so a <span class="term" data-term="session" tabindex="0">session</span> can reach <code>ready</code> end to end.</li>
 <li><input disabled="" type="checkbox"> Re-run the two-user test to green <code>ready</code>, then confirm editor/desktop
 proxying into live workspace ports.</li>
 <li><input disabled="" type="checkbox"> Add <code>/etc/hosts</code> or LAN DNS entries for the four <code>.ros-platform.local</code>
-names (needs sudo) instead of Host-header testing.</li>
+names (needs sudo) instead of <span class="term" data-term="host" tabindex="0">Host</span>-header testing.</li>
 <li><input disabled="" type="checkbox"> Remove legacy <code>ros2-ingress.yaml</code> path routes after full verification.</li>
 <li><input disabled="" type="checkbox"> Commit the checkpoint-08 working-tree changes (gofmt, go.sum, README).</li>
-<li><input disabled="" type="checkbox"> Next feature chunk: CSRF protection on state-changing browser requests,
+<li><input disabled="" type="checkbox"> Next feature chunk: <span class="term" data-term="csrf" tabindex="0">CSRF</span> protection on state-changing browser requests,
 then the student frontend against the verified API.</li>
 </ul>
 </div>

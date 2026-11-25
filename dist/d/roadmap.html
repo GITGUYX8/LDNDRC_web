@@ -6,6 +6,8 @@
 <title>What is still left — LDNDRC</title>
 <meta name="description" content="The honest done-versus-remaining list, in build order.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -87,12 +89,12 @@
 <tr>
 <td><strong>R2</strong> Memory</td>
 <td>partial</td>
-<td>move sessions and approvals off <code>emptyDir</code> onto durable storage</td>
+<td>move <span class="term" data-term="session" tabindex="0">sessions</span> and approvals off <code>emptyDir</code> onto durable storage</td>
 </tr>
 <tr>
 <td><strong>R3</strong> Click safety</td>
 <td>shipped</td>
-<td>login exempted from the CSRF check (fixed and verified live)</td>
+<td>login exempted from the <span class="term" data-term="csrf" tabindex="0">CSRF</span> check (fixed and verified live)</td>
 </tr>
 <tr>
 <td><strong>R4</strong> Student site</td>
@@ -116,10 +118,10 @@
 </tr>
 </tbody></table>
 <h2 id="the-next-four-things-in-order">The next four things, in order</h2><ol>
-<li>Durable state — losing sessions on a redeploy is the most embarrassing failure left.</li>
+<li>Durable state — losing <span class="term" data-term="session" tabindex="0">sessions</span> on a redeploy is the most embarrassing failure left.</li>
 <li>The pretty viewer — the sim streams data, but the browser view is not the final one.</li>
 <li>Two-laptop join — the join path is proven in pieces, not end to end.</li>
-<li>R7 hardening — encryption at rest, resource limits, operator dashboards.</li>
+<li>R7 hardening — encryption at rest, resource limits, <span class="term" data-term="operator" tabindex="0">operator</span> dashboards.</li>
 </ol>
 <h2 id="why-this-page-exists">Why this page exists</h2><p>Because &quot;done&quot; is a claim, and claims decay. Every row here is tied to a checkpoint or a live verification elsewhere in this map. If a row has no proof, it is not done — that is the rule from <a href="dev-timeline.html" class="topic-link">How it was built, in order</a>, applied forward.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">git <span class="hljs-built_in">log</span> --oneline -15

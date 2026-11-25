@@ -6,6 +6,8 @@
 <title>One Deployment, Service, and PVC per user — LDNDRC</title>
 <meta name="description" content="The unit of tenancy is a Kubernetes object set, not a row in a database.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,8 +52,8 @@
     </div>
     <h1 class="page-title">One Deployment, Service, and PVC per user</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">The unit of tenancy is a Kubernetes object set, not a row in a database.</p>
-    <div class="prose"><p>The unit of tenancy is not a database row. It is a set of Kubernetes objects with the student&#39;s name on it.</p>
-<h2 id="what-the-panel-creates">What the panel creates</h2><p>For each session, in the <code>ldndrc</code> namespace:</p>
+    <div class="prose"><p>The unit of tenancy is not a database row. It is a set of <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> objects with the student&#39;s name on it.</p>
+<h2 id="what-the-panel-creates">What the panel creates</h2><p>For each <span class="term" data-term="session" tabindex="0">session</span>, in the <code>ldndrc</code> <span class="term" data-term="namespace" tabindex="0">namespace</span>:</p>
 <table>
 <thead>
 <tr>
@@ -61,28 +63,28 @@
 </thead>
 <tbody><tr>
 <td><code>Deployment</code></td>
-<td>Runs the workspace pod; carries the image, env, and resource requests</td>
+<td>Runs the workspace <span class="term" data-term="pod" tabindex="0">pod</span>; carries the image, env, and resource requests</td>
 </tr>
 <tr>
 <td><code>Service</code></td>
-<td>A stable in-cluster address the gateway can proxy to</td>
+<td>A stable in-cluster address the <span class="term" data-term="gateway" tabindex="0">gateway</span> can proxy to</td>
 </tr>
 <tr>
 <td><code>PersistentVolumeClaim</code></td>
 <td><code>5Gi</code> by default, mounted as the student&#39;s home directory</td>
 </tr>
 </tbody></table>
-<p>All three are named from the session ID, so teardown is a single lookup.</p>
-<h2 id="why-a-deployment-and-not-a-bare-pod">Why a Deployment and not a bare Pod</h2><p>A bare Pod is not restarted if the node reboots. A Deployment gives you a ReplicaSet, a rollout strategy, and a readiness signal the panel can read. The panel only needs one replica, but it needs the controller semantics around it.</p>
-<h2 id="why-the-service-account-is-namespace-scoped">Why the service account is namespace-scoped</h2><p>The panel creates these objects through its ServiceAccount. That account can create and delete Deployments, Services, and PVCs <strong>in <code>ldndrc</code> only</strong>. It cannot see other namespaces and cannot list nodes cluster-wide.</p>
-<p>This is what keeps a compromised panel from owning the cluster. It is checked explicitly in the deployment checklist — see <a href="control-panel-deploy.html" class="topic-link">Deploying the control panel</a>.</p>
-<h2 id="resource-requests-are-the-scheduling-contract">Resource requests are the scheduling contract</h2><p>The pod requests CPU, memory, and <code>nvidia.com/gpu</code>. Those requests are how Kubernetes decides which Host can take it. When a pod sits <code>Pending</code>, the reason is almost always in one of two places:</p>
+<p>All three are named from the <span class="term" data-term="session" tabindex="0">session</span> ID, so teardown is a single lookup.</p>
+<h2 id="why-a-deployment-and-not-a-bare-pod">Why a Deployment and not a bare Pod</h2><p>A bare <span class="term" data-term="pod" tabindex="0">Pod</span> is not restarted if the <span class="term" data-term="node" tabindex="0">node</span> reboots. A <span class="term" data-term="deployment" tabindex="0">Deployment</span> gives you a ReplicaSet, a rollout strategy, and a readiness signal the panel can read. The panel only needs one replica, but it needs the controller semantics around it.</p>
+<h2 id="why-the-service-account-is-namespace-scoped">Why the service account is namespace-scoped</h2><p>The panel creates these objects through its ServiceAccount. That account can create and delete <span class="term" data-term="deployment" tabindex="0">Deployments</span>, <span class="term" data-term="service" tabindex="0">Services</span>, and <span class="term" data-term="pvc" tabindex="0">PVCs</span> <strong>in <code>ldndrc</code> only</strong>. It cannot see other <span class="term" data-term="namespace" tabindex="0">namespaces</span> and cannot list <span class="term" data-term="node" tabindex="0">nodes</span> cluster-wide.</p>
+<p>This is what keeps a compromised panel from owning the cluster. It is checked explicitly in the <span class="term" data-term="deployment" tabindex="0">deployment</span> checklist — see <a href="control-panel-deploy.html" class="topic-link">Deploying the control panel</a>.</p>
+<h2 id="resource-requests-are-the-scheduling-contract">Resource requests are the scheduling contract</h2><p>The <span class="term" data-term="pod" tabindex="0">pod</span> requests CPU, memory, and <code>nvidia.com/gpu</code>. Those requests are how <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> decides which <span class="term" data-term="host" tabindex="0">Host</span> can take it. When a <span class="term" data-term="pod" tabindex="0">pod</span> sits <code>Pending</code>, the reason is almost always in one of two places:</p>
 <ul>
-<li>no node labelled <code>role=host</code> (see <a href="hardware-gate.html" class="topic-link">The hardware gate</a>)</li>
+<li>no <span class="term" data-term="node" tabindex="0">node</span> labelled <code>role=host</code> (see <a href="hardware-gate.html" class="topic-link">The hardware gate</a>)</li>
 <li>no allocatable GPU because <code>SESSION_GPU_LIMIT=1</code> on a GPU-less demo</li>
 </ul>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc describe pod &lt;session-pod&gt;
-kubectl -n ldndrc get events --sort-by=.lastTimestamp</code></pre></div><h2 id="the-volume-is-the-student-s-work">The volume is the student&#39;s work</h2><p>Everything in <code>~/dev_ws</code> lives on that PVC. Tearing a session down with <code>DELETE</code> removes the PVC along with the Deployment and Service, so &quot;delete the session&quot; and &quot;delete my files&quot; are the same operation today. That is a known sharp edge, and it is part of <a href="durable-state.html" class="topic-link">Surviving a redeploy</a>.</p>
+kubectl -n ldndrc get events --sort-by=.lastTimestamp</code></pre></div><h2 id="the-volume-is-the-student-s-work">The volume is the student&#39;s work</h2><p>Everything in <code>~/dev_ws</code> lives on that <span class="term" data-term="pvc" tabindex="0">PVC</span>. Tearing a <span class="term" data-term="session" tabindex="0">session</span> down with <code>DELETE</code> removes the <span class="term" data-term="pvc" tabindex="0">PVC</span> along with the <span class="term" data-term="deployment" tabindex="0">Deployment</span> and <span class="term" data-term="service" tabindex="0">Service</span>, so &quot;delete the <span class="term" data-term="session" tabindex="0">session</span>&quot; and &quot;delete my files&quot; are the same operation today. That is a known sharp edge, and it is part of <a href="durable-state.html" class="topic-link">Surviving a redeploy</a>.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc get deploy,svc,pvc
 kubectl -n ldndrc get pod -o custom-columns=NAME:.metadata.name,NODE:.spec.nodeName</code></pre></div></div>
     <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>

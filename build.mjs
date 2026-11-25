@@ -24,6 +24,7 @@ const dist = path.join(root, "dist");
 
 const GRAPH = JSON.parse(fs.readFileSync(path.join(root, "content/graph.json"), "utf8"));
 const TOPICS_DIR = path.join(root, "content/topics");
+const GLOSSARY_TERMS = JSON.parse(fs.readFileSync(path.join(root, "content/glossary.json"), "utf8")).terms;
 
 /* ------------------------------------------------------------------ utils */
 
@@ -224,6 +225,70 @@ function expandWikiLinks(html, linkFor) {
     .join("");
 }
 
+/* ------------------------------------------------------- jargon hover terms */
+
+const TERM_VARIANTS = [];
+for (const term of GLOSSARY_TERMS) {
+  for (const variant of term.match || [term.title]) {
+    TERM_VARIANTS.push({ text: variant, id: term.id });
+  }
+}
+TERM_VARIANTS.sort((a, b) => b.text.length - a.text.length);
+
+const TERM_BY_TEXT = new Map(
+  TERM_VARIANTS.map((v) => [v.text.toLowerCase().replace(/\s+/g, " "), v.id])
+);
+const TERM_RE = new RegExp(
+  "\\b(?:" +
+    TERM_VARIANTS.map((v) =>
+      v.text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+")
+    ).join("|") +
+    ")\\b",
+  "gi"
+);
+
+// Terms are never wrapped inside code, links, headings, or embedded UI.
+const TERM_SKIP_TAGS = new Set([
+  "pre", "code", "a", "h1", "h2", "h3", "h4", "h5", "h6",
+  "script", "style", "svg", "button",
+]);
+const VOID_TAGS = new Set([
+  "br", "hr", "img", "input", "meta", "link", "source", "track",
+  "wbr", "area", "base", "col", "embed", "param",
+]);
+
+function wrapTerms(text) {
+  return text.replace(TERM_RE, (match) => {
+    const id = TERM_BY_TEXT.get(match.toLowerCase().replace(/\s+/g, " "));
+    if (!id) return match;
+    return `<span class="term" data-term="${id}" tabindex="0">${match}</span>`;
+  });
+}
+
+/** Wrap known jargon in <span class="term"> without touching markup or code. */
+function linkTerms(html) {
+  const pieces = html.split(/(<[^>]+>)/);
+  let skipDepth = 0;
+  let out = "";
+  for (const piece of pieces) {
+    if (piece.charAt(0) === "<") {
+      const tagMatch = piece.match(/^<\s*(\/?)\s*([a-zA-Z][a-zA-Z0-9-]*)/);
+      if (tagMatch) {
+        const closing = tagMatch[1] === "/";
+        const tag = tagMatch[2].toLowerCase();
+        if (TERM_SKIP_TAGS.has(tag)) {
+          if (closing) skipDepth = Math.max(0, skipDepth - 1);
+          else if (!VOID_TAGS.has(tag) && !/\/>\s*$/.test(piece)) skipDepth++;
+        }
+      }
+      out += piece;
+    } else {
+      out += skipDepth ? piece : wrapTerms(piece);
+    }
+  }
+  return out;
+}
+
 function renderTopicBody(id, { mode }) {
   const file = path.join(TOPICS_DIR, id + ".md");
   let md = fs.readFileSync(file, "utf8");
@@ -235,6 +300,8 @@ function renderTopicBody(id, { mode }) {
       ? (mode === "page" ? `../index.html#/route/${tid}` : `#/route/${tid}`)
       : (mode === "page" ? `${tid}.html` : `#/${tid}`)
   );
+  // The glossary already explains every word; tagging it would be noise.
+  if (id !== "glossary") html = linkTerms(html);
   return html.trim();
 }
 
@@ -274,6 +341,8 @@ function head({ title, description, cssHref, extra = "" }) {
 <title>${escapeHtml(title)}</title>
 <meta name="description" content="${escapeHtml(description || "")}">
 <link rel="stylesheet" href="${cssHref}">
+<script defer src="${cssHref.replace("theme.css", "glossary.js")}"></script>
+<script defer src="${cssHref.replace("theme.css", "tooltip.js")}"></script>
 <script defer src="${cssHref.replace("theme.css", "vendor/mermaid.min.js")}"></script>
 <script defer src="${cssHref.replace("theme.css", "mermaid-viewer.js")}"></script>
 ${extra}
@@ -311,6 +380,17 @@ themeSrc = themeSrc.replace(/url\("\.\/fonts\/([^"]+)"\)/g, (m, name) => {
 });
 fs.writeFileSync(path.join(dist, "assets/theme.css"), themeSrc);
 fs.copyFileSync(path.join(root, "src/app.js"), path.join(dist, "assets/app.js"));
+fs.copyFileSync(path.join(root, "src/tooltip.js"), path.join(dist, "assets/tooltip.js"));
+fs.writeFileSync(
+  path.join(dist, "assets/glossary.js"),
+  "window.__LDNDRC_GLOSSARY = " +
+    JSON.stringify(
+      Object.fromEntries(
+        GLOSSARY_TERMS.map((t) => [t.id, { title: t.title, summary: t.summary, example: t.example || "" }])
+      )
+    ) +
+    ";\n"
+);
 fs.copyFileSync(path.join(root, "src/mermaid-viewer.js"), path.join(dist, "assets/mermaid-viewer.js"));
 mkdir(path.join(dist, "assets/vendor"));
 fs.copyFileSync(
@@ -439,6 +519,7 @@ for (const file of RAW_FILES) {
     return `href="${librarySlug(clean)}.html${hash || ""}"`;
   });
   html = expandWikiLinks(html, (tid) => "../d/" + tid + ".html");
+  html = linkTerms(html);
 
   write(
     path.join(dist, "library", slug + ".html"),

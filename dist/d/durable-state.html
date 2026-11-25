@@ -6,6 +6,8 @@
 <title>Surviving a redeploy — LDNDRC</title>
 <meta name="description" content="Sessions and approvals live on emptyDir today; the fix is durable storage.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,13 +52,13 @@
     </div>
     <h1 class="page-title">Surviving a redeploy</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Sessions and approvals live on emptyDir today; the fix is durable storage.</p>
-    <div class="prose"><p>The panel keeps two small pieces of state: active sessions and node approvals. Today both live on <code>emptyDir</code> — a temporary shelf wiped when the pod is replaced.</p>
-<h2 id="what-already-works">What already works</h2><p>Small restarts lose nothing. The panel writes <code>sessions.json</code>; on boot it re-reads it and adopts pods that still exist. If a pod is gone, the session is marked <code>stopped</code> rather than pretending it is alive. That was CP21, and it removed a whole class of phantom sessions.</p>
-<h2 id="what-is-left">What is left</h2><p>A full redeploy replaces the pod, and with it the shelf. The fix is a PVC (or a small database) plus a rollout strategy that always keeps one panel answering:</p>
+    <div class="prose"><p>The panel keeps two small pieces of state: active <span class="term" data-term="session" tabindex="0">sessions</span> and <span class="term" data-term="node" tabindex="0">node</span> approvals. Today both live on <code>emptyDir</code> — a temporary shelf wiped when the <span class="term" data-term="pod" tabindex="0">pod</span> is replaced.</p>
+<h2 id="what-already-works">What already works</h2><p>Small restarts lose nothing. The panel writes <code>sessions.json</code>; on boot it re-reads it and adopts <span class="term" data-term="pod" tabindex="0">pods</span> that still exist. If a <span class="term" data-term="pod" tabindex="0">pod</span> is gone, the <span class="term" data-term="session" tabindex="0">session</span> is marked <code>stopped</code> rather than pretending it is alive. That was CP21, and it removed a whole class of phantom <span class="term" data-term="session" tabindex="0">sessions</span>.</p>
+<h2 id="what-is-left">What is left</h2><p>A full redeploy replaces the <span class="term" data-term="pod" tabindex="0">pod</span>, and with it the shelf. The fix is a <span class="term" data-term="pvc" tabindex="0">PVC</span> (or a small database) plus a rollout strategy that always keeps one panel answering:</p>
 <ul>
-<li>move <code>NODES_DB</code> and the sessions store onto a PVC</li>
+<li>move <code>NODES_DB</code> and the <span class="term" data-term="session" tabindex="0">sessions</span> store onto a <span class="term" data-term="pvc" tabindex="0">PVC</span></li>
 <li>set <code>maxUnavailable: 1</code> so the old copy dies only after the new one is ready</li>
-<li>prove it by replacing the deployment with live sessions and asserting zero loss</li>
+<li>prove it by replacing the <span class="term" data-term="deployment" tabindex="0">deployment</span> with live <span class="term" data-term="session" tabindex="0">sessions</span> and asserting zero loss</li>
 </ul>
 <h2 id="why-it-matters">Why it matters</h2><p>Every workshop begins with a deploy. Losing the state that says &quot;these laptops were approved&quot; means re-approving twenty machines by hand in front of a room. This is why R2-final sits at the top of the <a href="roadmap.html" class="topic-link">What is still left</a>.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc get deploy -o jsonpath=<span class="hljs-string">&#x27;{.items[*].spec.strategy}&#x27;</span>

@@ -6,6 +6,8 @@
 <title>The joiner&#39;s screens — LDNDRC</title>
 <meta name="description" content="Pre-flight matrix, driver rules D1–D4, and consent before anything is downloaded.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -52,7 +54,7 @@
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Pre-flight matrix, driver rules D1–D4, and consent before anything is downloaded.</p>
     <div class="prose"><p>The TUI spec describes what a first-time attendee sees, screen by screen. It is the human side of <a href="join-binary.html" class="topic-link">The join binary</a>.</p>
 <h2 id="screen-1-pre-flight-read-only">Screen 1 — pre-flight, read-only</h2><p>A matrix of checks: cores, RAM, GPU, disk, network, OS. Nothing is installed, nothing is uploaded. The user can read the verdict before agreeing to anything.</p>
-<h2 id="screen-2-the-verdict">Screen 2 — the verdict</h2><p>Host or Guest, with the failing row highlighted and a plain-language reason. &quot;16 GB required, this laptop has 15&quot; is a better message than a red cross.</p>
+<h2 id="screen-2-the-verdict">Screen 2 — the verdict</h2><p><span class="term" data-term="host" tabindex="0">Host</span> or <span class="term" data-term="guest" tabindex="0">Guest</span>, with the failing row highlighted and a plain-language reason. &quot;16 GB required, this laptop has 15&quot; is a better message than a red cross.</p>
 <h2 id="screens-3-consent-and-handoff">Screens 3+ — consent and handoff</h2><p>Driver download consent (D4), diagnostics upload consent (D3), registration, waiting for approval, agent install. Each step is skippable with a clear consequence.</p>
 <h2 id="the-rules-that-constrain-the-design">The rules that constrain the design</h2><ul>
 <li>Never install without consent.</li>

@@ -6,6 +6,8 @@
 <title>Building the workspace image — LDNDRC</title>
 <meta name="description" content="Base layers, an immutable tag, and an import path the laptop cluster understands.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,14 +52,14 @@
     </div>
     <h1 class="page-title">Building the workspace image</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Base layers, an immutable tag, and an import path the laptop cluster understands.</p>
-    <div class="prose"><p>The session image is where ROS, Gazebo, the editor, the desktop, and the scene bridge all meet. Building it is a chain, not a single <code>docker build</code>.</p>
+    <div class="prose"><p>The <span class="term" data-term="session" tabindex="0">session</span> image is where ROS, <span class="term" data-term="gazebo" tabindex="0">Gazebo</span>, the editor, the desktop, and the scene bridge all meet. Building it is a chain, not a single <code>docker build</code>.</p>
 <h2 id="the-chain">The chain</h2><ol>
 <li><strong>Base layers</strong> — Ubuntu, NVIDIA runtime hooks, common tooling.</li>
-<li><strong>ROS 2 Jazzy + Gazebo Harmonic</strong> — the robotics payload.</li>
-<li><strong>Workspace layer</strong> — code-server, Selkies, <code>gazebo-web</code>, supervisor config, <code>turtlebot3</code> packages and worlds.</li>
+<li><strong><span class="term" data-term="ros2" tabindex="0">ROS 2</span> Jazzy + <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> Harmonic</strong> — the robotics payload.</li>
+<li><strong>Workspace layer</strong> — <span class="term" data-term="code-server" tabindex="0">code-server</span>, Selkies, <code>gazebo-web</code>, supervisor config, <code>turtlebot3</code> packages and worlds.</li>
 <li><strong>Immutable tag</strong> — a content hash, never <code>latest</code>.</li>
 </ol>
-<h2 id="why-the-tag-is-a-hash">Why the tag is a hash</h2><p>The image is imported into each Host&#39;s containerd. If two Hosts have different images under the same tag, two students in the same class get different robots and nobody can reproduce the bug. An immutable sha tag makes that impossible to do by accident.</p>
+<h2 id="why-the-tag-is-a-hash">Why the tag is a hash</h2><p>The image is imported into each <span class="term" data-term="host" tabindex="0">Host</span>&#39;s <span class="term" data-term="containerd" tabindex="0">containerd</span>. If two <span class="term" data-term="host" tabindex="0">Hosts</span> have different images under the same tag, two students in the same class get different robots and nobody can reproduce the bug. An immutable sha tag makes that impossible to do by accident.</p>
 <h2 id="getting-it-onto-a-laptop">Getting it onto a laptop</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">docker save ldndrc/ros2-gz:&lt;sha&gt; -o workspace.tar
 k3d image import workspace.tar -c ldndrc     <span class="hljs-comment"># demo</span>
 <span class="hljs-comment"># real cluster: push to a local registry the Hosts can pull from</span></code></pre></div><p>The budget for all of this is <a href="disk-budget.html" class="topic-link">The disk budget</a>.</p>

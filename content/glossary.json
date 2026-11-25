@@ -1,0 +1,353 @@
+{
+  "terms": [
+    {
+      "id": "node",
+      "title": "Node",
+      "summary": "A laptop that is part of the cluster. On the map, the word node also means one concept in the graph — the cluster meaning applies inside lessons unless stated otherwise.",
+      "example": "k3s kubectl get nodes",
+      "match": ["node", "nodes"]
+    },
+    {
+      "id": "pod",
+      "title": "Pod",
+      "summary": "The smallest unit Kubernetes runs. Here it is one student's private workspace, with its own network namespace and home directory.",
+      "example": "kubectl get pod -n session-42",
+      "match": ["pod", "pods"]
+    },
+    {
+      "id": "deployment",
+      "title": "Deployment",
+      "summary": "A controller that keeps one pod running and restarts it when it stops. It describes the desired state; Kubernetes works to match it.",
+      "example": "kubectl rollout status deploy/gateway",
+      "match": ["deployment", "deployments"]
+    },
+    {
+      "id": "service",
+      "title": "Service",
+      "summary": "A stable in-cluster address in front of a pod, so callers do not need to know which pod is currently running.",
+      "example": "kubectl get svc -n session-42",
+      "match": ["service", "services"]
+    },
+    {
+      "id": "pvc",
+      "title": "PVC",
+      "summary": "PersistentVolumeClaim: a request for disk that survives a pod restart. Here it backs the student's home directory.",
+      "example": "kubectl get pvc -n session-42",
+      "match": ["pvc", "pvcs"]
+    },
+    {
+      "id": "ingress",
+      "title": "Ingress",
+      "summary": "The front door that reads a hostname and forwards the request to the right service inside the cluster.",
+      "example": "kubectl get ingress -A",
+      "match": ["ingress", "ingresses", "ingress controller"]
+    },
+    {
+      "id": "namespace",
+      "title": "Namespace",
+      "summary": "A named box for Kubernetes objects. It is the tenancy boundary: one student's objects are not visible in another's namespace.",
+      "example": "kubectl create namespace session-42",
+      "match": ["namespace", "namespaces"]
+    },
+    {
+      "id": "rbac",
+      "title": "RBAC",
+      "summary": "Role-Based Access Control: rules about which identity may perform which verb on which object.",
+      "example": "kubectl auth can-i create pods -n session-42",
+      "match": ["rbac", "role-based access control"]
+    },
+    {
+      "id": "cni",
+      "title": "CNI",
+      "summary": "Container Network Interface: the plugin contract that gives pods network addresses. LDNDRC uses Flannel.",
+      "example": "ls /etc/cni/net.d",
+      "match": ["cni"]
+    },
+    {
+      "id": "etcd",
+      "title": "etcd",
+      "summary": "The key-value database that stores every Kubernetes object — pods, secrets, configuration. Losing it loses the cluster's memory. K3s replaces it with a small embedded datastore by default.",
+      "example": "etcdctl get /registry/namespaces --prefix",
+      "match": ["etcd"]
+    },
+    {
+      "id": "flannel",
+      "title": "Flannel",
+      "summary": "The CNI plugin. It gives every pod an IP address and routes pod traffic over a VXLAN overlay. It carries HTTP, WebSocket, and WebRTC — no DDS discovery ever crosses it.",
+      "example": "ip -d link show flannel.1",
+      "match": ["flannel"]
+    },
+    {
+      "id": "k3s",
+      "title": "K3s",
+      "summary": "A lightweight Kubernetes distribution shipped as a single binary under 100 MB. It bundles the API server, scheduler, controller manager, kubelet, and containerd.",
+      "example": "k3s kubectl get nodes",
+      "match": ["k3s"]
+    },
+    {
+      "id": "kubernetes",
+      "title": "Kubernetes",
+      "summary": "The container orchestrator underneath LDNDRC. It schedules pods onto nodes and keeps their declared state true.",
+      "example": "kubectl get pods -A",
+      "match": ["kubernetes", "k8s"]
+    },
+    {
+      "id": "kubelet",
+      "title": "kubelet",
+      "summary": "The node agent. It watches for pods assigned to its machine and asks the container runtime to start them.",
+      "example": "systemctl status k3s",
+      "match": ["kubelet"]
+    },
+    {
+      "id": "containerd",
+      "title": "containerd",
+      "summary": "The container runtime that actually pulls images and starts containers for the kubelet.",
+      "example": "ctr -n k8s.io containers list",
+      "match": ["containerd"]
+    },
+    {
+      "id": "k3d",
+      "title": "k3d",
+      "summary": "A tool that runs K3s nodes inside Docker containers, used here for a disposable local demo cluster.",
+      "example": "k3d cluster create demo",
+      "match": ["k3d"]
+    },
+    {
+      "id": "kubeconfig",
+      "title": "kubeconfig",
+      "summary": "The file that tells kubectl which cluster to talk to and which credentials to present.",
+      "example": "export KUBECONFIG=~/.kube/config",
+      "match": ["kubeconfig"]
+    },
+    {
+      "id": "helm",
+      "title": "Helm",
+      "summary": "The Kubernetes package manager: it templates a set of manifests into one installable release.",
+      "match": ["helm"]
+    },
+    {
+      "id": "sidecar",
+      "title": "Sidecar",
+      "summary": "A helper container that runs beside the main container in the same pod, sharing its network and lifecycle.",
+      "example": "kubectl logs pod/web -c sidecar",
+      "match": ["sidecar", "sidecars"]
+    },
+    {
+      "id": "networkpolicy",
+      "title": "NetworkPolicy",
+      "summary": "Kubernetes firewall rules scoped to pods. LDNDRC's isolation does not rely on them — it relies on processes never generating cross-session traffic.",
+      "example": "kubectl get networkpolicy -A",
+      "match": ["networkpolicy", "networkpolicies", "network policy"]
+    },
+    {
+      "id": "configmap",
+      "title": "ConfigMap",
+      "summary": "A Kubernetes object holding non-secret configuration, injected into pods as files or environment variables.",
+      "example": "kubectl get configmap -n session-42",
+      "match": ["configmap", "configmaps"]
+    },
+    {
+      "id": "control-plane",
+      "title": "Control plane",
+      "summary": "Here: the panel's own services — authentication, sessions, onboarding, and the gateway. In Kubernetes generally: the API server, scheduler, and controller layer.",
+      "match": ["control plane"]
+    },
+    {
+      "id": "gateway",
+      "title": "Gateway",
+      "summary": "The panel's reverse proxy into session pods. It terminates the browser connection and forwards it to the right workspace.",
+      "example": "kubectl get svc gateway",
+      "match": ["gateway", "gateways"]
+    },
+    {
+      "id": "session",
+      "title": "Session",
+      "summary": "One student's private workspace: a namespace, a pod, a home directory, and a DDS domain ID.",
+      "match": ["session", "sessions"]
+    },
+    {
+      "id": "host",
+      "title": "Host",
+      "summary": "A laptop that contributes compute to the cluster and can run student pods.",
+      "match": ["host", "hosts"]
+    },
+    {
+      "id": "guest",
+      "title": "Guest",
+      "summary": "A laptop that only opens a browser: it joins the workshop without contributing compute.",
+      "match": ["guest", "guests"]
+    },
+    {
+      "id": "operator",
+      "title": "Operator",
+      "summary": "The person who owns the master machine and approves joins. Not the Kubernetes \"operator pattern\".",
+      "match": ["operator", "operators"]
+    },
+    {
+      "id": "mdns",
+      "title": "mDNS",
+      "summary": "Multicast DNS: local network name announcement with no DNS server. It lets a laptop find the master without typing an IP.",
+      "example": "avahi-browse -rt _ldndrc-master._tcp",
+      "match": ["mdns", "multicast dns"]
+    },
+    {
+      "id": "captive-portal",
+      "title": "Captive portal",
+      "summary": "A page that appears instead of the internet until a step is completed. Here it is the join flow a laptop lands on.",
+      "match": ["captive portal"]
+    },
+    {
+      "id": "ros2",
+      "title": "ROS 2",
+      "summary": "Robot Operating System 2: the robotics middleware students use. It publishes topics and calls services over DDS.",
+      "example": "ros2 topic list",
+      "match": ["ros 2", "ros2"]
+    },
+    {
+      "id": "dds",
+      "title": "DDS",
+      "summary": "ROS 2's discovery and transport layer. Peers find each other over multicast and then exchange data directly.",
+      "example": "ROS_DOMAIN_ID=42 ros2 topic list",
+      "match": ["dds"]
+    },
+    {
+      "id": "domain-id",
+      "title": "Domain ID",
+      "summary": "A number that separates DDS graphs. Two sessions with different domain IDs cannot see each other's topics.",
+      "example": "export ROS_DOMAIN_ID=42",
+      "match": ["domain id", "domain ids"]
+    },
+    {
+      "id": "multicast",
+      "title": "Multicast",
+      "summary": "One packet delivered to many listeners at once. DDS discovery uses it to find peers on the local network.",
+      "example": "ip maddr show",
+      "match": ["multicast"]
+    },
+    {
+      "id": "gazebo",
+      "title": "Gazebo",
+      "summary": "The physics simulator that runs the robot world students see. It publishes simulated sensor data over ROS 2.",
+      "example": "gz sim world.sdf",
+      "match": ["gazebo"]
+    },
+    {
+      "id": "gzweb",
+      "title": "GzWeb",
+      "summary": "The browser front end for Gazebo: it renders the simulation and streams it to the student's page.",
+      "example": "gzweb --port 8080",
+      "match": ["gzweb", "gz web"]
+    },
+    {
+      "id": "websocket",
+      "title": "WebSocket",
+      "summary": "A persistent, full-duplex connection between the browser and the panel. It is what makes live terminals and simulation streaming possible.",
+      "example": "new WebSocket(\"wss://panel.local/ws\")",
+      "match": ["websocket", "websockets"]
+    },
+    {
+      "id": "tls",
+      "title": "TLS",
+      "summary": "Transport Layer Security: encryption plus certificate checks for every browser connection.",
+      "example": "openssl s_client -connect panel.local:443",
+      "match": ["tls"]
+    },
+    {
+      "id": "csrf",
+      "title": "CSRF",
+      "summary": "Cross-Site Request Forgery: another site making the browser send a valid cookie. The defence is a separate token returned at login and held in memory.",
+      "example": "X-CSRF-Token: <csrf_token>",
+      "match": ["csrf"]
+    },
+    {
+      "id": "jwt",
+      "title": "JWT",
+      "summary": "JSON Web Token: a signed credential the server can verify without a lookup. It identifies the user; it is not the same value as the cookie.",
+      "example": "Authorization: Bearer eyJhbGciOi...",
+      "match": ["jwt", "json web token"]
+    },
+    {
+      "id": "cookie",
+      "title": "Cookie",
+      "summary": "A small value the browser stores and sends automatically. Here it identifies the user to the gateway, and is deliberately separate from the JWT.",
+      "match": ["cookie", "cookies"]
+    },
+    {
+      "id": "workspace-image",
+      "title": "Workspace image",
+      "summary": "The container image a student's session boots from. It is roughly 10 GB, so every Host has to hold a copy.",
+      "example": "SESSION_IMAGE=ldndrc-workspace:2026.06",
+      "match": ["workspace image", "workspace images"]
+    },
+    {
+      "id": "docker",
+      "title": "Docker",
+      "summary": "The container engine used to build images and, through k3d, to host the demo cluster.",
+      "example": "docker ps",
+      "match": ["docker"]
+    },
+    {
+      "id": "code-server",
+      "title": "code-server",
+      "summary": "VS Code running in the browser. It gives students an editor and terminal inside their session pod.",
+      "example": "code-server --bind-addr 0.0.0.0:8080",
+      "match": ["code-server"]
+    },
+    {
+      "id": "headlamp",
+      "title": "Headlamp",
+      "summary": "A Kubernetes dashboard. It is how the operator inspects pods, namespaces, and events without the command line.",
+      "example": "kubectl port-forward -n kube-system svc/headlamp 4466:80",
+      "match": ["headlamp"]
+    },
+    {
+      "id": "traefik",
+      "title": "Traefik",
+      "summary": "The ingress controller and reverse proxy that routes browser traffic to the right service in the cluster.",
+      "example": "kubectl -n kube-system get svc traefik",
+      "match": ["traefik"]
+    },
+    {
+      "id": "coredns",
+      "title": "CoreDNS",
+      "summary": "The cluster DNS server. It turns service names into cluster IPs so pods can find each other by name.",
+      "example": "kubectl -n kube-system get svc kube-dns",
+      "match": ["coredns"]
+    },
+    {
+      "id": "vxlan",
+      "title": "VXLAN",
+      "summary": "A tunnelling protocol that wraps pod packets inside UDP so they can cross the physical network. Flannel uses it for the overlay.",
+      "example": "ip -d link show flannel.1",
+      "match": ["vxlan"]
+    },
+    {
+      "id": "nix",
+      "title": "Nix",
+      "summary": "A purely functional package manager: builds are reproducible and every result lives at a hash-named path in the Nix store.",
+      "example": "nix shell nixpkgs#ripgrep",
+      "match": ["nix"]
+    },
+    {
+      "id": "nix-store",
+      "title": "Nix store",
+      "summary": "The /nix/store directory where Nix keeps everything it builds or downloads, each in its own path whose name starts with a hash.",
+      "example": "/nix/store/q9wb526c4vn8mz2sh24hpfxha83vqbsf-git-2.54.0",
+      "match": ["nix store"]
+    },
+    {
+      "id": "systemd",
+      "title": "systemd",
+      "summary": "The Linux init and service manager. It starts K3s, the panel, and the other long-running services.",
+      "example": "systemctl status k3s",
+      "match": ["systemd"]
+    },
+    {
+      "id": "gpu-timeslicing",
+      "title": "GPU time-slicing",
+      "summary": "Sharing one physical GPU between several containers by switching between them over time. It fakes separate GPUs but does not isolate memory.",
+      "example": "replicas: 4",
+      "match": ["time-slicing", "time slicing", "timeslicing"]
+    }
+  ]
+}

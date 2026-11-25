@@ -6,6 +6,8 @@
 <title>The one-laptop demo (k3d) — LDNDRC</title>
 <meta name="description" content="The entire platform in a throwaway container cluster, no GPU required.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,8 +52,8 @@
     </div>
     <h1 class="page-title">The one-laptop demo (k3d)</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">The entire platform in a throwaway container cluster, no GPU required.</p>
-    <div class="prose"><p>You should be able to see the whole platform before you own a cluster. <code>k3d</code> runs K3s inside Docker, so a single laptop can host the control plane, the demo image, the ingress, and a working session in about ten minutes.</p>
-<p>The demo deliberately does <strong>not</strong> use the real 10 GB workspace image. It uses <code>ldndrc/demo-standin</code>, a tiny HTTP server that answers on the same ports. That is enough to prove the provisioning path, the gateway, and the UI without waiting on a GPU.</p>
+    <div class="prose"><p>You should be able to see the whole platform before you own a cluster. <code>k3d</code> runs <span class="term" data-term="k3s" tabindex="0">K3s</span> inside <span class="term" data-term="docker" tabindex="0">Docker</span>, so a single laptop can <span class="term" data-term="host" tabindex="0">host</span> the <span class="term" data-term="control-plane" tabindex="0">control plane</span>, the demo image, the <span class="term" data-term="ingress" tabindex="0">ingress</span>, and a working <span class="term" data-term="session" tabindex="0">session</span> in about ten minutes.</p>
+<p>The demo deliberately does <strong>not</strong> use the real 10 GB <span class="term" data-term="workspace-image" tabindex="0">workspace image</span>. It uses <code>ldndrc/demo-standin</code>, a tiny HTTP server that answers on the same ports. That is enough to prove the provisioning path, the <span class="term" data-term="gateway" tabindex="0">gateway</span>, and the UI without waiting on a GPU.</p>
 <h2 id="the-short-version">The short version</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-comment"># 1. cluster</span>
 k3d cluster create ldndrc -p <span class="hljs-string">&quot;80:80@loadbalancer&quot;</span> -p <span class="hljs-string">&quot;443:443@loadbalancer&quot;</span>
 
@@ -67,7 +69,7 @@ kubectl -n ldndrc create secret generic ldndrc-control-panel \
 kubectl apply -f manifests/control-panel-rbac.yaml
 kubectl apply -f manifests/control-panel-deployment.yaml
 kubectl apply -f manifests/control-panel-service.yaml
-kubectl apply -f manifests/control-panel-ingress.yaml</code></pre></div><h2 id="the-part-people-skip-then-regret">The part people skip, then regret</h2><p><code>k3d image import</code> is not a registry. The image is copied into the cluster&#39;s containerd store at that moment. If you rebuild the tag and forget to re-import, the Deployment keeps running the old image and the failure looks like &quot;my code change did nothing&quot;.</p>
+kubectl apply -f manifests/control-panel-ingress.yaml</code></pre></div><h2 id="the-part-people-skip-then-regret">The part people skip, then regret</h2><p><code>k3d image import</code> is not a registry. The image is copied into the cluster&#39;s <span class="term" data-term="containerd" tabindex="0">containerd</span> store at that moment. If you rebuild the tag and forget to re-import, the <span class="term" data-term="deployment" tabindex="0">Deployment</span> keeps running the old image and the failure looks like &quot;my code change did nothing&quot;.</p>
 <h2 id="why-the-demo-is-configured-differently">Why the demo is configured differently</h2><p>Two environment overrides matter:</p>
 <table>
 <thead>
@@ -88,7 +90,7 @@ kubectl apply -f manifests/control-panel-ingress.yaml</code></pre></div><h2 id="
 <td><code>0</code></td>
 </tr>
 </tbody></table>
-<p><code>SESSION_GPU_LIMIT=0</code> means the session schedules on any node with no GPU request, so a laptop without an NVIDIA card still reaches <code>ready</code>. The GPU path is <a href="gpu-timeslicing.html" class="topic-link">Time-slicing one GPU</a>.</p>
+<p><code>SESSION_GPU_LIMIT=0</code> means the <span class="term" data-term="session" tabindex="0">session</span> schedules on any <span class="term" data-term="node" tabindex="0">node</span> with no GPU request, so a laptop without an NVIDIA card still reaches <code>ready</code>. The GPU path is <a href="gpu-timeslicing.html" class="topic-link">Time-slicing one GPU</a>.</p>
 <h2 id="teardown-is-one-command">Teardown is one command</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">k3d cluster delete ldndrc</code></pre></div><p>Everything goes: workloads, volumes, secrets. That is the beauty of the demo — it is disposable, so you can break it while learning. The real cluster in <a href="control-panel-deploy.html" class="topic-link">Deploying the control panel</a> is not.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">k3d cluster list
 kubectl -n ldndrc get pods</code></pre></div><p>Then follow <a href="../index.html#/route/goal-demo" class="topic-link">Demo it on one laptop</a> if you want the guided route through this.</p></div>

@@ -6,6 +6,8 @@
 <title>Checkpoint 32 — R6 SESSION_IMAGE Flip (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-32-r6-image-flip.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -46,29 +48,29 @@
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-32-r6-image-flip.md · 1.5 KB</div>
 <h1 class="page-title">Checkpoint 32 — R6 SESSION_IMAGE Flip (detailed)</h1>
 <div class="prose"><h2 id="context">Context</h2><p>Fifth R6 chunk on <code>feat/r6-workspace-image</code>: declare the real image
-as the session image in manifests + docs. No rebuild, no behavior
+as the <span class="term" data-term="session" tabindex="0">session</span> image in manifests + docs. No rebuild, no behavior
 change yet — the live cluster still runs the stand-in until the
 import + rollout chunk. GPU stays <code>&quot;0&quot;</code> (CPU-only decision).</p>
 <h2 id="changes-2-files">Changes (2 files)</h2><ul>
 <li><code>manifests/control-panel-deployment.yaml</code>: <code>SESSION_IMAGE</code>
 <code>ldndrc/demo-standin:dev</code> →
 <code>ldndrc/ros2-gz:jazzy-harmonic-eaaf8088</code> (immutable sha tag, never
-<code>:latest</code>), with a comment recording the R6 rationale, the k3d
+<code>:latest</code>), with a comment recording the R6 rationale, the <span class="term" data-term="k3d" tabindex="0">k3d</span>
 demo override path, the Selkies-deferred 502, and the CPU-only GPU
 note.</li>
 <li><code>README.md</code>: env table default updated to the immutable tag.
-Path A (k3d demo on the stand-in) is untouched and still valid.</li>
+Path A (<span class="term" data-term="k3d" tabindex="0">k3d</span> demo on the stand-in) is untouched and still valid.</li>
 </ul>
 <h2 id="proofs">Proofs</h2><ul>
 <li>Python YAML parse OK; <code>kubectl apply --dry-run=client</code> accepts the
 manifest against the live cluster.</li>
 </ul>
 <h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>Only the 2 files above + this report (staged for commit). The 8
-join/nodes files + <code>join-cluster.sh</code> untouched/unstaged; untracked
+join/<span class="term" data-term="node" tabindex="0">nodes</span> files + <code>join-cluster.sh</code> untouched/unstaged; untracked
 junk left alone.</p>
 <h2 id="next-blocked-on-operator-sudo">Next (blocked on operator sudo)</h2><p><code>sudo k3s ctr images import ~/ldndrc-workspace-jazzy-harmonic-eaaf8088.tar</code> → apply the flipped
-manifest (or patch the live Deployment env) → new session → ready
-with real services (editor 200 IDE, sim bridge, desktop 502) →
+manifest (or patch the live <span class="term" data-term="deployment" tabindex="0">Deployment</span> env) → new <span class="term" data-term="session" tabindex="0">session</span> → ready
+with real <span class="term" data-term="service" tabindex="0">services</span> (editor 200 IDE, sim bridge, desktop 502) →
 checkpoint. Still queued: Selkies 2.0.0 migration, image pre-warm /
 registry mirror in the join flow, R2-final, merge with
 <code>feat/r3-csrf</code>.</p>

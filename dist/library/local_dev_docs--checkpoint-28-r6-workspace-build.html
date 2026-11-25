@@ -6,6 +6,8 @@
 <title>Checkpoint 28 — R6 Workspace Build (Selkies deferred) (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-28-r6-workspace-build.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -47,7 +49,7 @@
 <h1 class="page-title">Checkpoint 28 — R6 Workspace Build (Selkies deferred) (detailed)</h1>
 <div class="prose"><h2 id="context">Context</h2><p>Second R6 chunk on <code>feat/r6-workspace-image</code>: build <code>images/workspace</code>
 on top of the checkpoint-27 base. Hit a real upstream breakage
-mid-build, resolved per operator decision. No panel/backend changes.</p>
+mid-build, resolved per <span class="term" data-term="operator" tabindex="0">operator</span> decision. No panel/backend changes.</p>
 <h2 id="upstream-breakage-selkies-1-6-2-assets-gone">Upstream breakage: Selkies 1.6.2 assets gone</h2><ul>
 <li>Build failed in <code>install-selkies.sh</code> step 1: the GStreamer tarball
 <code>gstreamer-selkies_gpl_v1.6.2_ubuntu24.04_amd64.tar.gz</code> returns 404
@@ -58,7 +60,7 @@ mid-build, resolved per operator decision. No panel/backend changes.</p>
 <code>selkies_gstreamer</code> wheel, no js-interposer deb). PyPI has <code>selkies</code>
 2.0.0 but no <code>selkies-gstreamer</code> package. The 1.x line is
 unrecoverable from upstream.</li>
-<li>Operator decision: <strong>defer Selkies</strong>, ship editor + sim first.</li>
+<li><span class="term" data-term="operator" tabindex="0">Operator</span> decision: <strong>defer Selkies</strong>, ship editor + sim first.</li>
 </ul>
 <h2 id="deferral-implementation-reversible-in-tree">Deferral implementation (reversible, in-tree)</h2><ul>
 <li><code>images/workspace/Dockerfile</code>: new <code>ARG WITH_SELKIES=0</code>; the
@@ -68,20 +70,20 @@ at 1). <code>install-selkies.sh</code>, <code>start-selkies.sh</code>, and the
 <li><code>images/workspace/supervisord.conf</code>: <code>[program:selkies]</code> section
 removed with a comment (an installed-but-absent program would
 restart-loop under <code>autorestart</code>). Migration restores it.</li>
-<li>Runtime effect: nothing listens on 8080 → gateway <code>desktop</code> stays
+<li>Runtime effect: nothing listens on 8080 → <span class="term" data-term="gateway" tabindex="0">gateway</span> <code>desktop</code> stays
 <strong>502-by-design</strong>, exactly like the demo stand-in. No provisioner
 change needed (readiness only probes 7682).</li>
 </ul>
-<h2 id="build-observed">Build (observed)</h2><p>Rebuilt green after the deferral: code-server install, Node 24,
+<h2 id="build-observed">Build (observed)</h2><p>Rebuilt green after the deferral: <span class="term" data-term="code-server" tabindex="0">code-server</span> install, <span class="term" data-term="node" tabindex="0">Node</span> 24,
 <code>npm install gzweb</code> + audit notes, seed/home setup, export ~30s.</p>
 <p>Result: <code>ldndrc/ros2-gz:jazzy-harmonic-workspace</code> — <strong>10.2GB</strong>
 (index <code>cc54d71348fb</code>, config <code>eaaf8088…</code>) on the 8.25GB base.
 Matches the roadmap&#39;s ~10GB+ expectation.</p>
 <h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>Only <code>images/workspace/Dockerfile</code> + <code>supervisord.conf</code> modified
-(staged for this chunk&#39;s commit). The 8 join/nodes files +
+(staged for this chunk&#39;s commit). The 8 join/<span class="term" data-term="node" tabindex="0">nodes</span> files +
 <code>join-cluster.sh</code> untouched/unstaged; untracked junk left alone.</p>
 <h2 id="next-chunk">Next chunk</h2><p>Local contract verify (<code>docker run</code>: 7682/8080/9002 answers, probe
-path ≤399, uid 1000, supervisord keeps code-server + gazebo-web up)
+path ≤399, uid 1000, supervisord keeps <span class="term" data-term="code-server" tabindex="0">code-server</span> + <span class="term" data-term="gazebo" tabindex="0">gazebo</span>-web up)
 → checkpoint-29. Then immutable tag + import → <code>SESSION_IMAGE</code>
 flip → live matrix. Queued separately: Selkies 2.0.0 migration
 (<code>ubuntu24.04</code> deb layout, start-script + silent-audio-patch

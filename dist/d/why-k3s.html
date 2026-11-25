@@ -6,6 +6,8 @@
 <title>Why K3s, not Kubernetes — LDNDRC</title>
 <meta name="description" content="One binary, one small datastore, and a single command on a laptop.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,19 +52,19 @@
     </div>
     <h1 class="page-title">Why K3s, not Kubernetes</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">One binary, one small datastore, and a single command on a laptop.</p>
-    <div class="prose"><p>Kubernetes is the right shape for this problem: it already knows how to schedule a pod onto whichever machine has room, restart it when it dies, and hold a volume next to it. The question was never <em>whether</em> Kubernetes. It was how much of it you can afford on a laptop.</p>
-<h2 id="what-k3s-removes">What K3s removes</h2><p>K3s is a single binary under 100 MB that packages the API server, scheduler, controller manager, kubelet, and containerd. It replaces etcd with a small embedded datastore by default and ships sensible defaults for the things a laptop does not have: no cloud provider, no load balancer controller, no CSI driver zoo.</p>
-<p>The practical result: <code>curl -sfL https://get.k3s.io | sh -</code> is the entire control plane install. On the master laptop. No container to bootstrap the container runtime.</p>
+    <div class="prose"><p><span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> is the right shape for this problem: it already knows how to schedule a <span class="term" data-term="pod" tabindex="0">pod</span> onto whichever machine has room, restart it when it dies, and hold a volume next to it. The question was never <em>whether</em> <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span>. It was how much of it you can afford on a laptop.</p>
+<h2 id="what-k3s-removes">What K3s removes</h2><p><span class="term" data-term="k3s" tabindex="0">K3s</span> is a single binary under 100 MB that packages the API server, scheduler, controller manager, <span class="term" data-term="kubelet" tabindex="0">kubelet</span>, and <span class="term" data-term="containerd" tabindex="0">containerd</span>. It replaces <span class="term" data-term="etcd" tabindex="0">etcd</span> with a small embedded datastore by default and ships sensible defaults for the things a laptop does not have: no cloud provider, no load balancer controller, no CSI driver zoo.</p>
+<p>The practical result: <code>curl -sfL https://get.k3s.io | sh -</code> is the entire <span class="term" data-term="control-plane" tabindex="0">control plane</span> install. On the master laptop. No container to bootstrap the container runtime.</p>
 <h2 id="what-it-keeps">What it keeps</h2><p>Everything that matters for this design:</p>
 <ul>
-<li><strong>Namespaces</strong> — the tenancy boundary.</li>
-<li><strong>Deployments and Services</strong> — one per student session.</li>
+<li><strong><span class="term" data-term="namespace" tabindex="0">Namespaces</span></strong> — the tenancy boundary.</li>
+<li><strong><span class="term" data-term="deployment" tabindex="0">Deployments</span> and <span class="term" data-term="service" tabindex="0">Services</span></strong> — one per student <span class="term" data-term="session" tabindex="0">session</span>.</li>
 <li><strong>PersistentVolumeClaims</strong> — the student&#39;s home directory.</li>
-<li><strong>RBAC</strong> — the control panel is namespace-scoped on purpose.</li>
-<li><strong>Ingress</strong> — Traefik is bundled, so the front door exists out of the box.</li>
+<li><strong><span class="term" data-term="rbac" tabindex="0">RBAC</span></strong> — the control panel is <span class="term" data-term="namespace" tabindex="0">namespace</span>-scoped on purpose.</li>
+<li><strong><span class="term" data-term="ingress" tabindex="0">Ingress</span></strong> — <span class="term" data-term="traefik" tabindex="0">Traefik</span> is bundled, so the front door exists out of the box.</li>
 </ul>
 <h2 id="why-not-kubeadm-or-a-managed-cluster">Why not kubeadm or a managed cluster?</h2><p><code>kubeadm</code> is a two-hour install with certificate rotation you have to think about. A managed cluster is a cloud bill and an internet dependency, both ruled out by <a href="lan-first.html" class="topic-link">The LAN-first constraint</a>.</p>
-<h2 id="the-one-honest-weakness">The one honest weakness</h2><p>K3s with an embedded datastore is a single control-plane node. If the master dies, the cluster is gone until it comes back. There is no failover, and the roadmap does not pretend otherwise. For a workshop, the recovery plan is &quot;rebuild the master and re-add the Hosts&quot;, which takes about ten minutes.</p>
+<h2 id="the-one-honest-weakness">The one honest weakness</h2><p><span class="term" data-term="k3s" tabindex="0">K3s</span> with an embedded datastore is a single control-plane <span class="term" data-term="node" tabindex="0">node</span>. If the master dies, the cluster is gone until it comes back. There is no failover, and the roadmap does not pretend otherwise. For a workshop, the recovery plan is &quot;rebuild the master and re-add the <span class="term" data-term="host" tabindex="0">Hosts</span>&quot;, which takes about ten minutes.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">k3s --version
 kubectl get nodes -o wide</code></pre></div><p>One server, zero control-plane taints to worry about. Next: <a href="k3d-demo.html" class="topic-link">The one-laptop demo (k3d)</a> runs the same thing without a second machine.</p></div>
     <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>

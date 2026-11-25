@@ -6,6 +6,8 @@
 <title>Checkpoint 03 — The Go Control Panel — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-03-go-control-panel.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -48,8 +50,8 @@
 <div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>Until now the platform had no &quot;brain&quot; — just containers, manifests, and a
 routing sign. This checkpoint decided what that brain should be made of and
 built its foundation. We picked <strong>Go</strong> for the control-plane backend (the
-service that will manage student sessions, log people in, and shuttle browser
-traffic into the right workspace) instead of the heavy Node-based alternative
+<span class="term" data-term="service" tabindex="0">service</span> that will manage student <span class="term" data-term="session" tabindex="0">sessions</span>, log people in, and shuttle browser
+traffic into the right workspace) instead of the heavy <span class="term" data-term="node" tabindex="0">Node</span>-based alternative
 we found in the reference material. We also taught git which files are secrets
 it must never commit.</p>
 <h2 id="what-got-built">What got built</h2><table>
@@ -63,12 +65,12 @@ it must never commit.</p>
 <tbody><tr>
 <td><code>control-panel/</code> (Go module, 280 lines)</td>
 <td>The Brain</td>
-<td>The control-plane API server for sessions, login, and routing</td>
+<td>The control-plane API server for <span class="term" data-term="session" tabindex="0">sessions</span>, login, and routing</td>
 </tr>
 <tr>
 <td><code>reusable-components-report.md</code> §5</td>
 <td>The Decision Log</td>
-<td>Records why the backend is Go, not Node</td>
+<td>Records why the backend is Go, not <span class="term" data-term="node" tabindex="0">Node</span></td>
 </tr>
 <tr>
 <td><code>plan.md</code> Phase 5</td>
@@ -85,14 +87,14 @@ it must never commit.</p>
 <ul>
 <li><strong>The Front Desk</strong> (<code>cmd/server</code>) — starts the server on port 8082 and
 refuses to run without a secret key.</li>
-<li><strong>The ID Office</strong> (<code>internal/auth</code>) — issues and checks login passes (JWT
+<li><strong>The ID Office</strong> (<code>internal/auth</code>) — issues and checks login passes (<span class="term" data-term="jwt" tabindex="0">JWT</span>
 tokens, the digital passes browsers carry).</li>
 <li><strong>The Route Board</strong> (<code>internal/httpapi</code>) — the wall of endpoints: health
-check, login, and a slot where session management plugs in.</li>
+check, login, and a slot where <span class="term" data-term="session" tabindex="0">session</span> management plugs in.</li>
 <li><strong>The Bridge</strong> (<code>internal/gateway</code>) — the traffic tunnel that will one day
-carry browser traffic into a workspace pod.</li>
-<li><strong>The Session Desk</strong> (<code>internal/sessions</code>) — the future manager of workspace
-pods; right now it&#39;s a friendly placeholder that says &quot;no cluster connected.&quot;</li>
+carry browser traffic into a workspace <span class="term" data-term="pod" tabindex="0">pod</span>.</li>
+<li><strong>The <span class="term" data-term="session" tabindex="0">Session</span> Desk</strong> (<code>internal/sessions</code>) — the future manager of workspace
+<span class="term" data-term="pod" tabindex="0">pods</span>; right now it&#39;s a friendly placeholder that says &quot;no cluster connected.&quot;</li>
 </ul>
 <p>The clever part: the heavy cluster-talking machinery is kept behind thin
 doorways (called seams), so the server builds and runs today — with or without
@@ -100,13 +102,13 @@ a cluster. We proved this in the smoke test.</p>
 <h3 id="the-decision-log-reusable-components-report-md">The Decision Log — <code>reusable-components-report.md</code></h3><p>The old plan said &quot;skip the control panel, too heavy for MVP.&quot; This checkpoint
 changed that: keep the control panel, but build it in Go. A Go binary is tiny
 (about 20MB, no runtime to install) and can talk to the cluster with the exact
-same power as the Node version — just leaner. The frontend stays as it is:
-browser tools like code-server and the 3D viewer are JavaScript/WebGL by
+same power as the <span class="term" data-term="node" tabindex="0">Node</span> version — just leaner. The frontend stays as it is:
+browser tools like <span class="term" data-term="code-server" tabindex="0">code-server</span> and the 3D viewer are JavaScript/WebGL by
 nature and Go cannot replace them.</p>
 <h3 id="the-blueprint-plan-md-phase-5">The Blueprint — <code>plan.md</code> Phase 5</h3><p>The official plan now has a Phase 5: the Go control panel — module layout,
 dependencies, and a table of the endpoints it will expose (create/list/delete
-sessions, login, health, websocket tunnel). The plan also swapped Monaco for
-code-server and fixed the Gazebo websocket settings to match the working ones
+<span class="term" data-term="session" tabindex="0">sessions</span>, login, health, <span class="term" data-term="websocket" tabindex="0">websocket</span> tunnel). The plan also swapped Monaco for
+<span class="term" data-term="code-server" tabindex="0">code-server</span> and fixed the <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> <span class="term" data-term="websocket" tabindex="0">websocket</span> settings to match the working ones
 we adopted.</p>
 <h3 id="the-vault-door-gitignore">The Vault Door — <code>.gitignore</code></h3><p>46 rules that keep secrets (<code>.env</code>, <code>.pem</code>, keys, kubeconfigs) and build junk
 (compiled binaries, node_modules, tarballs) out of git. Verified that no
@@ -128,12 +130,12 @@ warnings.</li>
 <li><strong>Smoke test passed:</strong> with the server running, the health check answered
 <code>{&quot;status&quot;:&quot;ok&quot;}</code>, a login with missing details was politely rejected, and a
 valid login produced a real signed pass.</li>
-<li><strong>Cluster-less by design proven:</strong> asking for a session while no cluster is
+<li><strong>Cluster-less by design proven:</strong> asking for a <span class="term" data-term="session" tabindex="0">session</span> while no cluster is
 connected correctly returns &quot;not found&quot; instead of crashing — the seams work.</li>
 <li><strong>The Vault Door verified:</strong> <code>git check-ignore</code> confirms <code>.env</code>, the compiled
 Go binary, and node_modules are all hidden, and no existing tracked file is
 caught by mistake.</li>
-<li>Not yet verified: talking to a real cluster (creating pods) — the seam is
+<li>Not yet verified: talking to a real cluster (creating <span class="term" data-term="pod" tabindex="0">pods</span>) — the seam is
 ready but the cluster-side piece is the next step.</li>
 </ul>
 <h2 id="the-one-liner-version">The one-liner version</h2><table>
@@ -145,7 +147,7 @@ ready but the cluster-side piece is the next step.</li>
 </thead>
 <tbody><tr>
 <td><code>control-panel/</code></td>
-<td>The Go brain for sessions, login, and browser routing</td>
+<td>The Go brain for <span class="term" data-term="session" tabindex="0">sessions</span>, login, and browser routing</td>
 </tr>
 <tr>
 <td><code>reusable-components-report.md</code> §5</td>
@@ -161,9 +163,9 @@ ready but the cluster-side piece is the next step.</li>
 </tr>
 </tbody></table>
 <h2 id="what-s-next">What&#39;s next</h2><ul>
-<li><input disabled="" type="checkbox"> Finish the original Task 4: copy the gzweb 3D viewer into <code>sim-web-app/</code></li>
-<li><input disabled="" type="checkbox"> Write the real farm manifest (StatefulSet + Service + Ingress)</li>
-<li><input disabled="" type="checkbox"> Wire the Go session desk to a real cluster (client-go pod provisioning)</li>
+<li><input disabled="" type="checkbox"> Finish the original Task 4: copy the <span class="term" data-term="gzweb" tabindex="0">gzweb</span> 3D viewer into <code>sim-web-app/</code></li>
+<li><input disabled="" type="checkbox"> Write the real farm manifest (StatefulSet + <span class="term" data-term="service" tabindex="0">Service</span> + <span class="term" data-term="ingress" tabindex="0">Ingress</span>)</li>
+<li><input disabled="" type="checkbox"> Wire the Go <span class="term" data-term="session" tabindex="0">session</span> desk to a real cluster (client-go <span class="term" data-term="pod" tabindex="0">pod</span> provisioning)</li>
 <li><input disabled="" type="checkbox"> Build the images and rehearse the full browser path on the test cluster</li>
 </ul>
 </div>

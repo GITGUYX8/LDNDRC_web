@@ -6,6 +6,8 @@
 <title>Checkpoint 35 — Selkies 2.0.0 Live: Desktop 200 (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-35-selkies-live.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -49,13 +51,13 @@
 imported live, panel flipped, desktop stream proven end to end. No
 repo code changes besides the tag bump + this report.</p>
 <h2 id="import-flip-observed">Import + flip (observed)</h2><ul>
-<li>Operator <code>sudo k3s ctr images import ~/ldndrc-workspace-jazzy-harmonic-4aa29d15.tar</code>: index
+<li><span class="term" data-term="operator" tabindex="0">Operator</span> <code>sudo k3s ctr images import ~/ldndrc-workspace-jazzy-harmonic-4aa29d15.tar</code>: index
 <code>4aa29d15…</code>, 65s unpack.</li>
 <li>Live <code>SESSION_IMAGE</code> patched <code>eaaf8088</code> → <code>4aa29d15</code> via
 <code>kubectl set env</code> (surgical — this branch&#39;s manifest is main-era);
 committed manifest + README bumped to the same tag.</li>
-<li>Delete-old-first panel restart → new pod Running (in-memory
-sessions wiped, known R2 debt).</li>
+<li>Delete-old-first panel restart → new <span class="term" data-term="pod" tabindex="0">pod</span> Running (in-memory
+<span class="term" data-term="session" tabindex="0">sessions</span> wiped, known R2 debt).</li>
 </ul>
 <h2 id="live-matrix-green-session-9007211b3f88-selkies-image">Live matrix GREEN (session <code>9007211b3f88</code>, Selkies image)</h2><table>
 <thead>
@@ -69,28 +71,28 @@ sessions wiped, known R2 debt).</li>
 <td>202 <code>provisioning</code> → <code>ready</code> (3rd 10s poll, no pull)</td>
 </tr>
 <tr>
-<td><code>desktop</code> + cookie</td>
+<td><code>desktop</code> + <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 <td><strong>200 Selkies HTML client</strong> — the 502 era is over</td>
 </tr>
 <tr>
-<td><code>editor</code> + cookie</td>
+<td><code>editor</code> + <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 <td>302 → IDE (regression holds)</td>
 </tr>
 <tr>
-<td><code>gazebo</code> + cookie</td>
+<td><code>gazebo</code> + <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 <td>404 from live bridge (regression holds)</td>
 </tr>
 <tr>
-<td><code>desktop</code> no cookie</td>
+<td><code>desktop</code> no <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 <td>401</td>
 </tr>
 <tr>
-<td><code>DELETE</code> session</td>
+<td><code>DELETE</code> <span class="term" data-term="session" tabindex="0">session</span></td>
 <td><code>stopped</code></td>
 </tr>
 </tbody></table>
 <h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>Only manifest tag bump + README + this report (staged for commit).
-The 8 join/nodes files + <code>join-cluster.sh</code> untouched/unstaged;
+The 8 join/<span class="term" data-term="node" tabindex="0">nodes</span> files + <code>join-cluster.sh</code> untouched/unstaged;
 untracked junk left alone.</p>
 <h2 id="what-remains">What remains</h2><p>Selkies migration done (CP-34…CP-35). Queued: merge with
 <code>feat/r3-csrf</code> (7 commits), R2-final persistence, join-time image

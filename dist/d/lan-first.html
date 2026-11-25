@@ -6,6 +6,8 @@
 <title>The LAN-first constraint — LDNDRC</title>
 <meta name="description" content="No cloud, no dedicated server, no internet dependency — and what that forces.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -51,17 +53,17 @@
     <h1 class="page-title">The LAN-first constraint</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">No cloud, no dedicated server, no internet dependency — and what that forces.</p>
     <div class="prose"><p>The requirement that shaped everything else: the platform must work with <strong>no cloud, no dedicated server, and no internet dependency</strong> during a workshop.</p>
-<p>That sounds like a deployment detail. It is really a design constraint that eliminates whole categories of solution.</p>
+<p>That sounds like a <span class="term" data-term="deployment" tabindex="0">deployment</span> detail. It is really a design constraint that eliminates whole categories of solution.</p>
 <h2 id="what-it-rules-out">What it rules out</h2><ul>
-<li><strong>Managed Kubernetes.</strong> No EKS, no GKE, no control plane you do not own.</li>
+<li><strong>Managed <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span>.</strong> No EKS, no GKE, no <span class="term" data-term="control-plane" tabindex="0">control plane</span> you do not own.</li>
 <li><strong>External identity.</strong> No OAuth provider. Login has to work when the uplink is down.</li>
-<li><strong>Hosted object storage.</strong> Student home directories live on a PVC in the cluster.</li>
+<li><strong>Hosted object storage.</strong> Student home directories live on a <span class="term" data-term="pvc" tabindex="0">PVC</span> in the cluster.</li>
 <li><strong>CDNs.</strong> Fonts, viewer assets, and scripts ship with the image.</li>
 </ul>
-<h2 id="what-it-forces">What it forces</h2><p><strong>A static address.</strong> The master needs a predictable LAN IP, because four hostnames have to resolve to it. There is no DNS server, so Guests get <code>/etc/hosts</code> entries or mDNS.</p>
+<h2 id="what-it-forces">What it forces</h2><p><strong>A static address.</strong> The master needs a predictable LAN IP, because four hostnames have to resolve to it. There is no DNS server, so <span class="term" data-term="guest" tabindex="0">Guests</span> get <code>/etc/hosts</code> entries or <span class="term" data-term="mdns" tabindex="0">mDNS</span>.</p>
 <p><strong>A hardware tier.</strong> Since compute is donated, the platform must decide which laptops qualify — that is <a href="hardware-gate.html" class="topic-link">The hardware gate</a>, and it exists because of this constraint.</p>
-<p><strong>An enrollment path that works before the network works.</strong> A laptop that has never seen the cluster cannot download an agent from it. The answer is a captive portal served on a separate onboarding access point: <a href="captive-portal.html" class="topic-link">The captive onboarding portal</a>.</p>
-<p><strong>Local images.</strong> A 10 GB workspace image cannot be pulled from a registry over a workshop uplink. It is built, tagged immutably, exported as a tarball, and imported node by node.</p>
+<p><strong>An enrollment path that works before the network works.</strong> A laptop that has never seen the cluster cannot download an agent from it. The answer is a <span class="term" data-term="captive-portal" tabindex="0">captive portal</span> served on a separate onboarding access point: <a href="captive-portal.html" class="topic-link">The captive onboarding portal</a>.</p>
+<p><strong>Local images.</strong> A 10 GB <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> cannot be pulled from a registry over a workshop uplink. It is built, tagged immutably, exported as a tarball, and imported <span class="term" data-term="node" tabindex="0">node</span> by <span class="term" data-term="node" tabindex="0">node</span>.</p>
 <h2 id="the-trade-off">The trade-off</h2><p>You get predictability, zero recurring cost, and data that never leaves the room. You pay in operational sharp edges: IP addresses are manual, image distribution is manual, and the master is a single point of failure with no failover.</p>
 <p>For a classroom that is the right trade. For a product you would sell, it is not — which is why the roadmap keeps <a href="roadmap.html" class="topic-link">What is still left</a> honest about what is still missing.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">ip -4 addr show | grep inet</code></pre></div><p>If the master&#39;s address is DHCP-assigned, this constraint is already being violated. Pin it.</p></div>

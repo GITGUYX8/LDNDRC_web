@@ -6,6 +6,8 @@
 <title>LDNDRC Project Journey — A Newcomer&#39;s Guide (Visual Report) — LDNDRC library</title>
 <meta name="description" content="Source document: docs/project-journey-report.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -81,17 +83,17 @@ no prior context. Jargon is explained in (brackets: plain words) on first use.</
 </tbody></table>
 <h2 id="0-new-here-start-here-2-minutes">0. New here? Start here (2 minutes)</h2><p>LDNDRC turns a room full of laptops into a robotics classroom with no cloud and no server room:</p>
 <ul>
-<li><strong>Hosts (strong laptops that share their power).</strong> A gaming or workstation laptop with a good CPU and ideally an NVIDIA graphics card (GPU: the chip that draws 3D pictures fast). It runs the heavy robot software.</li>
-<li><strong>Guests (weak laptops that just watch and type).</strong> Any old laptop with a browser (Chrome/Firefox). The student writes code and sees the 3D robot world — nothing is installed.</li>
-<li><strong>Master (the first laptop, the organizer).</strong> One laptop starts the cluster (K3s: a lightweight organizer that decides which laptop runs what) and keeps the list of who is allowed in.</li>
-<li><strong>Session (one student&#39;s private robot world).</strong> When a student clicks &quot;Launch&quot;, the Master creates a sealed box for them: their own code editor, their own simulated robot, their own desktop. Two students can both drive a topic called <code>/cmd_vel</code> (the &quot;please move&quot; message) and never interfere — each box hears only itself.</li>
-<li><strong>Control panel (the reception desk).</strong> A small program written in Go (a fast, single-file language) that handles login, creates sessions, checks permissions, and forwards browser clicks to the right box.</li>
-<li><strong>Gateway (the traffic guard).</strong> The part of the control panel that checks &quot;are you logged in?&quot; and then forwards you to your box&#39;s editor, desktop, or simulation view.</li>
+<li><strong><span class="term" data-term="host" tabindex="0">Hosts</span> (strong laptops that share their power).</strong> A gaming or workstation laptop with a good CPU and ideally an NVIDIA graphics card (GPU: the chip that draws 3D pictures fast). It runs the heavy robot software.</li>
+<li><strong><span class="term" data-term="guest" tabindex="0">Guests</span> (weak laptops that just watch and type).</strong> Any old laptop with a browser (Chrome/Firefox). The student writes code and sees the 3D robot world — nothing is installed.</li>
+<li><strong>Master (the first laptop, the organizer).</strong> One laptop starts the cluster (<span class="term" data-term="k3s" tabindex="0">K3s</span>: a lightweight organizer that decides which laptop runs what) and keeps the list of who is allowed in.</li>
+<li><strong><span class="term" data-term="session" tabindex="0">Session</span> (one student&#39;s private robot world).</strong> When a student clicks &quot;Launch&quot;, the Master creates a sealed box for them: their own code editor, their own simulated robot, their own desktop. Two students can both drive a topic called <code>/cmd_vel</code> (the &quot;please move&quot; message) and never interfere — each box hears only itself.</li>
+<li><strong>Control panel (the reception desk).</strong> A small program written in Go (a fast, single-file language) that handles login, creates <span class="term" data-term="session" tabindex="0">sessions</span>, checks permissions, and forwards browser clicks to the right box.</li>
+<li><strong><span class="term" data-term="gateway" tabindex="0">Gateway</span> (the traffic guard).</strong> The part of the control panel that checks &quot;are you logged in?&quot; and then forwards you to your box&#39;s editor, desktop, or simulation view.</li>
 </ul>
-<p>A normal day, end to end: student opens the classroom website → logs in → clicks Launch → waits about 20 seconds while their box starts → writes robot code in the browser editor → watches their TurtleBot3 (a small teaching robot) move in the 3D view → stops the session. A teacher opens the Admin page, sees who has a box running, and approves new laptops that want to share power.</p>
+<p>A normal day, end to end: student opens the classroom website → logs in → clicks Launch → waits about 20 seconds while their box starts → writes robot code in the browser editor → watches their TurtleBot3 (a small teaching robot) move in the 3D view → stops the <span class="term" data-term="session" tabindex="0">session</span>. A teacher opens the Admin page, sees who has a box running, and approves new laptops that want to share power.</p>
 <h2 id="1-final-dream-vs-what-exists-now-the-comparison">1. Final dream vs what exists now (the comparison)</h2><p>The &quot;final dream&quot; is <code>plan.md</code> (the original design, Phases 1–5) plus R7 (making it safe and sturdy for real classes):</p>
 <ul>
-<li><strong>Final:</strong> many laptops join with one click; every student gets code + 3D sim + desktop in the browser; login is safe (encrypted traffic = TLS, fake-request protection = CSRF); boxes survive restarts; works on Windows too; teachers see dashboards and limits.</li>
+<li><strong>Final:</strong> many laptops join with one click; every student gets code + 3D sim + desktop in the browser; login is safe (encrypted traffic = <span class="term" data-term="tls" tabindex="0">TLS</span>, fake-request protection = <span class="term" data-term="csrf" tabindex="0">CSRF</span>); boxes survive restarts; works on Windows too; teachers see dashboards and limits.</li>
 <li><strong>Now (Oct 2026, <code>main</code>):</strong> one real organizer laptop (<code>hari</code>, <code>192.168.1.37:6443</code>) runs everything; students do get code + desktop + sim-data through the browser; login has fake-request protection but no encryption yet; boxes survive small restarts but not big ones; new laptops can ask to join and be approved, but the final automatic &quot;become part of the cluster&quot; step still needs a paired test with two real laptops.</li>
 </ul>
 <div class="mermaid-diagram" data-mermaid="flowchart LR
@@ -165,14 +167,14 @@ NOW: one organizer laptop live | code+desktop live, sim viewer next |
 </tr>
 <tr>
 <td>Robot world (the sealed box)</td>
-<td>Full ROS 2 (robot brain) + Gazebo (3D physics world) + TurtleBot3 moving</td>
+<td>Full <span class="term" data-term="ros2" tabindex="0">ROS 2</span> (robot brain) + <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> (3D physics world) + TurtleBot3 moving</td>
 <td>Live: 10.8GB image, TurtleBot3 <code>empty</code> world moves at full speed on CPU</td>
 <td>Live</td>
 </tr>
 <tr>
 <td>Safety (who can do what)</td>
-<td>Encrypted traffic (TLS: scrambled so Wi-Fi snoopers can&#39;t read) + fake-request tokens (CSRF: proof the click came from our own site)</td>
-<td>CSRF live; TLS missing</td>
+<td>Encrypted traffic (<span class="term" data-term="tls" tabindex="0">TLS</span>: scrambled so Wi-Fi snoopers can&#39;t read) + fake-request tokens (<span class="term" data-term="csrf" tabindex="0">CSRF</span>: proof the click came from our own site)</td>
+<td><span class="term" data-term="csrf" tabindex="0">CSRF</span> live; <span class="term" data-term="tls" tabindex="0">TLS</span> missing</td>
 <td>Partly</td>
 </tr>
 <tr>
@@ -184,7 +186,7 @@ NOW: one organizer laptop live | code+desktop live, sim viewer next |
 <tr>
 <td>Teacher view</td>
 <td>Who runs what, approve laptops, usage limits</td>
-<td>Approve laptops + see sessions live; limits and dashboards later</td>
+<td>Approve laptops + see <span class="term" data-term="session" tabindex="0">sessions</span> live; limits and dashboards later</td>
 <td>Partly</td>
 </tr>
 </tbody></table>
@@ -273,27 +275,27 @@ Removed along the way: one shared box, old web paths, systemd plan,
 </tr>
 </thead>
 <tbody><tr>
-<td>K3s (organizer)</td>
+<td><span class="term" data-term="k3s" tabindex="0">K3s</span> (organizer)</td>
 <td>A lightweight boss program. You tell it &quot;I want one box for student A&quot;, it starts it, watches it, restarts it if it dies.</td>
 </tr>
 <tr>
-<td>Traefik (front door)</td>
-<td>Reads web addresses like <code>editor.ros-platform.local</code> (editor = code, desktop = screen, gazebo = sim data, control = desk) and forwards you. <code>:80</code> is normal web traffic, <code>:443</code> is encrypted web traffic.</td>
+<td><span class="term" data-term="traefik" tabindex="0">Traefik</span> (front door)</td>
+<td>Reads web addresses like <code>editor.ros-platform.local</code> (editor = code, desktop = screen, <span class="term" data-term="gazebo" tabindex="0">gazebo</span> = sim data, control = desk) and forwards you. <code>:80</code> is normal web traffic, <code>:443</code> is encrypted web traffic.</td>
 </tr>
 <tr>
 <td>Control panel / reception desk</td>
 <td>Our Go program. Handles login, creates boxes, checks tickets, serves the website, guards the doors.</td>
 </tr>
 <tr>
-<td>Session / sealed box</td>
-<td>One student&#39;s private world. Three Kubernetes objects: Deployment (the recipe: which picture + how much CPU), Service (the address + doors 7682/8080/9002), PVC (the private 5GB disk that keeps homework).</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> / sealed box</td>
+<td>One student&#39;s private world. Three <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> objects: <span class="term" data-term="deployment" tabindex="0">Deployment</span> (the recipe: which picture + how much CPU), <span class="term" data-term="service" tabindex="0">Service</span> (the address + doors 7682/8080/9002), <span class="term" data-term="pvc" tabindex="0">PVC</span> (the private 5GB disk that keeps homework).</td>
 </tr>
 <tr>
-<td>Pod (running box)</td>
+<td><span class="term" data-term="pod" tabindex="0">Pod</span> (running box)</td>
 <td>The recipe actually running. Has an ID (name), an owner (student), a status (starting → ready → stopped), and a ROS domain number (a channel so boxes can&#39;t hear each other).</td>
 </tr>
 <tr>
-<td>code-server (editor, door 7682)</td>
+<td><span class="term" data-term="code-server" tabindex="0">code-server</span> (editor, door 7682)</td>
 <td>Real VS Code in the browser. <code>200</code> means &quot;OK, here is the editor&quot;. <code>302 → 200</code> means &quot;one quick redirect, then the editor&quot;.</td>
 </tr>
 <tr>
@@ -301,27 +303,27 @@ Removed along the way: one shared box, old web paths, systemd plan,
 <td>Live screen sharing in the browser (click, type, terminal). <code>200</code> = picture arrives. Old <code>502</code> meant &quot;nothing listening yet&quot; — that era is over.</td>
 </tr>
 <tr>
-<td>Gazebo bridge (sim data, door 9002)</td>
+<td><span class="term" data-term="gazebo" tabindex="0">Gazebo</span> bridge (sim data, door 9002)</td>
 <td>The robot world&#39;s data pipe (positions, laser scans, clock). <code>404</code> here means &quot;pipe alive, but no pretty page at <code>/</code>&quot; — data yes, viewer next.</td>
 </tr>
 <tr>
-<td>ROS 2 Jazzy + Gazebo Harmonic</td>
+<td><span class="term" data-term="ros2" tabindex="0">ROS 2</span> Jazzy + <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> Harmonic</td>
 <td>The robot brain (Jazzy) and the 3D physics world (Harmonic). TurtleBot3 is a small teaching robot we drive in the <code>empty</code> practice world.</td>
 </tr>
 <tr>
-<td>Headlamp (glass wall, <code>:8080</code>)</td>
+<td><span class="term" data-term="headlamp" tabindex="0">Headlamp</span> (glass wall, <code>:8080</code>)</td>
 <td>A dashboard to see everything running. Needs a token (a temporary key).</td>
 </tr>
 <tr>
-<td>mDNS announcement</td>
-<td>The organizer shouting &quot;classroom here!&quot; on the Wi-Fi so new laptops can find it without typing addresses. Guest laptops hearing it is still pending.</td>
+<td><span class="term" data-term="mdns" tabindex="0">mDNS</span> announcement</td>
+<td>The organizer shouting &quot;classroom here!&quot; on the Wi-Fi so new laptops can find it without typing addresses. <span class="term" data-term="guest" tabindex="0">Guest</span> laptops hearing it is still pending.</td>
 </tr>
 <tr>
 <td>Bootstrap token (join ticket)</td>
 <td>A one-time password the organizer mints (valid 15 minutes) so a new laptop can join. Second ask gets &quot;status only&quot; — the ticket is given once.</td>
 </tr>
 <tr>
-<td>CSRF token (proof the click is ours)</td>
+<td><span class="term" data-term="csrf" tabindex="0">CSRF</span> token (proof the click is ours)</td>
 <td>A secret stamp the login gives the website. Every change (create/stop/approve) must show it, so a bad website can&#39;t trick your browser into clicking. <code>403</code> = &quot;no valid stamp, blocked&quot;. <code>401</code> = &quot;not logged in&quot;.</td>
 </tr>
 <tr>
@@ -334,10 +336,10 @@ Removed along the way: one shared box, old web paths, systemd plan,
 </tr>
 <tr>
 <td>hostNetwork + delete-old-first</td>
-<td>The desk runs directly on the organizer&#39;s network (so it can shout mDNS). Only one fits on door <code>:8082</code>, so updates must delete the old copy first — never plain restart.</td>
+<td>The desk runs directly on the organizer&#39;s network (so it can shout <span class="term" data-term="mdns" tabindex="0">mDNS</span>). Only one fits on door <code>:8082</code>, so updates must delete the old copy first — never plain restart.</td>
 </tr>
 </tbody></table>
-<p>Live snapshot behind this map (real master <code>hari</code>, CP33/CP35/CP37): box <code>ready</code> in ~20 seconds (picture pre-loaded, no download wait); editor shows the IDE; desktop shows the Selkies page; sim pipe answers with data; wrong or missing login correctly blocked; Admin page shows user/session/laptop cards and approve/deny works. Update rule: delete the old desk copy first, picture tarball (2.4GB packed, 10.8GB unpacked) lives in <code>$HOME</code> because <code>/tmp</code> is too small and wiped on reboot.</p>
+<p>Live snapshot behind this map (real master <code>hari</code>, CP33/CP35/CP37): box <code>ready</code> in ~20 seconds (picture pre-loaded, no download wait); editor shows the IDE; desktop shows the Selkies page; sim pipe answers with data; wrong or missing login correctly blocked; Admin page shows user/<span class="term" data-term="session" tabindex="0">session</span>/laptop cards and approve/deny works. Update rule: delete the old desk copy first, picture tarball (2.4GB packed, 10.8GB unpacked) lives in <code>$HOME</code> because <code>/tmp</code> is too small and wiped on reboot.</p>
 <h2 id="3-mind-map-what-is-built-vs-what-is-left-the-journey-order">3. Mind-map: what is built vs what is left (+ the journey order)</h2><h3 id="3a-mind-map-the-what-good-for-orienting">3a. Mind-map (the &quot;what&quot; — good for orienting)</h3><blockquote>
 <p>Drawn as a hub-and-spoke flowchart (same mind-map idea, but renders on
 every viewer). The native <code>mindmap</code> keyword was tried first and broke:
@@ -490,10 +492,10 @@ idea → foundation → one-box-per-student → doors → proof → demo
 Replaced: shared box, old paths, systemd, tiny default, Selkies 1.x.</code></pre></div><h3 id="journey-chapters-in-plain-english-the-story-7-chapters">Journey chapters in plain English (the story, 7 chapters)</h3><ol>
 <li><strong>Getting started (idea + first scripts).</strong> We wrote the classroom plan, a script that checks a laptop&#39;s muscles (CPU = thinking cores, RAM = short-term memory, GPU = picture chip), and tests that fake strong/weak laptops to prove the check works.</li>
 <li><strong>One box per student (the big fix).</strong> First we planned one shared room; we replaced it with sealed boxes. Each student gets recipe + address + private disk, a unique channel number, and localhost-only robot chatter (robots talk inside their own box, never across boxes).</li>
-<li><strong>Opening the doors (guard + names).</strong> The desk learned to check login cookies (a wristband after login) and web-address names (<code>editor.</code> vs <code>desktop.</code> vs <code>gazebo.</code>). Old hallway paths (<code>/code</code>, <code>/sim</code>) were demolished after live proof.</li>
-<li><strong>Seeing what runs (proof + glass wall).</strong> Automatic tests, then live tests on a demo cluster, then Headlamp so teachers can watch boxes from a second laptop over the Wi-Fi.</li>
+<li><strong>Opening the doors (guard + names).</strong> The desk learned to check login <span class="term" data-term="cookie" tabindex="0">cookies</span> (a wristband after login) and web-address names (<code>editor.</code> vs <code>desktop.</code> vs <code>gazebo.</code>). Old hallway paths (<code>/code</code>, <code>/sim</code>) were demolished after live proof.</li>
+<li><strong>Seeing what runs (proof + glass wall).</strong> Automatic tests, then live tests on a demo cluster, then <span class="term" data-term="headlamp" tabindex="0">Headlamp</span> so teachers can watch boxes from a second laptop over the Wi-Fi.</li>
 <li><strong>Welcoming new laptops (ask → approve → ticket).</strong> A joining laptop says &quot;here are my muscles&quot; → teacher approves → organizer mints a 15-minute ticket (given once) → pocket tool (<code>ldndrc-join</code>: a small program with a friendly text screen) installs. Proven laptop-to-organizer over real Wi-Fi; full install waits for two laptops together.</li>
-<li><strong>Real organizer + website (no more demo).</strong> We moved from a pretend cluster (k3d: cluster-in-a-box for practice) to a real K3s on <code>hari</code>, fixed two real bugs found only there (Wi-Fi wildcard DNS eating our addresses → trailing-dot fix; update deadlock → delete-old-first rule), added click-protection + the notebook that remembers boxes, and built the student website (Login → Launch stepper → Workspace with Code/Sim/Split + Desktop + Admin cards).</li>
+<li><strong>Real organizer + website (no more demo).</strong> We moved from a pretend cluster (<span class="term" data-term="k3d" tabindex="0">k3d</span>: cluster-in-a-box for practice) to a real <span class="term" data-term="k3s" tabindex="0">K3s</span> on <code>hari</code>, fixed two real bugs found only there (Wi-Fi wildcard DNS eating our addresses → trailing-dot fix; update deadlock → delete-old-first rule), added click-protection + the notebook that remembers boxes, and built the student website (Login → Launch stepper → Workspace with Code/Sim/Split + Desktop + Admin cards).</li>
 <li><strong>Real robot world (the heavy lifting).</strong> Built the 8.25GB base, then the 10.2GB world (Selkies broken upstream → shipped editor+sim first), proved it boots, froze it with version tags, flipped the live cluster to it, then added Selkies 2.0 (desktop picture live) and pre-packed the two 3D models (Ground Plane + Sun) so the robot moves even with no internet — full speed on plain CPU. Recorded the packing math (2.4GB to send, 10.8GB on disk). Merged both tracks into one <code>main</code>.</li>
 </ol>
 <h2 id="4-joining-flow-how-a-laptop-is-welcomed-step-by-step">4. Joining flow (how a laptop is welcomed, step by step)</h2><div class="mermaid-diagram" data-mermaid="sequenceDiagram
@@ -705,8 +707,8 @@ Proven on real Wi-Fi; final install awaits the paired run.</code></pre></div><p>
 </thead>
 <tbody><tr>
 <td>1</td>
-<td>Login small fix: old cookie wrongly blocks login (<code>guardCSRF</code> must skip the login door)</td>
-<td>Login works with and without old cookies; live proof; tidy the stale Selkies comment in the same change</td>
+<td>Login small fix: old <span class="term" data-term="cookie" tabindex="0">cookie</span> wrongly blocks login (<code>guardCSRF</code> must skip the login door)</td>
+<td>Login works with and without old <span class="term" data-term="cookie" tabindex="0">cookies</span>; live proof; tidy the stale Selkies comment in the same change</td>
 <td>&lt; half a day</td>
 </tr>
 <tr>
@@ -717,7 +719,7 @@ Proven on real Wi-Fi; final install awaits the paired run.</code></pre></div><p>
 </tr>
 <tr>
 <td>3</td>
-<td>Pretty 3D viewer: put the <code>sim-web-app/</code> gzweb picture into the website (replaces the data frame); try <code>world</code>/<code>house</code> robots</td>
+<td>Pretty 3D viewer: put the <code>sim-web-app/</code> <span class="term" data-term="gzweb" tabindex="0">gzweb</span> picture into the website (replaces the data frame); try <code>world</code>/<code>house</code> robots</td>
 <td>Moving 3D TurtleBot3 in the browser</td>
 <td>half a day</td>
 </tr>
@@ -735,7 +737,7 @@ Proven on real Wi-Fi; final install awaits the paired run.</code></pre></div><p>
 </tr>
 <tr>
 <td>6</td>
-<td>Sturdy for classes (R7): encrypted traffic (TLS), per-box walls (NetworkPolicy), per-student limits (quotas), watch screens (Prometheus/Grafana)</td>
+<td>Sturdy for classes (R7): encrypted traffic (<span class="term" data-term="tls" tabindex="0">TLS</span>), per-box walls (<span class="term" data-term="networkpolicy" tabindex="0">NetworkPolicy</span>), per-student limits (quotas), watch screens (Prometheus/Grafana)</td>
 <td>Safe beyond one trusted Wi-Fi room</td>
 <td>ongoing</td>
 </tr>

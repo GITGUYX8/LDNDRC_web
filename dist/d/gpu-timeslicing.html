@@ -6,6 +6,8 @@
 <title>Time-slicing one GPU — LDNDRC</title>
 <meta name="description" content="A consumer GeForce pretends to be four GPUs so four students fit.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,14 +52,14 @@
     </div>
     <h1 class="page-title">Time-slicing one GPU</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">A consumer GeForce pretends to be four GPUs so four students fit.</p>
-    <div class="prose"><p>A consumer GeForce cannot be partitioned the way a datacentre card can. Time-slicing fakes it: the NVIDIA device plugin advertises several logical GPUs on one physical card, and the scheduler hands them out as if they were separate.</p>
+    <div class="prose"><p>A consumer GeForce cannot be partitioned the way a datacentre card can. <span class="term" data-term="gpu-timeslicing" tabindex="0">Time-slicing</span> fakes it: the NVIDIA device plugin advertises several logical GPUs on one physical card, and the scheduler hands them out as if they were separate.</p>
 <h2 id="the-shape">The shape</h2><ul>
-<li>Install the NVIDIA GPU Operator.</li>
-<li>Patch the <code>ClusterPolicy</code> with a time-slicing ConfigMap (<code>replicas: 4</code>).</li>
-<li>Session pods request <code>nvidia.com/gpu: 1</code> each.</li>
+<li>Install the NVIDIA GPU <span class="term" data-term="operator" tabindex="0">Operator</span>.</li>
+<li>Patch the <code>ClusterPolicy</code> with a <span class="term" data-term="gpu-timeslicing" tabindex="0">time-slicing</span> <span class="term" data-term="configmap" tabindex="0">ConfigMap</span> (<code>replicas: 4</code>).</li>
+<li><span class="term" data-term="session" tabindex="0">Session</span> <span class="term" data-term="pod" tabindex="0">pods</span> request <code>nvidia.com/gpu: 1</code> each.</li>
 <li>Set <code>SESSION_GPU_LIMIT=1</code> in the panel.</li>
 </ul>
-<p>The result is up to four session pods per physical GPU, sharing it by time rather than memory. Four students on one gaming laptop is the whole economic argument for the platform.</p>
+<p>The result is up to four <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pods</span> per physical GPU, sharing it by time rather than memory. Four students on one gaming laptop is the whole economic argument for the platform.</p>
 <h2 id="the-honest-caveat">The honest caveat</h2><p>Time-sliced GPUs do not isolate memory. One student&#39;s oversized scene can push another&#39;s frame rate down. For a workshop that is acceptable; for an exam it would not be. The roadmap&#39;s R7 track is where limits and dashboards would go.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl get nodes -o jsonpath=<span class="hljs-string">&#x27;{.items[*].status.allocatable.nvidia\.com/gpu}&#x27;</span>
 <span class="hljs-comment"># 4 on a time-sliced single-GPU Host</span></code></pre></div></div>

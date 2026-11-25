@@ -6,6 +6,8 @@
 <title>The instructor console — LDNDRC</title>
 <meta name="description" content="Approve or deny join requests without touching curl.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,7 +52,7 @@
     </div>
     <h1 class="page-title">The instructor console</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Approve or deny join requests without touching curl.</p>
-    <div class="prose"><p>Before the console existed, approving a laptop meant a JWT, a curl command, and a node ID copied out of JSON. The instructor console puts that on a screen.</p>
+    <div class="prose"><p>Before the console existed, approving a laptop meant a <span class="term" data-term="jwt" tabindex="0">JWT</span>, a curl command, and a <span class="term" data-term="node" tabindex="0">node</span> ID copied out of JSON. The instructor console puts that on a screen.</p>
 <h2 id="what-it-does">What it does</h2><ul>
 <li>Lists pending join requests with hardware details.</li>
 <li>Approves or denies with a reason.</li>
@@ -58,7 +60,7 @@
 <li>Distinguishes approved from joined, so a laptop that never connected is visible.</li>
 </ul>
 <h2 id="why-it-matters">Why it matters</h2><p>Approval is the security boundary of the whole onboarding path — see <a href="nodes-api.html" class="topic-link">Register, approve, poll</a>. If only one person can perform it, and that person needs a shell, the workshop is one forgotten token away from stalling.</p>
-<h2 id="check-it-yourself">Check it yourself</h2><p>Open <code>control.ros-platform.local/admin</code> with an operator login and confirm a pending request appears after <code>POST /api/nodes/register</code>.</p></div>
+<h2 id="check-it-yourself">Check it yourself</h2><p>Open <code>control.ros-platform.local/admin</code> with an <span class="term" data-term="operator" tabindex="0">operator</span> login and confirm a pending request appears after <code>POST /api/nodes/register</code>.</p></div>
     <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>
 <div class="code term"><pre><code class="hljs">open http://control.ros-platform.local/admin</code></pre></div></div><div class="source-list"><span class="eyebrow">Sources</span><a href="../library/local_dev_docs--checkpoint-25-r4-ui3-admin.html">local_dev_docs/checkpoint-25-r4-ui3-admin.md</a><a href="../library/local_dev_docs--checkpoint-26-r4-ui3-live-verify.html">local_dev_docs/checkpoint-26-r4-ui3-live-verify.md</a></div>
 </div>

@@ -6,6 +6,8 @@
 <title>Checkpoint 27 — R6 Base Image Build (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-27-r6-base-image.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -47,26 +49,26 @@
 <h1 class="page-title">Checkpoint 27 — R6 Base Image Build (detailed)</h1>
 <div class="prose"><h2 id="context">Context</h2><p>First chunk of the R6 real-workspace-image track on new branch
 <code>feat/r6-workspace-image</code>, forked from <code>main</code> (<code>a404617</code>) per
-operator direction — the 7 unpushed <code>feat/r3-csrf</code> commits stay
+<span class="term" data-term="operator" tabindex="0">operator</span> direction — the 7 unpushed <code>feat/r3-csrf</code> commits stay
 separate for a later merge. Scope this chunk: audit + build
 <code>images/base</code> only. CPU-only (no nvidia toolkit/device plugin;
 <code>SESSION_GPU_LIMIT</code> stays <code>&quot;0&quot;</code>). No code changes.</p>
 <h2 id="audit-pre-build-read-only">Audit (pre-build, read-only)</h2><ul>
 <li><code>images/base/Dockerfile</code> + <code>installs.sh</code>: <code>osrf/ros:jazzy-desktop-full-noble</code><ul>
 <li>ROS Jazzy (desktop, nav2, ros-gz, TurtleBot3), dev toolchain,
-DDS pinned to <code>LOCALHOST</code>, <code>student</code> uid/gid 1000. Unpinned
+<span class="term" data-term="dds" tabindex="0">DDS</span> pinned to <code>LOCALHOST</code>, <code>student</code> uid/gid 1000. Unpinned
 upstream tags kept as-is (genesis-tested recipe; digest-pinning is
 follow-up, not this branch).</li>
 </ul>
 </li>
 <li><code>images/workspace</code> scripts for CPU-only: <code>run-with-virtualgl.sh</code>
 already <code>exec</code>s directly when <code>nvidia-smi</code> is absent — zero changes
-needed for GPU-less pods. <code>init-student-home.sh</code> writes
-code-server <code>auth: none</code>, so the session readiness probe
-(<code>GET /</code> on 7682) gets a 200 once code-server is up.</li>
+needed for GPU-less <span class="term" data-term="pod" tabindex="0">pods</span>. <code>init-student-home.sh</code> writes
+<span class="term" data-term="code-server" tabindex="0">code-server</span> <code>auth: none</code>, so the <span class="term" data-term="session" tabindex="0">session</span> readiness probe
+(<code>GET /</code> on 7682) gets a 200 once <span class="term" data-term="code-server" tabindex="0">code-server</span> is up.</li>
 <li>Build contexts are lean (wallpaper 540K, home-seed 60K) — no
 <code>.dockerignore</code> needed.</li>
-<li>Dirty-tree discipline: the 8 join/nodes modifications +
+<li>Dirty-tree discipline: the 8 join/<span class="term" data-term="node" tabindex="0">nodes</span> modifications +
 <code>join-cluster.sh</code> (carried over from the old worktree) left
 untouched and unstaged.</li>
 </ul>
@@ -76,8 +78,8 @@ export ~50s.</p>
 <p>Result: <code>ldndrc/ros2-gz:jazzy-harmonic-base</code> — <strong>8.25GB</strong>
 (index <code>8ceac6d138f9</code>, config <code>64b2e462…</code>). Matches the roadmap&#39;s
 ~10GB+ expectation for the stack (workspace layer still to come).</p>
-<h2 id="next-chunk">Next chunk</h2><p>Build <code>images/workspace</code> on top of this base (code-server + Selkies
-1.6.2 + gzweb under supervisord) → checkpoint-28. Then local
+<h2 id="next-chunk">Next chunk</h2><p>Build <code>images/workspace</code> on top of this base (<span class="term" data-term="code-server" tabindex="0">code-server</span> + Selkies
+1.6.2 + <span class="term" data-term="gzweb" tabindex="0">gzweb</span> under supervisord) → checkpoint-28. Then local
 contract verify → import → <code>SESSION_IMAGE</code> flip → live matrix,
 one checkpoint per chunk.</p>
 </div>

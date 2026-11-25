@@ -6,6 +6,8 @@
 <title>The disk budget — LDNDRC</title>
 <meta name="description" content="Ten gigabytes of image on a workshop laptop is a planning problem, not a build problem.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,7 +52,7 @@
     </div>
     <h1 class="page-title">The disk budget</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Ten gigabytes of image on a workshop laptop is a planning problem, not a build problem.</p>
-    <div class="prose"><p>The workspace image is roughly 10 GB. That is not a build problem — it is a planning problem, because every Host has to hold it.</p>
+    <div class="prose"><p>The <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> is roughly 10 GB. That is not a build problem — it is a planning problem, because every <span class="term" data-term="host" tabindex="0">Host</span> has to hold it.</p>
 <h2 id="the-numbers-that-matter">The numbers that matter</h2><table>
 <thead>
 <tr>
@@ -63,7 +65,7 @@
 <td>~4–5 GB</td>
 </tr>
 <tr>
-<td>Image, on disk per node</td>
+<td>Image, on disk per <span class="term" data-term="node" tabindex="0">node</span></td>
 <td>~10 GB</td>
 </tr>
 <tr>
@@ -71,13 +73,13 @@
 <td>~25 GB</td>
 </tr>
 <tr>
-<td>Student home PVC</td>
+<td>Student home <span class="term" data-term="pvc" tabindex="0">PVC</span></td>
 <td><code>5Gi</code></td>
 </tr>
 </tbody></table>
-<p>Multiply by the number of Hosts. A five-laptop workshop is asking for 50 GB of image storage before a single student has saved a file.</p>
+<p>Multiply by the number of <span class="term" data-term="host" tabindex="0">Hosts</span>. A five-laptop workshop is asking for 50 GB of image storage before a single student has saved a file.</p>
 <h2 id="what-the-compression-work-bought">What the compression work bought</h2><p>The compression checkpoint recorded what each layer costs and which ones can be squashed or reordered. The result was a smaller image and a documented number, so &quot;it fits on a workshop laptop&quot; became a measurement rather than a hope.</p>
-<h2 id="the-failure-mode">The failure mode</h2><p><code>ImagePullBackOff</code> on a session pod usually means the image is missing on the node that got scheduled — not that the registry is down. On the demo, re-run <code>k3d image import</code>. On a real cluster, check the local registry and the node&#39;s disk.</p>
+<h2 id="the-failure-mode">The failure mode</h2><p><code>ImagePullBackOff</code> on a <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span> usually means the image is missing on the <span class="term" data-term="node" tabindex="0">node</span> that got scheduled — not that the registry is down. On the demo, re-run <code>k3d image import</code>. On a real cluster, check the local registry and the <span class="term" data-term="node" tabindex="0">node</span>&#39;s disk.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">docker images | grep ldndrc
 <span class="hljs-built_in">df</span> -h /var/lib/rancher</code></pre></div></div>
     <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>

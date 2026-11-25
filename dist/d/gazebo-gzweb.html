@@ -6,6 +6,8 @@
 <title>Gazebo over a websocket — LDNDRC</title>
 <meta name="description" content="Headless physics in the pod, a Three.js scene in the browser, one bridge on :9002.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,7 +52,7 @@
     </div>
     <h1 class="page-title">Gazebo over a websocket</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">Headless physics in the pod, a Three.js scene in the browser, one bridge on :9002.</p>
-    <div class="prose"><p>The simulator is split in two: physics runs headless inside the pod, and only the scene is sent to the browser.</p>
+    <div class="prose"><p>The simulator is split in two: physics runs headless inside the <span class="term" data-term="pod" tabindex="0">pod</span>, and only the scene is sent to the browser.</p>
 <h2 id="the-pieces">The pieces</h2><table>
 <thead>
 <tr>
@@ -60,17 +62,17 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>gz sim</code> (Gazebo Harmonic)</td>
-<td>session pod</td>
+<td><code>gz sim</code> (<span class="term" data-term="gazebo" tabindex="0">Gazebo</span> Harmonic)</td>
+<td><span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span></td>
 <td>headless</td>
 </tr>
 <tr>
 <td><code>gazebo-web</code> bridge</td>
-<td>session pod</td>
+<td><span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span></td>
 <td><code>9002</code></td>
 </tr>
 <tr>
-<td>gzweb viewer (Three.js)</td>
+<td><span class="term" data-term="gzweb" tabindex="0">gzweb</span> viewer (Three.js)</td>
 <td>browser</td>
 <td>—</td>
 </tr>
@@ -80,22 +82,22 @@
 <td>—</td>
 </tr>
 </tbody></table>
-<p><code>gazebo-web</code> is supervised, so it restarts on its own. Gazebo is <strong>not</strong> supervised — the student launches it in the foreground so they can see its logs and choose a world.</p>
+<p><code>gazebo-web</code> is supervised, so it restarts on its own. <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> is <strong>not</strong> supervised — the student launches it in the foreground so they can see its logs and choose a world.</p>
 <h2 id="starting-a-world">Starting a world</h2><p>From the editor terminal:</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">turtlebot3-sim              <span class="hljs-comment"># obstacle world, burger model</span>
 turtlebot3-sim empty        <span class="hljs-comment"># empty world</span>
 turtlebot3-sim house        <span class="hljs-comment"># house world</span>
-TURTLEBOT3_MODEL=waffle_pi turtlebot3-sim house</code></pre></div><p>Then open the <code>gazebo</code> tab. The scene streams in over the websocket. Drive it from a second terminal:</p>
-<div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">turtlebot3-teleop.sh</code></pre></div><h2 id="the-rule-that-causes-most-blank-screens">The rule that causes most blank screens</h2><p><strong>One Gazebo server per workspace.</strong> A second <code>gz sim</code> creates a duplicate world and robot, and the viewer cannot tell which one to draw. Stop the first with <code>Ctrl-C</code>, or use:</p>
+TURTLEBOT3_MODEL=waffle_pi turtlebot3-sim house</code></pre></div><p>Then open the <code>gazebo</code> tab. The scene streams in over the <span class="term" data-term="websocket" tabindex="0">websocket</span>. Drive it from a second terminal:</p>
+<div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">turtlebot3-teleop.sh</code></pre></div><h2 id="the-rule-that-causes-most-blank-screens">The rule that causes most blank screens</h2><p><strong>One <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> server per workspace.</strong> A second <code>gz sim</code> creates a duplicate world and robot, and the viewer cannot tell which one to draw. Stop the first with <code>Ctrl-C</code>, or use:</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">turtlebot3-sim --force house</code></pre></div><h2 id="why-the-scene-is-blank">Why the scene is blank</h2><p>A blank viewer is almost always one of three things, in this order:</p>
 <ol>
-<li>no Gazebo server running (nothing to broadcast)</li>
+<li>no <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> server running (nothing to broadcast)</li>
 <li>the world lacks the <code>SceneBroadcaster</code> plugin</li>
 <li>the bridge on <code>:9002</code> is down or not proxied</li>
 </ol>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">supervisorctl status
-<span class="hljs-built_in">tail</span> -50 /tmp/gazebo-web.err.log</code></pre></div><h2 id="custom-worlds">Custom worlds</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">gz sim -s -v 3 ~/dev_ws/src/my_workshop/worlds/maze.sdf -r</code></pre></div><p>The <code>SceneBroadcaster</code> plugin is mandatory. Without it Gazebo renders locally and publishes nothing.</p>
-<h2 id="desktop-fallback">Desktop fallback</h2><p>If a student needs Gazebo&#39;s GUI, set <code>TURTLEBOT3_GAZEBO_GUI=true</code> and use the Selkies desktop tab. It is slower, but it is the escape hatch when a custom plugin does not stream.</p>
+<span class="hljs-built_in">tail</span> -50 /tmp/gazebo-web.err.log</code></pre></div><h2 id="custom-worlds">Custom worlds</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">gz sim -s -v 3 ~/dev_ws/src/my_workshop/worlds/maze.sdf -r</code></pre></div><p>The <code>SceneBroadcaster</code> plugin is mandatory. Without it <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> renders locally and publishes nothing.</p>
+<h2 id="desktop-fallback">Desktop fallback</h2><p>If a student needs <span class="term" data-term="gazebo" tabindex="0">Gazebo</span>&#39;s GUI, set <code>TURTLEBOT3_GAZEBO_GUI=true</code> and use the Selkies desktop tab. It is slower, but it is the escape hatch when a custom plugin does not stream.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n ldndrc <span class="hljs-built_in">exec</span> &lt;session-pod&gt; -- supervisorctl status
 curl -s -o /dev/null -w <span class="hljs-string">&#x27;%{http_code}\n&#x27;</span> -H <span class="hljs-string">&#x27;Host: gazebo.ros-platform.local&#x27;</span> http://127.0.0.1:8082/</code></pre></div></div>
     <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>

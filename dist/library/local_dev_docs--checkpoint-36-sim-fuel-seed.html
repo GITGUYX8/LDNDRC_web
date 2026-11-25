@@ -6,6 +6,8 @@
 <title>Checkpoint 36 — Sim Smoke: Fuel Seeding + Offline Proof (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-36-sim-fuel-seed.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,12 +52,12 @@ world and prove topics flow on CPU-only. First attempt failed for a
 real, diagnosable reason; fixed by seeding; proven offline
 (<code>--network none</code>). No Dockerfile change needed.</p>
 <h2 id="failure-diagnosis">Failure → diagnosis</h2><ul>
-<li>Live session <code>f6d4c988a688</code> ready; <code>turtlebot3-sim empty</code> in-pod
-died: <code>Unable to find uri[https://fuel.gazebosim.org/...Ground Plane]</code> + <code>[Sun]</code>, <code>REST response code: 0</code>, gazebo exited, launch
+<li>Live <span class="term" data-term="session" tabindex="0">session</span> <code>f6d4c988a688</code> ready; <code>turtlebot3-sim empty</code> in-<span class="term" data-term="pod" tabindex="0">pod</span>
+died: <code>Unable to find uri[https://fuel.gazebosim.org/...Ground Plane]</code> + <code>[Sun]</code>, <code>REST response code: 0</code>, <span class="term" data-term="gazebo" tabindex="0">gazebo</span> exited, launch
 tore down.</li>
-<li>Pod probe: <code>fuel.gazebosim.org</code> resolves to <code>185.38.109.x</code> parking
+<li><span class="term" data-term="pod" tabindex="0">Pod</span> probe: <code>fuel.gazebosim.org</code> resolves to <code>185.38.109.x</code> parking
 IPs — the LAN wildcard-DNS trap (checkpoint-20 §5 class), now in
-session-pod DNS. Connection impossible, not just slow.</li>
+<span class="term" data-term="session" tabindex="0">session</span>-<span class="term" data-term="pod" tabindex="0">pod</span> DNS. Connection impossible, not just slow.</li>
 <li>Decision: <strong>pre-seed models into the image</strong> (offline-safe,
 faster launches, classroom-proof) instead of chasing LAN DNS.</li>
 </ul>
@@ -65,7 +67,7 @@ faster launches, classroom-proof) instead of chasing LAN DNS.</li>
 <li><code>gz fuel download -u &lt;url&gt;</code> in a base-image container → 68K cache.</li>
 <li>Copied to <code>images/workspace/home-seed/.gz/fuel/...</code> (64K):
 <code>init-student-home</code>&#39;s existing <code>cp -rn</code> seeds it into
-<code>$HOME/.gz</code> on first boot (image and pod paths — no script
+<code>$HOME/.gz</code> on first boot (image and <span class="term" data-term="pod" tabindex="0">pod</span> paths — no script
 changes; the Dockerfile <code>chown</code> already covers the dir).</li>
 <li>Rebuilt workspace green (cache-hot, seconds).</li>
 </ul>
@@ -76,12 +78,12 @@ changes; the Dockerfile <code>chown</code> already covers the dir).</li>
 <li>ROS side: <code>/clock</code> <strong>158.882 → 159.930</strong> across consecutive
 echoes ≈ real-time for the empty world on llvmpipe; gz sim ~90%
 of one core.</li>
-<li>Test container removed; live session stopped (<code>stopped</code>).</li>
+<li>Test container removed; live <span class="term" data-term="session" tabindex="0">session</span> stopped (<code>stopped</code>).</li>
 </ul>
 <h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>New: <code>images/workspace/home-seed/.gz/</code> (seed data) + this report
-(staged for commit). The 8 join/nodes files + <code>join-cluster.sh</code>
+(staged for commit). The 8 join/<span class="term" data-term="node" tabindex="0">nodes</span> files + <code>join-cluster.sh</code>
 untouched/unstaged; untracked junk left alone.</p>
-<h2 id="next">Next</h2><p>New immutable tag + <code>docker save</code> → operator <code>sudo k3s ctr images import</code> → live re-run (<code>empty</code> world in-pod, same proofs) →
+<h2 id="next">Next</h2><p>New immutable tag + <code>docker save</code> → <span class="term" data-term="operator" tabindex="0">operator</span> <code>sudo k3s ctr images import</code> → live re-run (<code>empty</code> world in-<span class="term" data-term="pod" tabindex="0">pod</span>, same proofs) →
 checkpoint. The seed set covers <code>world</code>/<code>house</code> too (same 2 URIs).
 Still queued: sim viewer UI (SPA, other branch), merge, R2-final,
 pre-warm/registry, GPU follow-up.</p>

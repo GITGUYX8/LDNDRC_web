@@ -6,6 +6,8 @@
 <title>Checkpoint 14 — Nodes API: Register, Approve, Mint (P1) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-14-nodes-api.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -46,13 +48,13 @@
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-14-nodes-api.md · 3.5 KB</div>
 <h1 class="page-title">Checkpoint 14 — Nodes API: Register, Approve, Mint (P1)</h1>
 <div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>A second laptop cannot join the cluster today without a human pasting the
-all-powerful static K3s token. This checkpoint built the first half of the
+all-powerful static <span class="term" data-term="k3s" tabindex="0">K3s</span> token. This checkpoint built the first half of the
 zero-touch flow from the amended onboarding report: laptops register
-themselves, an operator approves with one API call, and the laptop&#39;s poll
+themselves, an <span class="term" data-term="operator" tabindex="0">operator</span> approves with one API call, and the laptop&#39;s poll
 receives a single-use 15-minute bootstrap token minted through the
-Kubernetes API — no root, no CLI exec, no static secret changing hands.</p>
+<span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> API — no root, no CLI exec, no static secret changing hands.</p>
 <p>Think of it as a coat check: the laptop hands over a claim ticket
-(registration), the operator nods (approval), and the desk hands back
+(registration), the <span class="term" data-term="operator" tabindex="0">operator</span> nods (approval), and the desk hands back
 exactly one key that melts in 15 minutes.</p>
 <h2 id="what-got-built">What got built</h2><table>
 <thead>
@@ -75,27 +77,27 @@ exactly one key that melts in 15 minutes.</p>
 <tr>
 <td><code>internal/nodes/watcher.go</code></td>
 <td>The Usher</td>
-<td>Every 5s, labels Ready nodes <code>role=host</code> and marks them joined.</td>
+<td>Every 5s, labels Ready <span class="term" data-term="node" tabindex="0">nodes</span> <code>role=host</code> and marks them joined.</td>
 </tr>
 <tr>
 <td><code>internal/httpapi/router.go</code></td>
 <td>The Front Desk</td>
-<td>Five routes: public register (rate-limited, optional join key) + poll, JWT-gated list/approve/deny.</td>
+<td>Five routes: public register (rate-limited, optional join key) + poll, <span class="term" data-term="jwt" tabindex="0">JWT</span>-gated list/approve/deny.</td>
 </tr>
 <tr>
 <td><code>cmd/server/main.go</code></td>
 <td>The Wiring</td>
-<td>Loads the nodes DB, builds the minter + watcher in-cluster, serves the new routes.</td>
+<td>Loads the <span class="term" data-term="node" tabindex="0">nodes</span> DB, builds the minter + watcher in-cluster, serves the new routes.</td>
 </tr>
 <tr>
 <td><code>manifests/control-panel-rbac.yaml</code></td>
 <td>The Key Ring, Extended</td>
-<td>kube-system secrets role + nodes ClusterRole for the control-panel account.</td>
+<td>kube-system secrets role + <span class="term" data-term="node" tabindex="0">nodes</span> ClusterRole for the control-panel account.</td>
 </tr>
 <tr>
 <td><code>manifests/control-panel-deployment.yaml</code></td>
 <td>The Filing Cabinet</td>
-<td><code>emptyDir</code> volume for the nodes DB plus <code>NODES_DB</code>/<code>K3S_JOIN_URL</code> env.</td>
+<td><code>emptyDir</code> volume for the <span class="term" data-term="node" tabindex="0">nodes</span> DB plus <code>NODES_DB</code>/<code>K3S_JOIN_URL</code> env.</td>
 </tr>
 <tr>
 <td><code>control-panel/README.md</code></td>
@@ -109,14 +111,14 @@ exactly one key that melts in 15 minutes.</p>
 transitions, JSON reload round-trip.</li>
 <li>Minter output shape (<code>K10…::…</code>), secret fields (groups, description),
 CA-missing failure.</li>
-<li>Watcher joins Ready nodes with both labels; skips unready and missing ones.</li>
+<li>Watcher joins Ready <span class="term" data-term="node" tabindex="0">nodes</span> with both labels; skips unready and missing ones.</li>
 <li>HTTP flow: register 201 → anon list 401 → approve 200 → poll returns the
 token exactly once → second poll returns status only; deny path; unknown
 ID 404.</li>
 </ul>
-<p>Live on the k3d cluster:</p>
+<p>Live on the <span class="term" data-term="k3d" tabindex="0">k3d</span> cluster:</p>
 <ul>
-<li>RBAC probes: secrets create in <code>kube-system</code> yes, nodes patch yes.</li>
+<li><span class="term" data-term="rbac" tabindex="0">RBAC</span> probes: secrets create in <code>kube-system</code> yes, <span class="term" data-term="node" tabindex="0">nodes</span> patch yes.</li>
 <li>Real register → approve → poll minted bootstrap-token Secret
 <code>bootstrap-token-rng9cl</code> (correct type, expiry, groups); second poll did
 not re-mint; poll answered 503 &quot;join URL not configured&quot; because
@@ -133,22 +135,22 @@ deleted afterwards.</li>
 </thead>
 <tbody><tr>
 <td><code>nodes/</code> package</td>
-<td>Laptops check in, operators approve, keys melt in 15 minutes.</td>
+<td>Laptops check in, <span class="term" data-term="operator" tabindex="0">operators</span> approve, keys melt in 15 minutes.</td>
 </tr>
 <tr>
 <td>Router + main wiring</td>
 <td>Five routes live behind the existing auth, watcher ticking.</td>
 </tr>
 <tr>
-<td>RBAC + volume</td>
+<td><span class="term" data-term="rbac" tabindex="0">RBAC</span> + volume</td>
 <td>Minter and watcher have exactly the permissions they need.</td>
 </tr>
 </tbody></table>
 <h2 id="what-s-next">What&#39;s next</h2><ul>
-<li><input disabled="" type="checkbox"> P2: mDNS advertisement (hostNetwork vs sidecar decision) + master docs.</li>
+<li><input disabled="" type="checkbox"> P2: <span class="term" data-term="mdns" tabindex="0">mDNS</span> advertisement (hostNetwork vs <span class="term" data-term="sidecar" tabindex="0">sidecar</span> decision) + master docs.</li>
 <li><input disabled="" type="checkbox"> P4: <code>ldndrc-join</code> Linux path end-to-end against this API.</li>
 <li><input disabled="" type="checkbox"> Set <code>K3S_JOIN_URL</code> when a real master with joining laptops exists.</li>
-<li><input disabled="" type="checkbox"> R2 persistence can subsume the nodes JSON store later.</li>
+<li><input disabled="" type="checkbox"> R2 persistence can subsume the <span class="term" data-term="node" tabindex="0">nodes</span> JSON store later.</li>
 <li><input disabled="" type="checkbox"> Commit this checkpoint&#39;s changes when ready.</li>
 </ul>
 </div>

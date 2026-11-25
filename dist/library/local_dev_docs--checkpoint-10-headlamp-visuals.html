@@ -6,6 +6,8 @@
 <title>Checkpoint 10 — Headlamp Visuals for the Cluster — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-10-headlamp-visuals.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -46,13 +48,13 @@
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-10-headlamp-visuals.md · 3.2 KB</div>
 <h1 class="page-title">Checkpoint 10 — Headlamp Visuals for the Cluster</h1>
 <div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p><code>kubectl get</code> works, but it shows one resource type at a time as text. When
-you want to <em>see</em> the whole farm — which pods run where, why one is stuck,
-how Services connect to Deployments — a visual dashboard is far faster. This
-checkpoint deployed Headlamp (the Kubernetes SIG-UI dashboard,
+you want to <em>see</em> the whole farm — which <span class="term" data-term="pod" tabindex="0">pods</span> run where, why one is stuck,
+how <span class="term" data-term="service" tabindex="0">Services</span> connect to <span class="term" data-term="deployment" tabindex="0">Deployments</span> — a visual dashboard is far faster. This
+checkpoint deployed <span class="term" data-term="headlamp" tabindex="0">Headlamp</span> (the <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> SIG-UI dashboard,
 <code>ghcr.io/headlamp-k8s/headlamp</code>) inside the cluster, following the reference
 project&#39;s proven template, renamed to LDNDRC conventions.</p>
 <p>Think of it as the control tower window: the control panel flies the planes,
-and Headlamp lets you watch them.</p>
+and <span class="term" data-term="headlamp" tabindex="0">Headlamp</span> lets you watch them.</p>
 <h2 id="what-got-built">What got built</h2><table>
 <thead>
 <tr>
@@ -64,44 +66,44 @@ and Headlamp lets you watch them.</p>
 <tbody><tr>
 <td><code>manifests/headlamp.yaml</code></td>
 <td>The Control Tower</td>
-<td>ServiceAccount, read-only ClusterRole/Binding, Deployment, and Service for Headlamp in the <code>ldndrc</code> namespace.</td>
+<td>ServiceAccount, read-only ClusterRole/Binding, <span class="term" data-term="deployment" tabindex="0">Deployment</span>, and <span class="term" data-term="service" tabindex="0">Service</span> for <span class="term" data-term="headlamp" tabindex="0">Headlamp</span> in the <code>ldndrc</code> <span class="term" data-term="namespace" tabindex="0">namespace</span>.</td>
 </tr>
 <tr>
 <td><code>local_dev_docs/checkpoint-10-*.md</code></td>
 <td>This Story</td>
-<td>Records the deployment and how to open the dashboard.</td>
+<td>Records the <span class="term" data-term="deployment" tabindex="0">deployment</span> and how to open the dashboard.</td>
 </tr>
 </tbody></table>
 <h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-control-tower-manifests-headlamp-yaml">The Control Tower — <code>manifests/headlamp.yaml</code></h3><p>Five resources, adapted from the reference <code>headlamp-template.yaml</code>:</p>
 <ul>
 <li>A ServiceAccount the dashboard runs as, with its token auto-mounted.</li>
 <li>A ClusterRole allowing <code>get</code>/<code>list</code>/<code>watch</code> on all resources plus the
-self-review verbs Headlamp&#39;s RBAC-aware UI needs. Read-only by design.</li>
+self-review verbs <span class="term" data-term="headlamp" tabindex="0">Headlamp</span>&#39;s <span class="term" data-term="rbac" tabindex="0">RBAC</span>-aware UI needs. Read-only by design.</li>
 <li>A ClusterRoleBinding joining the two (cluster-wide read is acceptable on
-this local dev cluster; narrow it before any shared deployment).</li>
-<li>A single-replica Deployment running Headlamp <code>-in-cluster</code> on port 4466 as
+this local dev cluster; narrow it before any shared <span class="term" data-term="deployment" tabindex="0">deployment</span>).</li>
+<li>A single-replica <span class="term" data-term="deployment" tabindex="0">Deployment</span> running <span class="term" data-term="headlamp" tabindex="0">Headlamp</span> <code>-in-cluster</code> on port 4466 as
 non-root user 100, with probes, dropped capabilities, and modest limits.</li>
-<li>A ClusterIP Service on port 80. Deliberately <strong>no ingress</strong> — the dashboard
+<li>A ClusterIP <span class="term" data-term="service" tabindex="0">Service</span> on port 80. Deliberately <strong>no <span class="term" data-term="ingress" tabindex="0">ingress</span></strong> — the dashboard
 is reached only via <code>kubectl port-forward</code>, so nothing leaks to the LAN.</li>
 </ul>
 <p>Login uses a ServiceAccount bearer token minted with <code>kubectl create token</code>,
-pasted once into Headlamp&#39;s login screen.</p>
+pasted once into <span class="term" data-term="headlamp" tabindex="0">Headlamp</span>&#39;s login screen.</p>
 <h2 id="how-it-all-connects">How it all connects</h2><ol>
 <li><code>kubectl apply -f manifests/headlamp.yaml</code> creates all five resources.</li>
 <li><code>kubectl -n ldndrc port-forward svc/ldndrc-headlamp 8080:80</code> exposes it
 on the laptop.</li>
 <li>Open <code>http://localhost:8080</code>, paste the token, pick the <code>main</code> cluster.</li>
-<li>The dashboard shows the control-panel pod Running, Bob&#39;s session pod
-Pending (with the GPU scheduling event visible), and all Services, PVCs,
-and the ingress in one place.</li>
+<li>The dashboard shows the control-panel <span class="term" data-term="pod" tabindex="0">pod</span> Running, Bob&#39;s <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span>
+Pending (with the GPU scheduling event visible), and all <span class="term" data-term="service" tabindex="0">Services</span>, <span class="term" data-term="pvc" tabindex="0">PVCs</span>,
+and the <span class="term" data-term="ingress" tabindex="0">ingress</span> in one place.</li>
 </ol>
 <h2 id="proof-it-works">Proof it works</h2><p>Observed live:</p>
 <ul>
 <li><code>rollout status deployment/ldndrc-headlamp</code> → successfully rolled out,
-pod 1/1 Running.</li>
+<span class="term" data-term="pod" tabindex="0">pod</span> 1/1 Running.</li>
 <li><code>curl http://127.0.0.1:8080/</code> → HTTP 200 (UI served).</li>
-<li>Bearer token against the K8s API (<code>/api/v1/namespaces/ldndrc/pods</code>) →
-HTTP 200, confirming the token Headlamp will use can actually read.</li>
+<li>Bearer token against the <span class="term" data-term="kubernetes" tabindex="0">K8s</span> API (<code>/api/v1/namespaces/ldndrc/pods</code>) →
+HTTP 200, confirming the token <span class="term" data-term="headlamp" tabindex="0">Headlamp</span> will use can actually read.</li>
 <li><code>git diff --check</code> → clean.</li>
 </ul>
 <h2 id="the-one-liner-version">The one-liner version</h2><table>
@@ -121,11 +123,11 @@ HTTP 200, confirming the token Headlamp will use can actually read.</li>
 </tr>
 </tbody></table>
 <h2 id="what-s-next">What&#39;s next</h2><ul>
-<li><input disabled="" type="checkbox"> Open the dashboard and confirm the Pending session pod&#39;s scheduling
+<li><input disabled="" type="checkbox"> Open the dashboard and confirm the Pending <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span>&#39;s scheduling
 event reads as expected.</li>
-<li><input disabled="" type="checkbox"> Pin the Headlamp image to a digest instead of <code>latest</code>.</li>
+<li><input disabled="" type="checkbox"> Pin the <span class="term" data-term="headlamp" tabindex="0">Headlamp</span> image to a digest instead of <code>latest</code>.</li>
 <li><input disabled="" type="checkbox"> Later: gate a <code>headlamp.&lt;host&gt;</code> route behind an ADMIN role in the Go
-gateway, matching the reference project&#39;s end state.</li>
+<span class="term" data-term="gateway" tabindex="0">gateway</span>, matching the reference project&#39;s end state.</li>
 <li><input disabled="" type="checkbox"> Commit the checkpoint-08/09/10 working-tree changes when ready.</li>
 </ul>
 </div>

@@ -6,6 +6,8 @@
 <title>Checkpoint 43 — The Front Door, Live on Real Hardware — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-43-captive-portal-live.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -57,7 +59,7 @@ harness. What started as hand-edited files in <code>~/ldndrc-portal-test/</code>
 <code>tools/captive-portal/</code>: parameterized, documented, covered by a root-free redirect
 test, and honest about which parts need a password.</p>
 <p>The full enrollment handshake (script → register → instructor approves → script
-says APPROVED) was <strong>not</strong> exercised from that laptop this session. That remains the
+says APPROVED) was <strong>not</strong> exercised from that laptop this <span class="term" data-term="session" tabindex="0">session</span>. That remains the
 next test.</p>
 <h2 id="what-got-built">What got built</h2><h3 id="the-product-already-in-the-panel">The product (already in the panel)</h3><p>The portal itself ships inside the control-panel binary, committed as
 <code>383624d feat(portal): LAN onboarding portal + served-download counter</code>:</p>
@@ -82,7 +84,7 @@ next test.</p>
 </tr>
 <tr>
 <td><code>/api/downloads/stats</code></td>
-<td>JWT-gated counter detail for the instructor console</td>
+<td><span class="term" data-term="jwt" tabindex="0">JWT</span>-gated counter detail for the instructor console</td>
 </tr>
 </tbody></table>
 <h3 id="the-harness-promoted-this-checkpoint">The harness (promoted this checkpoint)</h3><p>The live rig was originally created outside the repo as throwaway debugging tools.
@@ -134,7 +136,7 @@ an environment variable:</p>
 </tbody></table>
 <p>Nothing in the harness writes to <code>/etc</code> and no runtime state enters git. The
 privileged steps (hotspot, dnsmasq, nftables) are <strong>printed, never executed</strong> — the
-operator sees exactly what will change and supplies the password.</p>
+<span class="term" data-term="operator" tabindex="0">operator</span> sees exactly what will change and supplies the password.</p>
 <p>Docs updated in the same commit:</p>
 <ul>
 <li><code>docs/lan-onboarding-portal.md</code>: the speculative <code>hostapd</code> recipe (never used) is
@@ -173,7 +175,7 @@ as root directly, bypassing NM&#39;s broken helper path entirely.</p>
 ./tools/captive-portal/run.sh <span class="hljs-built_in">sudo</span>     <span class="hljs-comment"># just the root block again</span>
 ./tools/captive-portal/run.sh stop     <span class="hljs-comment"># stop panel &amp; trap; print root teardown</span>
 ./tools/captive-portal/run.sh config   <span class="hljs-comment"># resolved iface, IP, ports, runtime dir</span></code></pre></div><p>It refuses to start on an occupied panel port (with a hint to use <code>PANEL_PORT=8083</code>
-when a deployed panel pod owns <code>:8082</code>), waits for <code>/healthz</code> and the trap&#39;s 302
+when a deployed panel <span class="term" data-term="pod" tabindex="0">pod</span> owns <code>:8082</code>), waits for <code>/healthz</code> and the trap&#39;s 302
 before declaring success, and keeps every file under <code>$RUNTIME_DIR</code>.</p>
 <h3 id="the-reception-desk-the-panel-on-8083">The Reception Desk — the panel on <code>:8083</code></h3><p>The real portal page, run from the standalone binary. Its counter polls
 <code>GET /api/downloads/count</code> every three seconds and updates in place — no reload.
@@ -233,15 +235,15 @@ its own; it needed a click, then opened the portal.</li>
 <td>both processes stopped cleanly; root teardown printed</td>
 </tr>
 </tbody></table>
-<p><strong>Not proven this session:</strong> the enrollment loop from a real second laptop
+<p><strong>Not proven this <span class="term" data-term="session" tabindex="0">session</span>:</strong> the enrollment loop from a real second laptop
 (script registers → instructor approves in the console → script prints APPROVED).
 That loop was proven earlier from the master&#39;s own shell (approve → exit 0,
-deny → exit 1 with reason, bad JOIN_KEY → immediate rejection, re-run → same node
+deny → exit 1 with reason, bad JOIN_KEY → immediate rejection, re-run → same <span class="term" data-term="node" tabindex="0">node</span>
 id), but not yet driven from the Windows machine.</p>
-<p><strong>Caveat:</strong> <code>trap.log</code> from the Nov 18 session is empty (the trap wasn&#39;t logging to
+<p><strong>Caveat:</strong> <code>trap.log</code> from the Nov 18 <span class="term" data-term="session" tabindex="0">session</span> is empty (the trap wasn&#39;t logging to
 that file during the successful run), so we can&#39;t attribute the prompt to the nft
 interceptor vs the OS&#39;s own captive detection. The promoted trap logs every
-intercepted request, so the next session settles it.</p>
+intercepted request, so the next <span class="term" data-term="session" tabindex="0">session</span> settles it.</p>
 <h2 id="the-one-liner-version">The one-liner version</h2><table>
 <thead>
 <tr>
@@ -280,9 +282,9 @@ instructor approves → <code>APPROVED</code>), now that the portal is reachable
 <li><input disabled="" type="checkbox"> Apply the four pending <code>joining-cluster.ps1</code> fixes: 503-is-approved
 handling, real status on registration, PS7-safe 403 detection,
 <code>TEST_HOSTNAME</code>.</li>
-<li><input disabled="" type="checkbox"> Re-run one session with the Doorman logging so the captive prompt path is
+<li><input disabled="" type="checkbox"> Re-run one <span class="term" data-term="session" tabindex="0">session</span> with the Doorman logging so the captive prompt path is
 captured, not inferred.</li>
-<li><input disabled="" type="checkbox"> Cut the feature into the real deployment: the old pod image still owns
+<li><input disabled="" type="checkbox"> Cut the feature into the real <span class="term" data-term="deployment" tabindex="0">deployment</span>: the old <span class="term" data-term="pod" tabindex="0">pod</span> image still owns
 <code>:8082</code> (that&#39;s why this test used <code>:8083</code>).</li>
 <li><input disabled="" type="checkbox"> Cleanup/restart cheatsheet:
 <code>./tools/captive-portal/run.sh stop</code>, then

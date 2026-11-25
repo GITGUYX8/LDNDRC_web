@@ -6,6 +6,8 @@
 <title>Checkpoint 25 — R4 UI-3: Instructor Console (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-25-r4-ui3-admin.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -48,29 +50,29 @@
 <div class="prose"><h2 id="context">Context</h2><p>Continues on branch <code>feat/r3-csrf</code>, unpushed. Checkpoint-24 left the
 live master running the UI-1/UI-2 image (verified GREEN) and queued
 UI-3 next. The design doc (<code>docs/uiux-design.md</code> §8) scopes UI-3 as
-&quot;Admin table, instructor view, session metrics&quot;, §7 names the
-reference pattern explicitly — <strong>&quot;Admin page (user/session cards)&quot;</strong>,
+&quot;Admin table, instructor view, <span class="term" data-term="session" tabindex="0">session</span> metrics&quot;, §7 names the
+reference pattern explicitly — <strong>&quot;Admin page (user/<span class="term" data-term="session" tabindex="0">session</span> cards)&quot;</strong>,
 verdict &quot;Defer … UI in a later phase&quot;. UI-3 <em>is</em> that later phase, so
 this run implements the reference <strong>card pattern</strong>, not a plain data
 table. No backend changes were needed: <code>GET /api/nodes</code>,
 <code>POST /api/nodes/{id}/approve</code>, <code>POST /api/nodes/{id}/deny</code>, and
-<code>GET /api/sessions</code> already exist, Bearer-authed with CSRF on
-mutations. Scope per operator: build UI-3, commit locally, no push;
-dirty join/nodes files left untouched.</p>
+<code>GET /api/sessions</code> already exist, Bearer-authed with <span class="term" data-term="csrf" tabindex="0">CSRF</span> on
+mutations. Scope per <span class="term" data-term="operator" tabindex="0">operator</span>: build UI-3, commit locally, no push;
+dirty join/<span class="term" data-term="node" tabindex="0">nodes</span> files left untouched.</p>
 <h2 id="reference-docs-considered">Reference docs considered</h2><ul>
-<li><code>docs/uiux-design.md</code> §3/§7/§8 — admin = user/session cards (the
+<li><code>docs/uiux-design.md</code> §3/§7/§8 — admin = user/<span class="term" data-term="session" tabindex="0">session</span> cards (the
 pattern kept here); student IA unchanged (<code>/admin</code> is additive, no
 route moved); Mission Control tokens, dot+text status, real
 <code>&lt;button&gt;</code>s, 2px focus rings, <code>prefers-reduced-motion</code> (inherited
 from the base stylesheet).</li>
-<li><code>ldndrc-workshop-design.md</code> §8 — session record fields (id, user,
-status set, node, ROS_DOMAIN_ID, created_at) all surface on the
-session cards; the <code>status → list</code> admin index is mirrored
+<li><code>ldndrc-workshop-design.md</code> §8 — <span class="term" data-term="session" tabindex="0">session</span> record fields (id, user,
+status set, <span class="term" data-term="node" tabindex="0">node</span>, ROS_DOMAIN_ID, created_at) all surface on the
+<span class="term" data-term="session" tabindex="0">session</span> cards; the <code>status → list</code> admin index is mirrored
 client-side as status filter chips.</li>
 <li><code>docs/roadmap.md</code> R4 — UI-3 is the admin view closing out the
 UI-1/UI-2/UI-3 phasing.</li>
 <li><code>local_dev_docs/checkpoint-10-headlamp-visuals.md</code> — gating
-headlamp behind an ADMIN role stays future work, untouched.</li>
+<span class="term" data-term="headlamp" tabindex="0">headlamp</span> behind an ADMIN role stays future work, untouched.</li>
 <li><code>sim-web-app/README.md</code> cockpit notes — student-cockpit concern,
 not admin; untouched.</li>
 </ul>
@@ -87,19 +89,19 @@ apply unchanged.</li>
 <code>.cards</code>/<code>.card</code> language):</p>
 <ul>
 <li>Header: back-to-launch link, title, manual ↻ Refresh.</li>
-<li><strong>Fleet metrics strip</strong>: host count + per-status counts
-(dot + text label, never color-alone), session count +
+<li><strong>Fleet metrics strip</strong>: <span class="term" data-term="host" tabindex="0">host</span> count + per-status counts
+(dot + text label, never color-alone), <span class="term" data-term="session" tabindex="0">session</span> count +
 per-status counts.</li>
-<li><strong>User cards</strong>: one per account with avatar initial, session count,
+<li><strong>User cards</strong>: one per account with avatar initial, <span class="term" data-term="session" tabindex="0">session</span> count,
 ready/provisioning summary. Backend note: <code>GET /api/sessions</code> is
 scoped to the caller (<code>Store.List(username)</code> has no list-all seam),
 so today this is one card for the signed-in instructor; a list-all
 endpoint would populate the whole room here with <strong>no view change</strong>.</li>
-<li><strong>Session cards</strong> with status filter chips (all/provisioning/ready/
+<li><strong><span class="term" data-term="session" tabindex="0">Session</span> cards</strong> with status filter chips (all/provisioning/ready/
 stopping/stopped/error + counts): status dot+label + live age,
-id, user, node, ROS domain id, created time, error <code>&lt;details&gt;</code>
-when present, Stop button for active own sessions.</li>
-<li><strong>Host cards</strong>: hostname, specs (os/arch/CPU/RAM/GPU), node name,
+id, user, <span class="term" data-term="node" tabindex="0">node</span>, ROS <span class="term" data-term="domain-id" tabindex="0">domain id</span>, created time, error <code>&lt;details&gt;</code>
+when present, Stop button for active own <span class="term" data-term="session" tabindex="0">sessions</span>.</li>
+<li><strong><span class="term" data-term="host" tabindex="0">Host</span> cards</strong>: hostname, specs (os/arch/CPU/RAM/GPU), <span class="term" data-term="node" tabindex="0">node</span> name,
 requested time, deny reason when present; Approve (one click) /
 Deny… (inline reason input + confirm) for <code>pending</code> (approve also
 for <code>expired</code>, matching the store&#39;s transition); otherwise no
@@ -122,25 +124,25 @@ the join-TUI flow.</li>
 <li><code>tsc</code> + <code>vite build</code> green (47 modules, bundle
 <code>index-lFfXNHjr.js</code> 196.68KB/61.79KB gzip + CSS 8.97KB).</li>
 <li><code>gofmt -l</code> clean, <code>go vet ./...</code> clean, <code>go test</code> ok (auth,
-httpapi, nodes, sessions; full suite green in checkpoint-24 run).</li>
-<li>Local server smoke (temp NODES/SESSIONS_DB, no cluster): <code>/admin</code>
+httpapi, <span class="term" data-term="node" tabindex="0">nodes</span>, <span class="term" data-term="session" tabindex="0">sessions</span>; full suite green in checkpoint-24 run).</li>
+<li>Local server smoke (temp <span class="term" data-term="node" tabindex="0">NODES</span>/SESSIONS_DB, no cluster): <code>/admin</code>
 200 with the new bundle; login → <code>GET /api/nodes</code> shows the
 registered <code>card-laptop</code> pending record, <code>POST /api/sessions</code>
 202 — the exact payloads the cards render.</li>
 <li><code>dist/.gitkeep</code> restored after the vite <code>emptyOutDir</code> wipe
 (same discipline as checkpoint-23); built assets gitignored.</li>
-<li>Dirty-tree discipline: the 8 join/nodes modifications +
+<li>Dirty-tree discipline: the 8 join/<span class="term" data-term="node" tabindex="0">nodes</span> modifications +
 <code>join-cluster.sh</code> unmodified and unstaged; untracked junk
 (<code>ldndrc-join-linux-amd64</code>, <code>session-ses_f638.md</code>,
 <code>ldndrc-workshop-design.md</code>) left alone.</li>
 </ul>
 <h2 id="not-done-next">Not done (next)</h2><p>Rebuild image → <code>ctr import</code> (sudo) → delete-old-first rollout →
 verify <code>/admin</code> on <code>control.ros-platform.local</code> (200 + bundle, user/
-session/host cards with live data, approve/deny round-trip). Then
-R2-final (nodes/sessions → PVC/DB) + panel Deployment
+<span class="term" data-term="session" tabindex="0">session</span>/<span class="term" data-term="host" tabindex="0">host</span> cards with live data, approve/deny round-trip). Then
+R2-final (<span class="term" data-term="node" tabindex="0">nodes</span>/<span class="term" data-term="session" tabindex="0">sessions</span> → <span class="term" data-term="pvc" tabindex="0">PVC</span>/DB) + panel <span class="term" data-term="deployment" tabindex="0">Deployment</span>
 <code>maxUnavailable: 1</code> (live manifest still predates both). Optional
 later: <code>GET /api/admin/sessions</code> list-all seam to fill the Users
-section room-wide; ADMIN-role gating for headlamp (checkpoint-10).</p>
+section room-wide; ADMIN-role gating for <span class="term" data-term="headlamp" tabindex="0">headlamp</span> (checkpoint-10).</p>
 </div>
 </div>
 </body>

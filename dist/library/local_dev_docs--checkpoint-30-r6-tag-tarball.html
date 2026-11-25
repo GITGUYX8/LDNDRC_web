@@ -6,6 +6,8 @@
 <title>Checkpoint 30 — R6 Immutable Tag + Import Tarball (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-30-r6-tag-tarball.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -46,12 +48,12 @@
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-30-r6-tag-tarball.md · 1.3 KB</div>
 <h1 class="page-title">Checkpoint 30 — R6 Immutable Tag + Import Tarball (detailed)</h1>
 <div class="prose"><h2 id="context">Context</h2><p>Fourth R6 chunk on <code>feat/r6-workspace-image</code>: freeze the verified
-workspace image under an immutable tag and stage it for cluster
+<span class="term" data-term="workspace-image" tabindex="0">workspace image</span> under an immutable tag and stage it for cluster
 import. No image rebuild, no code changes.</p>
 <h2 id="tag-tarball-observed">Tag + tarball (observed)</h2><ul>
 <li><code>docker tag ldndrc/ros2-gz:jazzy-harmonic-workspace ldndrc/ros2-gz:jazzy-harmonic-eaaf8088</code> — <code>&lt;sha&gt;</code> is the image
 config digest short form (<code>eaaf8088…</code>), per the workshop-design rule
-(<code>:jazzy-harmonic-&lt;sha&gt;</code>, never <code>:latest</code> for sessions).</li>
+(<code>:jazzy-harmonic-&lt;sha&gt;</code>, never <code>:latest</code> for <span class="term" data-term="session" tabindex="0">sessions</span>).</li>
 <li><code>docker save</code> → <code>~/ldndrc-workspace-jazzy-harmonic-eaaf8088.tar</code>
 (<strong>2.3GB</strong> on disk — layers compress well from 10.2GB).</li>
 <li>Location note: <code>/tmp</code> is a 7.7GB tmpfs and would not reliably hold
@@ -60,11 +62,11 @@ so it lives in <code>$HOME</code> (416GB free). <code>k3s ctr images import</cod
 it via sudo regardless of path.</li>
 </ul>
 <h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>No repo files touched except this report (staged for commit). The 8
-join/nodes files + <code>join-cluster.sh</code> untouched/unstaged; untracked
+join/<span class="term" data-term="node" tabindex="0">nodes</span> files + <code>join-cluster.sh</code> untouched/unstaged; untracked
 junk left alone.</p>
-<h2 id="next-chunk">Next chunk</h2><p>Operator runs <code>sudo k3s ctr images import ~/ldndrc-workspace-jazzy-harmonic-eaaf8088.tar</code>, then: flip
-<code>SESSION_IMAGE</code> in manifests (committed) → live session matrix with
-real services (editor 200 IDE, sim bridge, desktop 502-by-design) →
+<h2 id="next-chunk">Next chunk</h2><p><span class="term" data-term="operator" tabindex="0">Operator</span> runs <code>sudo k3s ctr images import ~/ldndrc-workspace-jazzy-harmonic-eaaf8088.tar</code>, then: flip
+<code>SESSION_IMAGE</code> in manifests (committed) → live <span class="term" data-term="session" tabindex="0">session</span> matrix with
+real <span class="term" data-term="service" tabindex="0">services</span> (editor 200 IDE, sim bridge, desktop 502-by-design) →
 checkpoint.</p>
 </div>
 </div>

@@ -6,6 +6,8 @@
 <title>Checkpoint 12 — Stand-In Image Proves the Ready Path — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-12-demo-standin-ready-path.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -45,10 +47,10 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-12-demo-standin-ready-path.md · 3.7 KB</div>
 <h1 class="page-title">Checkpoint 12 — Stand-In Image Proves the Ready Path</h1>
-<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>Every gateway test so far ended at 503: no session ever became <code>ready</code>
-because the workspace image doesn&#39;t exist. That left the most important path
+<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>Every <span class="term" data-term="gateway" tabindex="0">gateway</span> test so far ended at 503: no <span class="term" data-term="session" tabindex="0">session</span> ever became <code>ready</code>
+because the <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> doesn&#39;t exist. That left the most important path
 — a logged-in user actually reaching their workspace through the browser
-hosts — completely unverified. This checkpoint closed that gap with a tiny
+<span class="term" data-term="host" tabindex="0">hosts</span> — completely unverified. This checkpoint closed that gap with a tiny
 stand-in image (82MB): a Python HTTP server that answers the readiness probe
 and identifies itself on every response.</p>
 <p>Think of it as a cardboard cutout in the shop window: it proves the window,
@@ -83,35 +85,35 @@ the lighting, and the foot traffic work. Nobody mistakes it for merchandise.</p>
 </tr>
 </tbody></table>
 <p>No Go code changed. The provisioner already took the image from env.</p>
-<h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-greeter-server-py">The Greeter — <code>server.py</code></h3><p>A stdlib <code>HTTPServer</code> on port 7682 (the session editor port the readiness
+<h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-greeter-server-py">The Greeter — <code>server.py</code></h3><p>A stdlib <code>HTTPServer</code> on port 7682 (the <span class="term" data-term="session" tabindex="0">session</span> editor port the readiness
 probe hits). Every response says <code>ldndrc-demo-standin: plumbing only</code>, so a
 green dashboard can never be misread as a working ROS workspace. Ports
-8080/9002 intentionally serve nothing — desktop/gazebo traffic should fail
+8080/9002 intentionally serve nothing — desktop/<span class="term" data-term="gazebo" tabindex="0">gazebo</span> traffic should fail
 with a clean 502, which is itself a verified behavior.</p>
 <h3 id="the-demo-switch-deployment-manifest">The Demo Switch — deployment manifest</h3><p><code>SESSION_IMAGE: ldndrc/demo-standin:dev</code> with a comment naming the
 production image. The code default stays
 <code>ldndrc/ros2-gz:jazzy-harmonic-workspace</code>; only this demo manifest
 overrides it. Reverting is one line.</p>
 <h2 id="how-it-all-connects">How it all connects</h2><ol>
-<li>Stand-in built (82MB), imported into k3d, deployment applied + restarted.</li>
-<li>Stale <code>ImagePullBackOff</code> session deleted; fresh session created via API.</li>
-<li>Scheduler places the pod; local-path binds the PVC; image pulls from the
-node (already imported, no registry needed).</li>
-<li>Readiness probe passes → pod 1/1 Running → store promotes session to
-<code>ready</code> on first gateway lookup.</li>
-<li>Gateway proxies the editor host to the session Service → 200 with the
+<li>Stand-in built (82MB), imported into <span class="term" data-term="k3d" tabindex="0">k3d</span>, <span class="term" data-term="deployment" tabindex="0">deployment</span> applied + restarted.</li>
+<li>Stale <code>ImagePullBackOff</code> <span class="term" data-term="session" tabindex="0">session</span> deleted; fresh <span class="term" data-term="session" tabindex="0">session</span> created via API.</li>
+<li>Scheduler places the <span class="term" data-term="pod" tabindex="0">pod</span>; local-path binds the <span class="term" data-term="pvc" tabindex="0">PVC</span>; image pulls from the
+<span class="term" data-term="node" tabindex="0">node</span> (already imported, no registry needed).</li>
+<li>Readiness probe passes → <span class="term" data-term="pod" tabindex="0">pod</span> 1/1 Running → store promotes <span class="term" data-term="session" tabindex="0">session</span> to
+<code>ready</code> on first <span class="term" data-term="gateway" tabindex="0">gateway</span> lookup.</li>
+<li><span class="term" data-term="gateway" tabindex="0">Gateway</span> proxies the editor <span class="term" data-term="host" tabindex="0">host</span> to the <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="service" tabindex="0">Service</span> → 200 with the
 stand-in body.</li>
 </ol>
 <h2 id="proof-it-works">Proof it works</h2><p>Observed live:</p>
 <ul>
-<li>Pod <code>ros2-session-5ed57ac3be64-...</code> 1/1 Running.</li>
-<li>Session status <code>provisioning</code> → <code>ready</code> (promotion timestamp recorded).</li>
-<li>Gateway editor host + cookie → <strong>200</strong> with the stand-in body, via both
-port-forward (<code>:8082</code>) and Traefik (<code>:80</code>).</li>
-<li>Gateway desktop/gazebo hosts + cookie → <strong>502</strong> (nothing listening —
+<li><span class="term" data-term="pod" tabindex="0">Pod</span> <code>ros2-session-5ed57ac3be64-...</code> 1/1 Running.</li>
+<li><span class="term" data-term="session" tabindex="0">Session</span> status <code>provisioning</code> → <code>ready</code> (promotion timestamp recorded).</li>
+<li><span class="term" data-term="gateway" tabindex="0">Gateway</span> editor <span class="term" data-term="host" tabindex="0">host</span> + <span class="term" data-term="cookie" tabindex="0">cookie</span> → <strong>200</strong> with the stand-in body, via both
+port-forward (<code>:8082</code>) and <span class="term" data-term="traefik" tabindex="0">Traefik</span> (<code>:80</code>).</li>
+<li><span class="term" data-term="gateway" tabindex="0">Gateway</span> desktop/<span class="term" data-term="gazebo" tabindex="0">gazebo</span> <span class="term" data-term="host" tabindex="0">hosts</span> + <span class="term" data-term="cookie" tabindex="0">cookie</span> → <strong>502</strong> (nothing listening —
 correct stand-in behavior, and proves the error path returns cleanly).</li>
-<li>Gateway editor host without cookie → <strong>401</strong> (auth still enforced).</li>
-<li>Session list still scoped to the owning user.</li>
+<li><span class="term" data-term="gateway" tabindex="0">Gateway</span> editor <span class="term" data-term="host" tabindex="0">host</span> without <span class="term" data-term="cookie" tabindex="0">cookie</span> → <strong>401</strong> (auth still enforced).</li>
+<li><span class="term" data-term="session" tabindex="0">Session</span> list still scoped to the owning user.</li>
 </ul>
 <h2 id="the-one-liner-version">The one-liner version</h2><table>
 <thead>
@@ -125,8 +127,8 @@ correct stand-in behavior, and proves the error path returns cleanly).</li>
 <td>A cardboard cutout that lets the ready path go green.</td>
 </tr>
 <tr>
-<td>Gateway 200s</td>
-<td>Traefik → cookie → session Service routing works end to end.</td>
+<td><span class="term" data-term="gateway" tabindex="0">Gateway</span> 200s</td>
+<td><span class="term" data-term="traefik" tabindex="0">Traefik</span> → <span class="term" data-term="cookie" tabindex="0">cookie</span> → <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="service" tabindex="0">Service</span> routing works end to end.</td>
 </tr>
 <tr>
 <td>502s and 401</td>
@@ -134,12 +136,12 @@ correct stand-in behavior, and proves the error path returns cleanly).</li>
 </tr>
 </tbody></table>
 <h2 id="what-s-next">What&#39;s next</h2><ul>
-<li><input disabled="" type="checkbox"> Replace the stand-in with the real Jazzy/Harmonic workspace image on
+<li><input disabled="" type="checkbox"> Replace the stand-in with the real Jazzy/Harmonic <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> on
 GPU hardware (the true end state).</li>
 <li><input disabled="" type="checkbox"> Remove legacy <code>ros2-ingress.yaml</code> path routes — now unblocked, since
-the host-based ready path is proven.</li>
-<li><input disabled="" type="checkbox"> Session store persistence (restarts still orphan K3s resources).</li>
-<li><input disabled="" type="checkbox"> CSRF protection on state-changing browser requests.</li>
+the <span class="term" data-term="host" tabindex="0">host</span>-based ready path is proven.</li>
+<li><input disabled="" type="checkbox"> <span class="term" data-term="session" tabindex="0">Session</span> store persistence (restarts still orphan <span class="term" data-term="k3s" tabindex="0">K3s</span> resources).</li>
+<li><input disabled="" type="checkbox"> <span class="term" data-term="csrf" tabindex="0">CSRF</span> protection on state-changing browser requests.</li>
 <li><input disabled="" type="checkbox"> Student frontend UI against the verified API.</li>
 <li><input disabled="" type="checkbox"> Commit this checkpoint&#39;s files when ready.</li>
 </ul>

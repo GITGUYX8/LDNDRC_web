@@ -6,6 +6,8 @@
 <title>Checkpoint 37 — Sim Smoke Live Re-run (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-37-sim-live.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -46,18 +48,18 @@
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-37-sim-live.md · 1.8 KB</div>
 <h1 class="page-title">Checkpoint 37 — Sim Smoke Live Re-run (detailed)</h1>
 <div class="prose"><h2 id="context">Context</h2><p>R6 sim finale on <code>feat/r6-workspace-image</code>: seeded image
-(<code>10f1f10c</code>) imported live, panel flipped, full in-pod proof.
+(<code>10f1f10c</code>) imported live, panel flipped, full in-<span class="term" data-term="pod" tabindex="0">pod</span> proof.
 Follows checkpoint-36 (seed + offline proof).</p>
 <h2 id="import-flip-observed">Import + flip (observed)</h2><ul>
-<li>Operator <code>sudo k3s ctr images import ~/ldndrc-workspace-jazzy-harmonic-10f1f10c.tar</code>: index
+<li><span class="term" data-term="operator" tabindex="0">Operator</span> <code>sudo k3s ctr images import ~/ldndrc-workspace-jazzy-harmonic-10f1f10c.tar</code>: index
 <code>10f1f10c…</code>, 28s (layer sharing with the previous tag).</li>
 <li>Live <code>SESSION_IMAGE</code> patched to the seeded tag via <code>kubectl set env</code>; committed manifest + README bumped to match.</li>
-<li>Delete-old-first panel restart → new pod Running (in-memory
-sessions wiped, known R2 debt).</li>
+<li>Delete-old-first panel restart → new <span class="term" data-term="pod" tabindex="0">pod</span> Running (in-memory
+<span class="term" data-term="session" tabindex="0">sessions</span> wiped, known R2 debt).</li>
 </ul>
 <h2 id="live-proof-session-6d80a7ef40bf-seeded-image">Live proof (session <code>6d80a7ef40bf</code>, seeded image)</h2><ul>
-<li>Pod runs <code>ldndrc/ros2-gz:jazzy-harmonic-10f1f10c</code>, <code>1/1 Running</code>.</li>
-<li>Seed present in pod HOME (<code>ground plane</code>, <code>sun</code> listed).</li>
+<li><span class="term" data-term="pod" tabindex="0">Pod</span> runs <code>ldndrc/ros2-gz:jazzy-harmonic-10f1f10c</code>, <code>1/1 Running</code>.</li>
+<li>Seed present in <span class="term" data-term="pod" tabindex="0">pod</span> HOME (<code>ground plane</code>, <code>sun</code> listed).</li>
 <li><code>turtlebot3-sim empty</code>: gz sim alive, <strong>zero</strong> &quot;Unable to find
 uri&quot; errors, all bridges created (clock, joint_states, odom, tf,
 cmd_vel, imu, scan).</li>
@@ -66,15 +68,15 @@ cmd_vel, imu, scan).</li>
 real-time for the empty world on CPU-only; gz sim ~93% of one
 core. (One thin <code>ros2 topic list</code> mid-run was CLI discovery lag,
 not missing topics — retry showed the full bus.)</li>
-<li>Session stopped (<code>stopped</code>) afterwards.</li>
+<li><span class="term" data-term="session" tabindex="0">Session</span> stopped (<code>stopped</code>) afterwards.</li>
 </ul>
 <h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>Only manifest tag bump + README + this report (staged for commit).
-The 8 join/nodes files + <code>join-cluster.sh</code> untouched/unstaged;
+The 8 join/<span class="term" data-term="node" tabindex="0">nodes</span> files + <code>join-cluster.sh</code> untouched/unstaged;
 untracked junk left alone.</p>
 <h2 id="what-remains">What remains</h2><p>Sim track done (CP-36…CP-37): sim runs offline-safe at ≈RTF for
 the empty world. Still queued: sim viewer UI (SPA, other branch),
 merge with <code>feat/r3-csrf</code>, R2-final, join-time image pre-warm /
-registry, GPU follow-up, CSRF login-lockout fix (planned,
+registry, GPU follow-up, <span class="term" data-term="csrf" tabindex="0">CSRF</span> login-lockout fix (planned,
 <code>feat/r3-csrf</code>).</p>
 </div>
 </div>

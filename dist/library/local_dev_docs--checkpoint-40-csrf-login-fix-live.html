@@ -6,6 +6,8 @@
 <title>Checkpoint 40 — CSRF login-lockout fix live (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-40-csrf-login-fix-live.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -45,18 +47,18 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-40-csrf-login-fix-live.md · 3.9 KB</div>
 <h1 class="page-title">Checkpoint 40 — CSRF login-lockout fix live (detailed)</h1>
-<div class="prose"><h2 id="the-bug">The bug</h2><p>Re-login from a browser holding a stale <code>ldndrc_session</code> cookie →
+<div class="prose"><h2 id="the-bug">The bug</h2><p>Re-login from a browser holding a stale <code>ldndrc_session</code> <span class="term" data-term="cookie" tabindex="0">cookie</span> →
 <code>403 &quot;csrf token missing or invalid&quot;</code>, login handler never reached.
-<code>guardCSRF</code> required a CSRF header on <em>every</em> cookie-carrying POST,
+<code>guardCSRF</code> required a <span class="term" data-term="csrf" tabindex="0">CSRF</span> header on <em>every</em> <span class="term" data-term="cookie" tabindex="0">cookie</span>-carrying POST,
 but login is the endpoint that <em>issues</em> tokens — it can never require
 one. Chicken-and-egg lockout.</p>
 <h2 id="the-fix-on-main-uncommitted-until-this-checkpoint">The fix (on main, uncommitted until this checkpoint)</h2><ul>
 <li><code>internal/httpapi/csrf.go</code>: early-return the guard for
 <code>POST /api/auth/login</code> (before the method switch), with comment
 explaining why. Header comment updated (was: &quot;pre-auth endpoints
-carry no cookie&quot; — wrong; login carries stale cookies).</li>
+carry no <span class="term" data-term="cookie" tabindex="0">cookie</span>&quot; — wrong; login carries stale <span class="term" data-term="cookie" tabindex="0">cookies</span>).</li>
 <li><code>internal/httpapi/csrf_test.go</code>: regression case in <code>TestCSRFGuard</code>
-— login POST + stale cookie + no header → 200 (the helper
+— login POST + stale <span class="term" data-term="cookie" tabindex="0">cookie</span> + no header → 200 (the helper
 <code>loginTokens</code> was always cookieless, which is why the suite never
 caught the bug).</li>
 <li><code>manifests/control-panel-deployment.yaml</code>: stale comment refresh —
@@ -65,19 +67,19 @@ Selkies 2.0.0 is live (CP-34/35), not &quot;deferred / 502-by-design&quot;.</li>
 <h2 id="proofs-before-deploy">Proofs before deploy</h2><ul>
 <li><code>gofmt</code>/<code>go vet</code> clean; full <code>go test -count=1 ./...</code> green (all 7
 packages; join 10.3s).</li>
-<li>Docker image <code>ldndrc/control-panel:dev</code> rebuilt + smoke-tested in a
-throwaway container: stale-cookie login → 200; cookie-POST without
+<li><span class="term" data-term="docker" tabindex="0">Docker</span> image <code>ldndrc/control-panel:dev</code> rebuilt + smoke-tested in a
+throwaway container: stale-<span class="term" data-term="cookie" tabindex="0">cookie</span> login → 200; <span class="term" data-term="cookie" tabindex="0">cookie</span>-POST without
 header → 403.</li>
 </ul>
 <h2 id="deploy-observed">Deploy (observed)</h2><ul>
 <li>First import attempt failed: tarball had been saved to <code>/tmp</code>
 (tmpfs, wiped) — re-saved to <code>~/ldndrc-panel-csrffix.tar</code> (14M).
 Lesson repeated: import tarballs live in <code>$HOME</code>, never <code>/tmp</code>.</li>
-<li>Scratch-pod import check: a probe pod with the image returned
+<li>Scratch-<span class="term" data-term="pod" tabindex="0">pod</span> import check: a probe <span class="term" data-term="pod" tabindex="0">pod</span> with the image returned
 <code>StartError: exec &quot;sh&quot; not found</code> — that error itself proves the
-image is present in containerd (missing image would be
+image is present in <span class="term" data-term="containerd" tabindex="0">containerd</span> (missing image would be
 <code>ImagePullBackOff</code>). The panel image is distroless: no shell.</li>
-<li>Rollout: delete-old-first (<code>kubectl delete pod -l app.kubernetes.io/name=ldndrc-control-panel</code>), new pod <code>vm7c9</code>
+<li>Rollout: delete-old-first (<code>kubectl delete pod -l app.kubernetes.io/name=ldndrc-control-panel</code>), new <span class="term" data-term="pod" tabindex="0">pod</span> <code>vm7c9</code>
 Running/ready in ~13s, 0 restarts. (Plain <code>rollout restart</code> stays
 forbidden — hostNetwork <code>:8082</code> deadlock, CP-20 §6.)</li>
 </ul>
@@ -91,39 +93,39 @@ forbidden — hostNetwork <code>:8082</code> deadlock, CP-20 §6.)</li>
 </thead>
 <tbody><tr>
 <td>1</td>
-<td>Stale-cookie login POST</td>
-<td><strong>200</strong>, token+csrf issued</td>
+<td>Stale-<span class="term" data-term="cookie" tabindex="0">cookie</span> login POST</td>
+<td><strong>200</strong>, token+<span class="term" data-term="csrf" tabindex="0">csrf</span> issued</td>
 </tr>
 <tr>
 <td>2</td>
-<td>Garbage cookie POST /api/sessions, no header</td>
+<td>Garbage <span class="term" data-term="cookie" tabindex="0">cookie</span> POST /api/<span class="term" data-term="session" tabindex="0">sessions</span>, no header</td>
 <td><strong>403</strong></td>
 </tr>
 <tr>
 <td>3</td>
-<td>No cookie, Bearer + CSRF header</td>
-<td><strong>202</strong> (session created)</td>
+<td>No <span class="term" data-term="cookie" tabindex="0">cookie</span>, Bearer + <span class="term" data-term="csrf" tabindex="0">CSRF</span> header</td>
+<td><strong>202</strong> (<span class="term" data-term="session" tabindex="0">session</span> created)</td>
 </tr>
 <tr>
 <td>4</td>
-<td>Valid cookie + matching header</td>
-<td><strong>409</strong> — guard passed; handler&#39;s one-session-per-user conflict</td>
+<td>Valid <span class="term" data-term="cookie" tabindex="0">cookie</span> + matching header</td>
+<td><strong>409</strong> — guard passed; handler&#39;s one-<span class="term" data-term="session" tabindex="0">session</span>-per-user conflict</td>
 </tr>
 <tr>
 <td>5</td>
-<td>Valid cookie + wrong header</td>
+<td>Valid <span class="term" data-term="cookie" tabindex="0">cookie</span> + wrong header</td>
 <td><strong>403</strong> — pairing enforced</td>
 </tr>
 </tbody></table>
 <p>Notes on test #3/#4 mechanics (cost me a round-trip each):</p>
 <ul>
-<li>Login sets the cookie itself (<code>router.go:71 SetSessionCookie</code>), but
+<li>Login sets the <span class="term" data-term="cookie" tabindex="0">cookie</span> itself (<code>router.go:71 SetSessionCookie</code>), but
 with <code>COOKIE_DOMAIN=.ros-platform.local</code> curl on 127.0.0.1 won&#39;t
-store it → looked like &quot;no cookie&quot;. Use <code>--resolve control.ros-platform.local:8082:127.0.0.1</code> to test the real path.</li>
-<li>The wrong-header &quot;negative&quot; without a cookie isn&#39;t a guard test at
-all: no cookie → guard skipped → handler (409 conflict).</li>
-<li>CSRF pairing model: <code>VerifyCSRF(cookie.Value, header)</code> — the header
-token is verified against the <em>cookie&#39;s</em> JWT.</li>
+store it → looked like &quot;no <span class="term" data-term="cookie" tabindex="0">cookie</span>&quot;. Use <code>--resolve control.ros-platform.local:8082:127.0.0.1</code> to test the real path.</li>
+<li>The wrong-header &quot;negative&quot; without a <span class="term" data-term="cookie" tabindex="0">cookie</span> isn&#39;t a guard test at
+all: no <span class="term" data-term="cookie" tabindex="0">cookie</span> → guard skipped → handler (409 conflict).</li>
+<li><span class="term" data-term="csrf" tabindex="0">CSRF</span> pairing model: <code>VerifyCSRF(cookie.Value, header)</code> — the header
+token is verified against the <em><span class="term" data-term="cookie" tabindex="0">cookie</span>&#39;s</em> <span class="term" data-term="jwt" tabindex="0">JWT</span>.</li>
 </ul>
 <h2 id="environment-incident-discovered-mid-proof">Environment incident discovered mid-proof</h2><p>The laptop&#39;s WiFi IP drifted <code>192.168.1.37</code> → <code>192.168.1.65</code> (DHCP).
 Consequences observed:</p>
@@ -131,9 +133,9 @@ Consequences observed:</p>
 <li><code>/etc/hosts</code> entries (line 5) still point at <code>.37</code> → every
 <code>*.ros-platform.local</code> URL dead from the browser, even though the
 panel is healthy (<code>127.0.0.1:8082</code> → 200). User needs the sudo
-hosts fix again.</li>
+<span class="term" data-term="host" tabindex="0">hosts</span> fix again.</li>
 <li><code>manifests/control-panel-deployment.yaml</code> line 81 hardcodes
-<code>https://192.168.1.37:6443</code> (join/kubeconfig path). Debt: make the
+<code>https://192.168.1.37:6443</code> (join/<span class="term" data-term="kubeconfig" tabindex="0">kubeconfig</span> path). Debt: make the
 IP configurable or drift-proof (DHCP reservation is the cheap fix).</li>
 </ul>
 <p>Nothing live depends on the stale IP for this proof (used 127.0.0.1),

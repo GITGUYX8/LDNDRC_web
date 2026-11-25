@@ -6,6 +6,8 @@
 <title>LOCAL DYNAMIC NODE DISCOVERY ROS CLUSTER — LDNDRC library</title>
 <meta name="description" content="Source document: plan.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -45,13 +47,13 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · plan.md · 18.6 KB</div>
 <h1 class="page-title">LOCAL DYNAMIC NODE DISCOVERY ROS CLUSTER</h1>
-<div class="prose"><h2 id="1-project-overview">1. Project Overview</h2><p>This platform is a local-first, browser-accessible robotics simulation environment built on a dynamic Kubernetes (K3s) cluster. It is designed to run entirely on a network of consumer laptops without a dedicated server.</p>
-<p>High-end laptops (&quot;Hosts&quot;) contribute their CPU, RAM, and GPU resources to run ROS2 and Gazebo simulations. Low-end laptops (&quot;Guests&quot;) act as thin clients, accessing the platform via a web browser to write code (Monaco), view 3D simulation (Gazebo Sim web app), and stream desktop (Selkies).</p>
+<div class="prose"><h2 id="1-project-overview">1. Project Overview</h2><p>This platform is a local-first, browser-accessible robotics simulation environment built on a dynamic <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> (<span class="term" data-term="k3s" tabindex="0">K3s</span>) cluster. It is designed to run entirely on a network of consumer laptops without a dedicated server.</p>
+<p>High-end laptops (&quot;<span class="term" data-term="host" tabindex="0">Hosts</span>&quot;) contribute their CPU, RAM, and GPU resources to run <span class="term" data-term="ros2" tabindex="0">ROS2</span> and <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> simulations. Low-end laptops (&quot;<span class="term" data-term="guest" tabindex="0">Guests</span>&quot;) act as thin clients, accessing the platform via a web browser to write code (Monaco), view 3D simulation (<span class="term" data-term="gazebo" tabindex="0">Gazebo</span> Sim web app), and stream desktop (Selkies).</p>
 <h3 id="key-characteristics">Key Characteristics</h3><ul>
-<li><strong>Workload per Pod:</strong> 3-4 CPU cores, 4-8GB RAM, 1 GPU (time-sliced).</li>
+<li><strong>Workload per <span class="term" data-term="pod" tabindex="0">Pod</span>:</strong> 3-4 CPU cores, 4-8GB RAM, 1 GPU (time-sliced).</li>
 <li><strong>Hardware Target:</strong> Consumer gaming/workstation laptops (NVIDIA GeForce GPUs).</li>
 <li><strong>Networking:</strong> Local LAN (Wi-Fi/Ethernet), no cloud dependencies.</li>
-<li><strong>Isolation:</strong> Each user gets a fully isolated ROS2 environment — no topic cross-talk between users.</li>
+<li><strong>Isolation:</strong> Each user gets a fully isolated <span class="term" data-term="ros2" tabindex="0">ROS2</span> environment — no topic cross-talk between users.</li>
 </ul>
 <hr>
 <h2 id="2-tech-stack">2. Tech Stack</h2><table>
@@ -64,28 +66,28 @@
 </thead>
 <tbody><tr>
 <td align="left"><strong>Orchestration</strong></td>
-<td align="left">K3s (Lightweight Kubernetes)</td>
-<td align="left">Manages cluster state, scheduling, and pod lifecycle on laptops.</td>
+<td align="left"><span class="term" data-term="k3s" tabindex="0">K3s</span> (Lightweight <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span>)</td>
+<td align="left">Manages cluster state, scheduling, and <span class="term" data-term="pod" tabindex="0">pod</span> lifecycle on laptops.</td>
 </tr>
 <tr>
 <td align="left"><strong>Container Runtime</strong></td>
-<td align="left">Containerd</td>
-<td align="left">Lightweight runtime bundled with K3s.</td>
+<td align="left"><span class="term" data-term="containerd" tabindex="0">Containerd</span></td>
+<td align="left">Lightweight runtime bundled with <span class="term" data-term="k3s" tabindex="0">K3s</span>.</td>
 </tr>
 <tr>
-<td align="left"><strong>Networking (CNI)</strong></td>
-<td align="left">Flannel</td>
-<td align="left">Pod-to-pod networking across laptops. Irrelevant for DDS — all ROS2 traffic stays on pod localhost.</td>
+<td align="left"><strong>Networking (<span class="term" data-term="cni" tabindex="0">CNI</span>)</strong></td>
+<td align="left"><span class="term" data-term="flannel" tabindex="0">Flannel</span></td>
+<td align="left"><span class="term" data-term="pod" tabindex="0">Pod</span>-to-<span class="term" data-term="pod" tabindex="0">pod</span> networking across laptops. Irrelevant for <span class="term" data-term="dds" tabindex="0">DDS</span> — all <span class="term" data-term="ros2" tabindex="0">ROS2</span> traffic stays on <span class="term" data-term="pod" tabindex="0">pod</span> localhost.</td>
 </tr>
 <tr>
-<td align="left"><strong>Ingress Controller</strong></td>
-<td align="left">Traefik (Bundled in K3s)</td>
-<td align="left">Routes browser traffic to correct pods based on URL path.</td>
+<td align="left"><strong><span class="term" data-term="ingress" tabindex="0">Ingress Controller</span></strong></td>
+<td align="left"><span class="term" data-term="traefik" tabindex="0">Traefik</span> (Bundled in <span class="term" data-term="k3s" tabindex="0">K3s</span>)</td>
+<td align="left">Routes browser traffic to correct <span class="term" data-term="pod" tabindex="0">pods</span> based on URL path.</td>
 </tr>
 <tr>
 <td align="left"><strong>GPU Management</strong></td>
-<td align="left">NVIDIA GPU Operator</td>
-<td align="left">Automates GPU driver configuration and time-slicing on consumer laptops.</td>
+<td align="left">NVIDIA GPU <span class="term" data-term="operator" tabindex="0">Operator</span></td>
+<td align="left">Automates GPU driver configuration and <span class="term" data-term="gpu-timeslicing" tabindex="0">time-slicing</span> on consumer laptops.</td>
 </tr>
 <tr>
 <td align="left"><strong>Auto-Discovery</strong></td>
@@ -94,17 +96,17 @@
 </tr>
 <tr>
 <td align="left"><strong>Robotics Core</strong></td>
-<td align="left">ROS2 (Jazzy LTS recommended)</td>
+<td align="left"><span class="term" data-term="ros2" tabindex="0">ROS2</span> (Jazzy LTS recommended)</td>
 <td align="left">Middleware for robotics communication.</td>
 </tr>
 <tr>
 <td align="left"><strong>Simulation</strong></td>
-<td align="left">Gazebo Sim Harmonic (LTS 2029)</td>
+<td align="left"><span class="term" data-term="gazebo" tabindex="0">Gazebo</span> Sim Harmonic (LTS 2029)</td>
 <td align="left">Physics simulation with <code>websocket_server</code> plugin for web rendering.</td>
 </tr>
 <tr>
 <td align="left"><strong>3D Web View</strong></td>
-<td align="left">gzweb (npm library)</td>
+<td align="left"><span class="term" data-term="gzweb" tabindex="0">gzweb</span> (npm library)</td>
 <td align="left">Three.js-based WebGL client — renders simulation in browser.</td>
 </tr>
 <tr>
@@ -114,13 +116,13 @@
 </tr>
 <tr>
 <td align="left"><strong>Code Editor</strong></td>
-<td align="left">code-server</td>
+<td align="left"><span class="term" data-term="code-server" tabindex="0">code-server</span></td>
 <td align="left">VS Code in the browser, integrated terminal (replaces standalone Monaco).</td>
 </tr>
 <tr>
 <td align="left"><strong>Control Panel (backend)</strong></td>
-<td align="left">Go (client-go, JWT, net/http)</td>
-<td align="left">Sessions, auth, pod provisioning, WebSocket proxy — single static binary.</td>
+<td align="left">Go (client-go, <span class="term" data-term="jwt" tabindex="0">JWT</span>, net/http)</td>
+<td align="left"><span class="term" data-term="session" tabindex="0">Sessions</span>, auth, <span class="term" data-term="pod" tabindex="0">pod</span> provisioning, <span class="term" data-term="websocket" tabindex="0">WebSocket</span> proxy — single static binary.</td>
 </tr>
 </tbody></table>
 <hr>
@@ -164,12 +166,12 @@
 │                                                              │
 │  Flannel only routes HTTP / WebSocket / WebRTC traffic       │
 │  DDS never leaves localhost — Flannel multicast irrelevant   │
-└─────────────────────────────────────────────────────────────┘</code></pre></div><h3 id="isolation-model">Isolation Model</h3><p>Each pod is a <strong>fully isolated ROS2 environment</strong>:</p>
+└─────────────────────────────────────────────────────────────┘</code></pre></div><h3 id="isolation-model">Isolation Model</h3><p>Each <span class="term" data-term="pod" tabindex="0">pod</span> is a <strong>fully isolated <span class="term" data-term="ros2" tabindex="0">ROS2</span> environment</strong>:</p>
 <ul>
-<li>All 4 containers share the pod network namespace — DDS discovery/multicast stays on <code>localhost</code></li>
-<li><code>ROS_DOMAIN_ID</code> is unique per pod (derived from StatefulSet ordinal)</li>
-<li>Even if two pods land on the same host, their DDS traffic cannot interfere because they&#39;re on different virtual Ethernet pairs</li>
-<li>The cluster provides only: GPU scheduling (which laptop runs the pod), web routing (Traefik), and resource guarantees</li>
+<li>All 4 containers share the <span class="term" data-term="pod" tabindex="0">pod</span> network <span class="term" data-term="namespace" tabindex="0">namespace</span> — <span class="term" data-term="dds" tabindex="0">DDS</span> discovery/<span class="term" data-term="multicast" tabindex="0">multicast</span> stays on <code>localhost</code></li>
+<li><code>ROS_DOMAIN_ID</code> is unique per <span class="term" data-term="pod" tabindex="0">pod</span> (derived from StatefulSet ordinal)</li>
+<li>Even if two <span class="term" data-term="pod" tabindex="0">pods</span> land on the same <span class="term" data-term="host" tabindex="0">host</span>, their <span class="term" data-term="dds" tabindex="0">DDS</span> traffic cannot interfere because they&#39;re on different virtual Ethernet pairs</li>
+<li>The cluster provides only: GPU scheduling (which laptop runs the <span class="term" data-term="pod" tabindex="0">pod</span>), web routing (<span class="term" data-term="traefik" tabindex="0">Traefik</span>), and resource guarantees</li>
 </ul>
 <div class="code term" data-lang=""><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs">Pod A (localhost, domain=101): topic /cmd_vel ──► subscriber inside same pod
 Pod B (localhost, domain=102): topic /cmd_vel ──► subscriber inside same pod
@@ -177,8 +179,8 @@ Pod B (localhost, domain=102): topic /cmd_vel ──► subscriber inside same p
                                             zero cross-pod discovery,
                                             even with same domain_id.
                                             domain_id adds defense-in-depth.</code></pre></div><hr>
-<h2 id="4-implementation-plan">4. Implementation Plan</h2><h3 id="phase-1-infrastructure-setup-auto-discovery-mvp">Phase 1: Infrastructure Setup &amp; Auto-Discovery (MVP)</h3><p><strong>Goal:</strong> Establish the K3s cluster and allow laptops to dynamically join based on their hardware.</p>
-<p><strong>1. Master Node Setup:</strong>
+<h2 id="4-implementation-plan">4. Implementation Plan</h2><h3 id="phase-1-infrastructure-setup-auto-discovery-mvp">Phase 1: Infrastructure Setup &amp; Auto-Discovery (MVP)</h3><p><strong>Goal:</strong> Establish the <span class="term" data-term="k3s" tabindex="0">K3s</span> cluster and allow laptops to dynamically join based on their hardware.</p>
+<p><strong>1. Master <span class="term" data-term="node" tabindex="0">Node</span> Setup:</strong>
 Choose a laptop to be the Master (must have a static LAN IP, e.g., <code>192.168.1.50</code>). Disable sleep mode.</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">curl -sfL https://get.k3s.io | sh -
 <span class="hljs-built_in">cat</span> /var/lib/rancher/k3s/server/node-token</code></pre></div><p><strong>2. Auto-Discovery Agent (<code>join-cluster.sh</code>):</strong>
@@ -193,12 +195,12 @@ TEST_CPU=12 TEST_RAM=16 TEST_GPU=nvidia ./join-cluster.sh
 
 <span class="hljs-comment"># Simulate a Guest laptop (4 cores, 4GB, no GPU):</span>
 TEST_CPU=4 TEST_RAM=4 TEST_GPU=none ./join-cluster.sh
-<span class="hljs-comment"># → &quot;Low-end laptop detected. Use browser to access platform.&quot;</span></code></pre></div><p><strong>Testing (single-laptop):</strong> Run <code>./test-join.sh</code> — no cluster, no Docker, no VMs needed. It tests all 4 hardware detection branches using env var overrides in ~2 seconds.</p>
+<span class="hljs-comment"># → &quot;Low-end laptop detected. Use browser to access platform.&quot;</span></code></pre></div><p><strong>Testing (single-laptop):</strong> Run <code>./test-join.sh</code> — no cluster, no <span class="term" data-term="docker" tabindex="0">Docker</span>, no VMs needed. It tests all 4 hardware detection branches using env var overrides in ~2 seconds.</p>
 <hr>
-<h3 id="phase-2-gpu-time-slicing-configuration">Phase 2: GPU Time-Slicing Configuration</h3><p><strong>Goal:</strong> Allow multiple ROS2/Gazebo pods to share a single consumer laptop GPU. Consumer GPUs (GeForce) do not support hardware MIG, so we use software time-slicing.</p>
-<p><strong>1. Install NVIDIA GPU Operator:</strong></p>
+<h3 id="phase-2-gpu-time-slicing-configuration">Phase 2: GPU Time-Slicing Configuration</h3><p><strong>Goal:</strong> Allow multiple <span class="term" data-term="ros2" tabindex="0">ROS2</span>/<span class="term" data-term="gazebo" tabindex="0">Gazebo</span> <span class="term" data-term="pod" tabindex="0">pods</span> to share a single consumer laptop GPU. Consumer GPUs (GeForce) do not support hardware MIG, so we use software <span class="term" data-term="gpu-timeslicing" tabindex="0">time-slicing</span>.</p>
+<p><strong>1. Install NVIDIA GPU <span class="term" data-term="operator" tabindex="0">Operator</span>:</strong></p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">helm repo add nvidia https://nvidia.github.io/gpu-operator
-helm install gpu-operator nvidia/gpu-operator -n gpu-operator --create-namespace</code></pre></div><p><strong>2. Configure Time-Slicing ConfigMap:</strong></p>
+helm install gpu-operator nvidia/gpu-operator -n gpu-operator --create-namespace</code></pre></div><p><strong>2. Configure <span class="term" data-term="gpu-timeslicing" tabindex="0">Time-Slicing</span> <span class="term" data-term="configmap" tabindex="0">ConfigMap</span>:</strong></p>
 <div class="code" data-lang="yaml"><span class="lang-tag">yaml</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-yaml"><span class="hljs-comment"># gpu-time-slicing-config.yaml</span>
 <span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span>
 <span class="hljs-attr">kind:</span> <span class="hljs-string">ConfigMap</span>
@@ -216,15 +218,15 @@ helm install gpu-operator nvidia/gpu-operator -n gpu-operator --create-namespace
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl apply -f gpu-time-slicing-config.yaml
 kubectl patch clusterpolicy cluster-policy -n gpu-operator --<span class="hljs-built_in">type</span>=<span class="hljs-string">&#x27;json&#x27;</span> \
   -p=<span class="hljs-string">&#x27;[{&quot;op&quot;: &quot;add&quot;, &quot;path&quot;: &quot;/spec/devicePlugin/config&quot;, &quot;value&quot;: {&quot;name&quot;: &quot;time-slicing-config&quot;, &quot;default&quot;: &quot;default&quot;}}]&#x27;</span></code></pre></div><hr>
-<h3 id="phase-3-ros2-gazebo-web-integration">Phase 3: ROS2, Gazebo, &amp; Web Integration</h3><p><strong>Goal:</strong> Deploy isolated per-user pods with the full ROS2/Gazebo/web stack.</p>
+<h3 id="phase-3-ros2-gazebo-web-integration">Phase 3: ROS2, Gazebo, &amp; Web Integration</h3><p><strong>Goal:</strong> Deploy isolated per-user <span class="term" data-term="pod" tabindex="0">pods</span> with the full <span class="term" data-term="ros2" tabindex="0">ROS2</span>/<span class="term" data-term="gazebo" tabindex="0">Gazebo</span>/web stack.</p>
 <h4 id="design-decisions">Design Decisions</h4><ul>
-<li><strong>StatefulSet</strong> — ordinal index (0, 1, 2...) provides deterministic <code>ROS_DOMAIN_ID</code> per pod</li>
-<li><strong>Single pod per user</strong> — all containers share one pod network namespace; DDS traffic stays on <code>localhost</code></li>
-<li><strong><code>websocket_server</code> plugin</strong> — runs inside <code>gz-sim</code> process, no separate Gzweb server needed</li>
-<li><strong>gzweb npm library</strong> — served by a lightweight web app container for the Three.js/WebGL 3D view</li>
+<li><strong>StatefulSet</strong> — ordinal index (0, 1, 2...) provides deterministic <code>ROS_DOMAIN_ID</code> per <span class="term" data-term="pod" tabindex="0">pod</span></li>
+<li><strong>Single <span class="term" data-term="pod" tabindex="0">pod</span> per user</strong> — all containers share one <span class="term" data-term="pod" tabindex="0">pod</span> network <span class="term" data-term="namespace" tabindex="0">namespace</span>; <span class="term" data-term="dds" tabindex="0">DDS</span> traffic stays on <code>localhost</code></li>
+<li><strong><code>websocket_server</code> plugin</strong> — runs inside <code>gz-sim</code> process, no separate <span class="term" data-term="gzweb" tabindex="0">Gzweb</span> server needed</li>
+<li><strong><span class="term" data-term="gzweb" tabindex="0">gzweb</span> npm library</strong> — served by a lightweight web app container for the Three.js/WebGL 3D view</li>
 <li><strong>Selkies</strong> — streams the interactive desktop (terminal + Monaco workspace) via WebRTC</li>
 </ul>
-<p><strong>1. Pod Manifest (<code>ros2-platform.yaml</code>):</strong></p>
+<p><strong>1. <span class="term" data-term="pod" tabindex="0">Pod</span> Manifest (<code>ros2-platform.yaml</code>):</strong></p>
 <div class="code" data-lang="yaml"><span class="lang-tag">yaml</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">apps/v1</span>
 <span class="hljs-attr">kind:</span> <span class="hljs-string">StatefulSet</span>
 <span class="hljs-attr">metadata:</span>
@@ -293,36 +295,36 @@ kubectl patch clusterpolicy cluster-policy -n gpu-operator --<span class="hljs-b
           <span class="hljs-attr">image:</span> <span class="hljs-string">node:18-alpine</span>
           <span class="hljs-attr">ports:</span>
             <span class="hljs-bullet">-</span> <span class="hljs-attr">containerPort:</span> <span class="hljs-number">3000</span></code></pre></div><p><strong>2. ROS_DOMAIN_ID Mapping:</strong>
-The StatefulSet creates pods named <code>ros2-platform-0</code>, <code>ros2-platform-1</code>, etc. The init script extracts the ordinal:</p>
+The StatefulSet creates <span class="term" data-term="pod" tabindex="0">pods</span> named <code>ros2-platform-0</code>, <code>ros2-platform-1</code>, etc. The init script extracts the ordinal:</p>
 <table>
 <thead>
 <tr>
-<th>Pod</th>
+<th><span class="term" data-term="pod" tabindex="0">Pod</span></th>
 <th>Ordinal</th>
 <th>ROS_DOMAIN_ID</th>
 <th>Isolated from</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>ros2-platform-0</td>
+<td><span class="term" data-term="ros2" tabindex="0">ros2</span>-platform-0</td>
 <td>0</td>
 <td>100</td>
-<td>All other pods</td>
+<td>All other <span class="term" data-term="pod" tabindex="0">pods</span></td>
 </tr>
 <tr>
-<td>ros2-platform-1</td>
+<td><span class="term" data-term="ros2" tabindex="0">ros2</span>-platform-1</td>
 <td>1</td>
 <td>101</td>
-<td>All other pods</td>
+<td>All other <span class="term" data-term="pod" tabindex="0">pods</span></td>
 </tr>
 <tr>
-<td>ros2-platform-2</td>
+<td><span class="term" data-term="ros2" tabindex="0">ros2</span>-platform-2</td>
 <td>2</td>
 <td>102</td>
-<td>All other pods</td>
+<td>All other <span class="term" data-term="pod" tabindex="0">pods</span></td>
 </tr>
 </tbody></table>
-<p><strong>3. Gazebo Sim <code>websocket_server</code> Plugin Config (<code>websocket.gzlaunch</code>):</strong></p>
+<p><strong>3. <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> Sim <code>websocket_server</code> Plugin Config (<code>websocket.gzlaunch</code>):</strong></p>
 <div class="code" data-lang="xml"><span class="lang-tag">xml</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-xml"><span class="hljs-meta">&lt;?xml version=&#x27;1.0&#x27;?&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">gz</span> <span class="hljs-attr">version</span>=<span class="hljs-string">&#x27;1.0&#x27;</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">plugin</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&#x27;gz::launch::WebsocketServer&#x27;</span>
@@ -331,10 +333,10 @@ The StatefulSet creates pods named <code>ros2-platform-0</code>, <code>ros2-plat
     <span class="hljs-tag">&lt;<span class="hljs-name">publication_hz</span>&gt;</span>30<span class="hljs-tag">&lt;/<span class="hljs-name">publication_hz</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">max_connections</span>&gt;</span>-1<span class="hljs-tag">&lt;/<span class="hljs-name">max_connections</span>&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-name">plugin</span>&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-name">gz</span>&gt;</span></code></pre></div><p>Build this into the custom Docker image alongside ROS2 + Gazebo Sim Harmonic.</p>
+<span class="hljs-tag">&lt;/<span class="hljs-name">gz</span>&gt;</span></code></pre></div><p>Build this into the custom <span class="term" data-term="docker" tabindex="0">Docker</span> image alongside <span class="term" data-term="ros2" tabindex="0">ROS2</span> + <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> Sim Harmonic.</p>
 <hr>
-<h3 id="phase-4-web-routing-final-platform-access">Phase 4: Web Routing &amp; Final Platform Access</h3><p><strong>Goal:</strong> Expose pods so Guest laptops can access them via browser. Use session affinity so a user stays on their assigned pod.</p>
-<p><strong>1. Service (<code>ros2-service.yaml</code>):</strong></p>
+<h3 id="phase-4-web-routing-final-platform-access">Phase 4: Web Routing &amp; Final Platform Access</h3><p><strong>Goal:</strong> Expose <span class="term" data-term="pod" tabindex="0">pods</span> so <span class="term" data-term="guest" tabindex="0">Guest</span> laptops can access them via browser. Use <span class="term" data-term="session" tabindex="0">session</span> affinity so a user stays on their assigned <span class="term" data-term="pod" tabindex="0">pod</span>.</p>
+<p><strong>1. <span class="term" data-term="service" tabindex="0">Service</span> (<code>ros2-service.yaml</code>):</strong></p>
 <div class="code" data-lang="yaml"><span class="lang-tag">yaml</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span>
 <span class="hljs-attr">kind:</span> <span class="hljs-string">Service</span>
 <span class="hljs-attr">metadata:</span>
@@ -355,7 +357,7 @@ The StatefulSet creates pods named <code>ros2-platform-0</code>, <code>ros2-plat
       <span class="hljs-attr">targetPort:</span> <span class="hljs-number">8080</span>
     <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">web-selkies</span>
       <span class="hljs-attr">port:</span> <span class="hljs-number">8081</span>
-      <span class="hljs-attr">targetPort:</span> <span class="hljs-number">8081</span></code></pre></div><p><strong>2. Ingress (<code>ros2-ingress.yaml</code>):</strong></p>
+      <span class="hljs-attr">targetPort:</span> <span class="hljs-number">8081</span></code></pre></div><p><strong>2. <span class="term" data-term="ingress" tabindex="0">Ingress</span> (<code>ros2-ingress.yaml</code>):</strong></p>
 <div class="code" data-lang="yaml"><span class="lang-tag">yaml</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">networking.k8s.io/v1</span>
 <span class="hljs-attr">kind:</span> <span class="hljs-string">Ingress</span>
 <span class="hljs-attr">metadata:</span>
@@ -386,7 +388,7 @@ The StatefulSet creates pods named <code>ros2-platform-0</code>, <code>ros2-plat
                 <span class="hljs-attr">name:</span> <span class="hljs-string">ros2-platform-svc</span>
                 <span class="hljs-attr">port:</span>
                   <span class="hljs-attr">number:</span> <span class="hljs-number">8081</span></code></pre></div><hr>
-<h3 id="phase-5-go-control-panel-backend">Phase 5: Go Control Panel (Backend)</h3><p><strong>Goal:</strong> A lightweight session-management API and gateway in Go, deployed as a single static binary. Reuses the reference control panel&#39;s behavior (pod CRUD, auth, WebSocket proxy) without the Node runtime.</p>
+<h3 id="phase-5-go-control-panel-backend">Phase 5: Go Control Panel (Backend)</h3><p><strong>Goal:</strong> A lightweight <span class="term" data-term="session" tabindex="0">session</span>-management API and <span class="term" data-term="gateway" tabindex="0">gateway</span> in Go, deployed as a single static binary. Reuses the reference control panel&#39;s behavior (<span class="term" data-term="pod" tabindex="0">pod</span> CRUD, auth, <span class="term" data-term="websocket" tabindex="0">WebSocket</span> proxy) without the <span class="term" data-term="node" tabindex="0">Node</span> runtime.</p>
 <p><strong>1. Module layout (<code>control-panel/</code>):</strong></p>
 <div class="code term" data-lang=""><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs">control-panel/
   cmd/server/main.go     — HTTP server entrypoint
@@ -411,27 +413,27 @@ The StatefulSet creates pods named <code>ros2-platform-0</code>, <code>ros2-plat
 <tbody><tr>
 <td>POST</td>
 <td><code>/api/sessions</code></td>
-<td>Provision a workspace pod</td>
+<td>Provision a workspace <span class="term" data-term="pod" tabindex="0">pod</span></td>
 </tr>
 <tr>
 <td>GET</td>
 <td><code>/api/sessions</code></td>
-<td>List sessions (status, node)</td>
+<td>List <span class="term" data-term="session" tabindex="0">sessions</span> (status, <span class="term" data-term="node" tabindex="0">node</span>)</td>
 </tr>
 <tr>
 <td>GET</td>
 <td><code>/api/sessions/{id}</code></td>
-<td>Session detail</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> detail</td>
 </tr>
 <tr>
 <td>DELETE</td>
 <td><code>/api/sessions/{id}</code></td>
-<td>Tear down a session</td>
+<td>Tear down a <span class="term" data-term="session" tabindex="0">session</span></td>
 </tr>
 <tr>
 <td>POST</td>
 <td><code>/api/auth/login</code></td>
-<td>Issue JWT</td>
+<td>Issue <span class="term" data-term="jwt" tabindex="0">JWT</span></td>
 </tr>
 <tr>
 <td>GET</td>
@@ -441,25 +443,25 @@ The StatefulSet creates pods named <code>ros2-platform-0</code>, <code>ros2-plat
 <tr>
 <td>WS</td>
 <td><code>/ws/{session}</code></td>
-<td>WebSocket proxy into a pod (code-server / gzweb / selkies)</td>
+<td><span class="term" data-term="websocket" tabindex="0">WebSocket</span> proxy into a <span class="term" data-term="pod" tabindex="0">pod</span> (<span class="term" data-term="code-server" tabindex="0">code-server</span> / <span class="term" data-term="gzweb" tabindex="0">gzweb</span> / selkies)</td>
 </tr>
 </tbody></table>
-<p><strong>4. Deployment:</strong> static binary + minimal container (e.g. <code>gcr.io/distroless/static</code>) run as a Deployment, exposed via Traefik behind auth.</p>
+<p><strong>4. <span class="term" data-term="deployment" tabindex="0">Deployment</span>:</strong> static binary + minimal container (e.g. <code>gcr.io/distroless/static</code>) run as a <span class="term" data-term="deployment" tabindex="0">Deployment</span>, exposed via <span class="term" data-term="traefik" tabindex="0">Traefik</span> behind auth.</p>
 <hr>
 <h2 id="5-operational-guidelines">5. Operational Guidelines</h2><h3 id="how-nodes-join-and-exit">How Nodes Join and Exit</h3><ul>
-<li><strong>Joining:</strong> A user runs <code>./join-cluster.sh</code>. The script detects hardware, starts the K3s agent, and registers the laptop with the Master. The GPU operator automatically injects the time-slicing config into the new node.</li>
+<li><strong>Joining:</strong> A user runs <code>./join-cluster.sh</code>. The script detects hardware, starts the <span class="term" data-term="k3s" tabindex="0">K3s</span> agent, and registers the laptop with the Master. The GPU <span class="term" data-term="operator" tabindex="0">operator</span> automatically injects the <span class="term" data-term="gpu-timeslicing" tabindex="0">time-slicing</span> config into the new <span class="term" data-term="node" tabindex="0">node</span>.</li>
 <li><strong>Exiting Gracefully:</strong> User runs <code>/usr/local/bin/k3s-uninstall.sh</code>.</li>
-<li><strong>Exiting Abruptly (Laptop closed/battery died):</strong> The Master node loses heartbeat within ~40 seconds. The node is marked <code>NotReady</code>. Kubernetes automatically evicts the pods and reschedules them onto other available Host laptops.</li>
+<li><strong>Exiting Abruptly (Laptop closed/battery died):</strong> The Master <span class="term" data-term="node" tabindex="0">node</span> loses heartbeat within ~40 seconds. The <span class="term" data-term="node" tabindex="0">node</span> is marked <code>NotReady</code>. <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> automatically evicts the <span class="term" data-term="pod" tabindex="0">pods</span> and reschedules them onto other available <span class="term" data-term="host" tabindex="0">Host</span> laptops.</li>
 </ul>
 <h3 id="end-user-experience">End User Experience</h3><ol>
-<li><strong>Host Users:</strong> Turn on laptops, run the script, and leave them plugged in.</li>
-<li><strong>Guest Users:</strong> Open browser (Chrome/Firefox) on any laptop.</li>
-<li>Navigate to <code>http://ros-platform.local/code</code> to access the code-server editor (VS Code in the browser).</li>
-<li>Write ROS2 code and hit &quot;Run&quot; — it executes inside the assigned pod, fully isolated from other users. Use the built-in terminal to run <code>ros2 launch</code> directly in the browser.</li>
-<li>Navigate to <code>http://ros-platform.local/sim</code> to view the Gazebo Sim 3D output via WebGL.</li>
+<li><strong><span class="term" data-term="host" tabindex="0">Host</span> Users:</strong> Turn on laptops, run the script, and leave them plugged in.</li>
+<li><strong><span class="term" data-term="guest" tabindex="0">Guest</span> Users:</strong> Open browser (Chrome/Firefox) on any laptop.</li>
+<li>Navigate to <code>http://ros-platform.local/code</code> to access the <span class="term" data-term="code-server" tabindex="0">code-server</span> editor (VS Code in the browser).</li>
+<li>Write <span class="term" data-term="ros2" tabindex="0">ROS2</span> code and hit &quot;Run&quot; — it executes inside the assigned <span class="term" data-term="pod" tabindex="0">pod</span>, fully isolated from other users. Use the built-in terminal to run <code>ros2 launch</code> directly in the browser.</li>
+<li>Navigate to <code>http://ros-platform.local/sim</code> to view the <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> Sim 3D output via WebGL.</li>
 <li>Navigate to <code>http://ros-platform.local/stream</code> for the Selkies interactive desktop stream (terminal + code workspace).</li>
 </ol>
-<h3 id="control-panel-go-backend">Control Panel (Go Backend)</h3><p>The session-management backend is written in Go and deployed as a single static binary — no Node runtime. It reuses the behavior of the reference control panel but in Go:</p>
+<h3 id="control-panel-go-backend">Control Panel (Go Backend)</h3><p>The <span class="term" data-term="session" tabindex="0">session</span>-management backend is written in Go and deployed as a single static binary — no <span class="term" data-term="node" tabindex="0">Node</span> runtime. It reuses the behavior of the reference control panel but in Go:</p>
 <table>
 <thead>
 <tr>
@@ -468,15 +470,15 @@ The StatefulSet creates pods named <code>ros2-platform-0</code>, <code>ros2-plat
 </tr>
 </thead>
 <tbody><tr>
-<td>Create/delete session pods</td>
+<td>Create/delete <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pods</span></td>
 <td><code>k8s.io/client-go</code></td>
 </tr>
 <tr>
-<td>Auth / session tokens</td>
+<td>Auth / <span class="term" data-term="session" tabindex="0">session</span> tokens</td>
 <td><code>github.com/golang-jwt/jwt</code></td>
 </tr>
 <tr>
-<td>WebSocket proxy to pods</td>
+<td><span class="term" data-term="websocket" tabindex="0">WebSocket</span> proxy to <span class="term" data-term="pod" tabindex="0">pods</span></td>
 <td><code>net/http/httputil.ReverseProxy</code></td>
 </tr>
 <tr>
@@ -489,12 +491,12 @@ The StatefulSet creates pods named <code>ros2-platform-0</code>, <code>ros2-plat
 </tr>
 </tbody></table>
 <h3 id="security-model">Security Model</h3><ul>
-<li>Each pod has a unique <code>ROS_DOMAIN_ID</code> — DDS traffic is port-isolated even if a packet leaked out of localhost.</li>
-<li><code>ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST</code> pins ROS2 discovery to localhost as a second isolation layer.</li>
-<li>DDS runs over UDP multicast on localhost only — no DDS packet ever traverses the pod network or Flannel overlay.</li>
-<li>Flannel carries only HTTP (code-server), WebSocket (gzweb), and WebRTC (Selkies) traffic.</li>
-<li>Cross-pod ROS2 topic discovery is <strong>impossible by design</strong> — the network topology prevents it at the kernel level (different network namespaces).</li>
-<li><strong>Recommended:</strong> The Go control panel terminates auth (JWT) before traffic reaches Traefik; add basic auth / OAuth2-proxy / mTLS in front before opening beyond LAN.</li>
+<li>Each <span class="term" data-term="pod" tabindex="0">pod</span> has a unique <code>ROS_DOMAIN_ID</code> — <span class="term" data-term="dds" tabindex="0">DDS</span> traffic is port-isolated even if a packet leaked out of localhost.</li>
+<li><code>ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST</code> pins <span class="term" data-term="ros2" tabindex="0">ROS2</span> discovery to localhost as a second isolation layer.</li>
+<li><span class="term" data-term="dds" tabindex="0">DDS</span> runs over UDP <span class="term" data-term="multicast" tabindex="0">multicast</span> on localhost only — no <span class="term" data-term="dds" tabindex="0">DDS</span> packet ever traverses the <span class="term" data-term="pod" tabindex="0">pod</span> network or <span class="term" data-term="flannel" tabindex="0">Flannel</span> overlay.</li>
+<li><span class="term" data-term="flannel" tabindex="0">Flannel</span> carries only HTTP (<span class="term" data-term="code-server" tabindex="0">code-server</span>), <span class="term" data-term="websocket" tabindex="0">WebSocket</span> (<span class="term" data-term="gzweb" tabindex="0">gzweb</span>), and WebRTC (Selkies) traffic.</li>
+<li>Cross-<span class="term" data-term="pod" tabindex="0">pod</span> <span class="term" data-term="ros2" tabindex="0">ROS2</span> topic discovery is <strong>impossible by design</strong> — the network topology prevents it at the kernel level (different network <span class="term" data-term="namespace" tabindex="0">namespaces</span>).</li>
+<li><strong>Recommended:</strong> The Go control panel terminates auth (<span class="term" data-term="jwt" tabindex="0">JWT</span>) before traffic reaches <span class="term" data-term="traefik" tabindex="0">Traefik</span>; add basic auth / OAuth2-proxy / mTLS in front before opening beyond LAN.</li>
 </ul>
 </div>
 </div>

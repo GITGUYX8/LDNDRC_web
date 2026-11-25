@@ -6,6 +6,8 @@
 <title>Flannel and Traefik — LDNDRC</title>
 <meta name="description" content="One CNI that deliberately carries no DDS, and one ingress that reads hostnames.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -51,22 +53,22 @@
     <h1 class="page-title">Flannel and Traefik</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">One CNI that deliberately carries no DDS, and one ingress that reads hostnames.</p>
     <div class="prose"><p>Two networking components do all the work, and both are easy to misread.</p>
-<h2 id="flannel-the-pod-network">Flannel — the pod network</h2><p>Flannel is the CNI. It gives every pod an IP address and makes pods routable to each other inside the cluster. It is also the component that makes <a href="dds-isolation.html" class="topic-link">Why DDS never leaves the pod</a> true: Flannel&#39;s overlay carries IP traffic, but DDS discovery never generates any because the processes are isolated in their pod namespace.</p>
-<p>Flannel is a deliberate choice for what it <em>doesn&#39;t</em> do. No network policy engine, no service mesh, no eBPF complexity. The isolation model does not depend on filtering packets; it depends on packets never being generated across the boundary.</p>
-<h2 id="traefik-the-front-door">Traefik — the front door</h2><p>Traefik is bundled with K3s and listens on the cluster&#39;s ports 80 and 443. Its job is simple: read the <code>Host</code> header and route to a Service.</p>
+<h2 id="flannel-the-pod-network">Flannel — the pod network</h2><p><span class="term" data-term="flannel" tabindex="0">Flannel</span> is the <span class="term" data-term="cni" tabindex="0">CNI</span>. It gives every <span class="term" data-term="pod" tabindex="0">pod</span> an IP address and makes <span class="term" data-term="pod" tabindex="0">pods</span> routable to each other inside the cluster. It is also the component that makes <a href="dds-isolation.html" class="topic-link">Why DDS never leaves the pod</a> true: <span class="term" data-term="flannel" tabindex="0">Flannel</span>&#39;s overlay carries IP traffic, but <span class="term" data-term="dds" tabindex="0">DDS</span> discovery never generates any because the processes are isolated in their <span class="term" data-term="pod" tabindex="0">pod</span> <span class="term" data-term="namespace" tabindex="0">namespace</span>.</p>
+<p><span class="term" data-term="flannel" tabindex="0">Flannel</span> is a deliberate choice for what it <em>doesn&#39;t</em> do. No <span class="term" data-term="networkpolicy" tabindex="0">network policy</span> engine, no <span class="term" data-term="service" tabindex="0">service</span> mesh, no eBPF complexity. The isolation model does not depend on filtering packets; it depends on packets never being generated across the boundary.</p>
+<h2 id="traefik-the-front-door">Traefik — the front door</h2><p><span class="term" data-term="traefik" tabindex="0">Traefik</span> is bundled with <span class="term" data-term="k3s" tabindex="0">K3s</span> and listens on the cluster&#39;s ports 80 and 443. Its job is simple: read the <code>Host</code> header and route to a <span class="term" data-term="service" tabindex="0">Service</span>.</p>
 <p>The four hostnames are the whole public surface:</p>
 <div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">control.ros-platform.local   → control panel :8082
 editor.ros-platform.local    → gateway → session pod :7682
 desktop.ros-platform.local   → gateway → session pod :8080
-gazebo.ros-platform.local    → gateway → session pod :9002</code></pre></div><p>Only <code>control.</code> points at a fixed workload. The other three point at the control panel too — the panel is the gateway, and it decides which pod to proxy to based on the logged-in cookie. That indirection is <a href="gateway-proxy.html" class="topic-link">The cookie gateway</a>.</p>
-<h2 id="name-resolution">Name resolution</h2><p>There is no DNS server in the design. Guests resolve the four names one of two ways:</p>
+gazebo.ros-platform.local    → gateway → session pod :9002</code></pre></div><p>Only <code>control.</code> points at a fixed workload. The other three point at the control panel too — the panel is the <span class="term" data-term="gateway" tabindex="0">gateway</span>, and it decides which <span class="term" data-term="pod" tabindex="0">pod</span> to proxy to based on the logged-in <span class="term" data-term="cookie" tabindex="0">cookie</span>. That indirection is <a href="gateway-proxy.html" class="topic-link">The cookie gateway</a>.</p>
+<h2 id="name-resolution">Name resolution</h2><p>There is no DNS server in the design. <span class="term" data-term="guest" tabindex="0">Guests</span> resolve the four names one of two ways:</p>
 <ul>
 <li><code>/etc/hosts</code> entries pointing at the master&#39;s LAN IP</li>
-<li>mDNS advertisement from the master (see <a href="join-binary.html" class="topic-link">The join binary</a>&#39;s discovery path)</li>
+<li><span class="term" data-term="mdns" tabindex="0">mDNS</span> advertisement from the master (see <a href="join-binary.html" class="topic-link">The join binary</a>&#39;s discovery path)</li>
 </ul>
-<p>On a real LAN you also need the master reachable from every Guest. That means a static IP and a router that does not isolate clients — many venue Wi-Fis do, and that is a real failure mode.</p>
+<p>On a real LAN you also need the master reachable from every <span class="term" data-term="guest" tabindex="0">Guest</span>. That means a static IP and a router that does not isolate clients — many venue Wi-Fis do, and that is a real failure mode.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl -n kube-system get svc traefik
-kubectl get ingress -A</code></pre></div><p>An ingress with no address is not routing yet. Read its events before touching the panel.</p></div>
+kubectl get ingress -A</code></pre></div><p>An <span class="term" data-term="ingress" tabindex="0">ingress</span> with no address is not routing yet. Read its events before touching the panel.</p></div>
     <div class="verify"><div class="verify-head"><svg aria-hidden="true"><use href="#i-check"/></svg> Verify</div>
 <div class="code term"><pre><code class="hljs">kubectl -n kube-system get svc traefik</code></pre></div></div><div class="source-list"><span class="eyebrow">Sources</span><a href="../library/README.html">README.md</a></div>
 </div>

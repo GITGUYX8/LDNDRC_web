@@ -6,6 +6,8 @@
 <title>Checkpoint 33 — R6 Live Matrix with Real Image (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-33-r6-live-matrix.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -45,10 +47,10 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-33-r6-live-matrix.md · 1.8 KB</div>
 <h1 class="page-title">Checkpoint 33 — R6 Live Matrix with Real Image (detailed)</h1>
-<div class="prose"><h2 id="context">Context</h2><p>Sixth R6 chunk on <code>feat/r6-workspace-image</code>: operator imported the
+<div class="prose"><h2 id="context">Context</h2><p>Sixth R6 chunk on <code>feat/r6-workspace-image</code>: <span class="term" data-term="operator" tabindex="0">operator</span> imported the
 2.3GB tarball (<code>ctr images import</code>, index <code>cc54d71348fb</code>, 164s
 unpack). This run flips the live panel to the real image and proves
-a full session on it. No repo changes this chunk except this
+a full <span class="term" data-term="session" tabindex="0">session</span> on it. No repo changes this chunk except this
 report (the CP-32 manifest flip was already committed).</p>
 <h2 id="rollout-observed">Rollout (observed)</h2><ul>
 <li>Live <code>SESSION_IMAGE</code> was still <code>ldndrc/demo-standin:dev</code> →
@@ -56,7 +58,7 @@ patched to <code>ldndrc/ros2-gz:jazzy-harmonic-eaaf8088</code> via
 <code>kubectl set env</code> (surgical: this branch&#39;s manifest is main-era
 and would clobber live-only env on wholesale apply).</li>
 <li>Delete-old-first panel restart (hostNetwork <code>:8082</code> discipline) →
-new pod <code>…-q4xpg</code> Running. In-memory session records wiped as
+new <span class="term" data-term="pod" tabindex="0">pod</span> <code>…-q4xpg</code> Running. In-memory <span class="term" data-term="session" tabindex="0">session</span> records wiped as
 known R2 debt — the 4 old stand-in workloads orphaned again.</li>
 </ul>
 <h2 id="live-matrix-green-session-713105823791-real-image">Live matrix GREEN (session <code>713105823791</code>, real image)</h2><table>
@@ -68,31 +70,31 @@ known R2 debt — the 4 old stand-in workloads orphaned again.</li>
 </thead>
 <tbody><tr>
 <td><code>POST /api/sessions</code></td>
-<td>202 <code>provisioning</code> → <code>ready</code> in ~20s (no pull — pre-imported; pod <code>1/1 Running</code>)</td>
+<td>202 <code>provisioning</code> → <code>ready</code> in ~20s (no pull — pre-imported; <span class="term" data-term="pod" tabindex="0">pod</span> <code>1/1 Running</code>)</td>
 </tr>
 <tr>
-<td><code>editor</code> + cookie</td>
-<td><strong>302 → 200 VS Code IDE HTML</strong> through the gateway (first real editor on this master)</td>
+<td><code>editor</code> + <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
+<td><strong>302 → 200 VS Code IDE HTML</strong> through the <span class="term" data-term="gateway" tabindex="0">gateway</span> (first real editor on this master)</td>
 </tr>
 <tr>
-<td><code>desktop</code> + cookie</td>
+<td><code>desktop</code> + <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 <td>502 by design (Selkies deferred)</td>
 </tr>
 <tr>
-<td><code>gazebo</code> + cookie</td>
+<td><code>gazebo</code> + <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 <td>404 from the live bridge (routing proven, matches CP-29 semantics)</td>
 </tr>
 <tr>
-<td><code>editor</code> no cookie</td>
+<td><code>editor</code> no <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 <td>401</td>
 </tr>
 <tr>
-<td><code>DELETE</code> session</td>
+<td><code>DELETE</code> <span class="term" data-term="session" tabindex="0">session</span></td>
 <td><code>stopped</code>, workload terminating</td>
 </tr>
 </tbody></table>
 <h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>No source files touched; only this report (staged for commit). The
-8 join/nodes files + <code>join-cluster.sh</code> untouched/unstaged;
+8 join/<span class="term" data-term="node" tabindex="0">nodes</span> files + <code>join-cluster.sh</code> untouched/unstaged;
 untracked junk left alone.</p>
 <h2 id="what-remains">What remains</h2><p>R6 core is done: build → verify → import → flip → live matrix, one
 checkpoint per chunk (CP-27…CP-33). Queued: Selkies 2.0.0 migration

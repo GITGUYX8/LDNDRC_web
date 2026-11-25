@@ -6,6 +6,8 @@
 <title>Checkpoint 24 — R4 UI-1/UI-2 Live Verify on Real Master (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-24-r4-live-verify.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -48,31 +50,31 @@
 <div class="prose"><h2 id="context">Context</h2><p>Continues checkpoint-23 on branch <code>feat/r3-csrf</code> (still unpushed).
 Checkpoint-23 built the student SPA + webbuild stage but left the live
 verify undone. This run does exactly that: rebuild → <code>ctr import</code> →
-delete-old-first rollout → full gateway matrix via
+delete-old-first rollout → full <span class="term" data-term="gateway" tabindex="0">gateway</span> matrix via
 <code>control.ros-platform.local</code>. No code changes this run (image rebuild
-only); the 8 dirty join/nodes files + <code>join-cluster.sh</code> remain
+only); the 8 dirty join/<span class="term" data-term="node" tabindex="0">nodes</span> files + <code>join-cluster.sh</code> remain
 unmodified and unstaged, untracked junk left alone.</p>
 <h2 id="step-by-step-with-observed-outputs">Step-by-step with observed outputs</h2><h3 id="1-pre-flight-all-green">1. Pre-flight (all green)</h3><ul>
 <li><code>npm run build</code>: 46 modules, <code>index-Bdyr3u-x.js</code> 188KB/59.9KB gzip.</li>
 <li><code>gofmt -l</code> clean, <code>go vet ./...</code> clean, <code>go test -count=1 ./...</code>
-all <code>ok</code> (auth, discovery, gateway, httpapi, join 10.2s, nodes,
-sessions). Note: <code>go</code>/<code>kubectl</code> via direct
+all <code>ok</code> (auth, discovery, <span class="term" data-term="gateway" tabindex="0">gateway</span>, httpapi, join 10.2s, <span class="term" data-term="node" tabindex="0">nodes</span>,
+<span class="term" data-term="session" tabindex="0">sessions</span>). Note: <code>go</code>/<code>kubectl</code> via direct
 <code>~/.local/share/mise/installs/*</code> paths — the mise shims report
 &quot;No version is set&quot; in this shell.</li>
-<li>Local docker smoke (<code>-p 18082</code>): <code>/</code> + <code>/login</code> 200 with the real
+<li>Local <span class="term" data-term="docker" tabindex="0">docker</span> smoke (<code>-p 18082</code>): <code>/</code> + <code>/login</code> 200 with the real
 <code>&lt;script src=&quot;/assets/index-Bdyr3u-x.js&quot;&gt;</code> bundle (not the
 placeholder), <code>/healthz</code> 200.</li>
 </ul>
 <h3 id="2-rebuild-import-rollout">2. Rebuild + import + rollout</h3><ul>
 <li><code>docker build -t ldndrc/control-panel:dev -f control-panel/Dockerfile control-panel/</code> → config <code>48724709…</code>, index <code>a5287bf4…</code> (68.9MB).</li>
 <li><code>docker save</code> → <code>/tmp/ldndrc-control-panel-dev.tar</code> (14M).</li>
-<li>Operator ran <code>sudo k3s ctr images import</code> (sudo needs a password —
-cannot be done from this session): index <code>a5287bf4…</code> confirmed.</li>
+<li><span class="term" data-term="operator" tabindex="0">Operator</span> ran <code>sudo k3s ctr images import</code> (sudo needs a password —
+cannot be done from this <span class="term" data-term="session" tabindex="0">session</span>): index <code>a5287bf4…</code> confirmed.</li>
 <li>Delete-old-first (never plain <code>rollout restart</code> — hostNetwork <code>:8082</code>
 deadlock, checkpoint-20 §6):
 <code>kubectl -n ldndrc delete pod -l app.kubernetes.io/name=ldndrc-control-panel</code>
 → <code>rollout status</code> success in seconds.</li>
-<li>New pod <code>…-qhshf</code> <code>1/1 Running</code>, <code>hostNetwork=true</code>,
+<li>New <span class="term" data-term="pod" tabindex="0">pod</span> <code>…-qhshf</code> <code>1/1 Running</code>, <code>hostNetwork=true</code>,
 <code>imageID=sha256:48724709…</code> (new), logs:
 <code>sessions reconcile: 0 adopted, 0 tombstoned</code> +
 <code>discovery: advertising _ldndrc-master._tcp on hari:8082</code>.</li>
@@ -80,7 +82,7 @@ deadlock, checkpoint-20 §6):
 <h3 id="3-live-verify-green-new-session-2e15dafa61c3-via-traefik-80">3. Live verify GREEN (new session <code>2e15dafa61c3</code>, via Traefik <code>:80</code>)</h3><p>DNS note: this machine has <strong>no</strong> <code>/etc/hosts</code> entries for
 <code>*.ros-platform.local</code>, so plain resolution hits the LAN wildcard
 (<code>185.38.109.200+</code> parking page, <code>301</code>). All checks below pin with
-<code>curl --resolve …:192.168.1.37</code>. Recommend adding the four hosts
+<code>curl --resolve …:192.168.1.37</code>. Recommend adding the four <span class="term" data-term="host" tabindex="0">hosts</span>
 entries (needs sudo) for real browser use.</p>
 <table>
 <thead>
@@ -99,50 +101,50 @@ entries (needs sudo) for real browser use.</p>
 </tr>
 <tr>
 <td><code>POST /api/auth/login</code> (student1)</td>
-<td>token 157 chars + csrf 64 hex + <code>ldndrc_session</code> cookie</td>
+<td>token 157 chars + <span class="term" data-term="csrf" tabindex="0">csrf</span> 64 hex + <code>ldndrc_session</code> <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 </tr>
 <tr>
 <td><code>GET /api/sessions</code> no bearer</td>
 <td>401</td>
 </tr>
 <tr>
-<td><code>POST /api/sessions</code> + CSRF</td>
+<td><code>POST /api/sessions</code> + <span class="term" data-term="csrf" tabindex="0">CSRF</span></td>
 <td>202 <code>provisioning</code> → <code>ready</code> on first 10s poll</td>
 </tr>
 <tr>
-<td>Cookie POST without <code>X-CSRF-Token</code></td>
+<td><span class="term" data-term="cookie" tabindex="0">Cookie</span> POST without <code>X-CSRF-Token</code></td>
 <td>403</td>
 </tr>
 <tr>
-<td><code>editor</code> + cookie</td>
+<td><code>editor</code> + <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 <td><strong>200 + stand-in body</strong></td>
 </tr>
 <tr>
-<td><code>desktop</code> + cookie</td>
+<td><code>desktop</code> + <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 <td>502 by design</td>
 </tr>
 <tr>
-<td><code>editor</code> no cookie</td>
+<td><code>editor</code> no <span class="term" data-term="cookie" tabindex="0">cookie</span></td>
 <td>401</td>
 </tr>
 </tbody></table>
 <h2 id="known-debt-re-observed">Known debt re-observed</h2><ul>
-<li>Pod delete wiped in-memory/emptyDir session records, so the three
-pre-existing session workloads (<code>fc4fc8545676</code>, <code>fb363ba9e344</code>,
+<li><span class="term" data-term="pod" tabindex="0">Pod</span> delete wiped in-memory/emptyDir <span class="term" data-term="session" tabindex="0">session</span> records, so the three
+pre-existing <span class="term" data-term="session" tabindex="0">session</span> workloads (<code>fc4fc8545676</code>, <code>fb363ba9e344</code>,
 <code>20c8e08984b1</code>) are now orphaned (still Running, panel reports
 <code>0 adopted</code>). Same R2 incident as checkpoint-20 §6 — hand-cleaned
-then, left running now. R2-final (nodes/sessions → PVC/DB) resolves
+then, left running now. R2-final (<span class="term" data-term="node" tabindex="0">nodes</span>/<span class="term" data-term="session" tabindex="0">sessions</span> → <span class="term" data-term="pvc" tabindex="0">PVC</span>/DB) resolves
 it for good.</li>
-<li>Live Deployment still lacks <code>SESSIONS_DB</code> env (revision predates R2)
+<li>Live <span class="term" data-term="deployment" tabindex="0">Deployment</span> still lacks <code>SESSIONS_DB</code> env (revision predates R2)
 and still uses default RollingUpdate instead of <code>maxUnavailable: 1</code>
 — both queued below.</li>
 </ul>
 <h2 id="next">Next</h2><ol>
-<li>Add <code>/etc/hosts</code> entries for the four platform hosts (sudo, one line).</li>
+<li>Add <code>/etc/hosts</code> entries for the four platform <span class="term" data-term="host" tabindex="0">hosts</span> (sudo, one line).</li>
 <li>UI-3 (admin table) per <code>docs/uiux-design.md</code>.</li>
-<li>R2-final (nodes → PVC/DB, sessions durable) + panel Deployment
+<li>R2-final (<span class="term" data-term="node" tabindex="0">nodes</span> → <span class="term" data-term="pvc" tabindex="0">PVC</span>/DB, <span class="term" data-term="session" tabindex="0">sessions</span> durable) + panel <span class="term" data-term="deployment" tabindex="0">Deployment</span>
 <code>maxUnavailable: 1</code>.</li>
-<li>Hand-delete the three orphaned pre-verify session workloads when
+<li>Hand-delete the three orphaned pre-verify <span class="term" data-term="session" tabindex="0">session</span> workloads when
 convenient.</li>
 </ol>
 </div>

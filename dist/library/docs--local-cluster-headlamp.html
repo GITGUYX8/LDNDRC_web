@@ -6,6 +6,8 @@
 <title>Local Cluster Runbook (k3d + Headlamp) — LDNDRC library</title>
 <meta name="description" content="Source document: docs/local-cluster-headlamp.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -45,14 +47,14 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · docs/local-cluster-headlamp.md · 6.5 KB</div>
 <h1 class="page-title">Local Cluster Runbook (k3d + Headlamp)</h1>
-<div class="prose"><p>Run the whole LDNDRC stack on this laptop: K3s cluster (via k3d), control
-panel, demo session, Traefik ingress, and the Headlamp dashboard.
+<div class="prose"><p>Run the whole LDNDRC stack on this laptop: <span class="term" data-term="k3s" tabindex="0">K3s</span> cluster (via <span class="term" data-term="k3d" tabindex="0">k3d</span>), control
+panel, demo <span class="term" data-term="session" tabindex="0">session</span>, <span class="term" data-term="traefik" tabindex="0">Traefik</span> <span class="term" data-term="ingress" tabindex="0">ingress</span>, and the <span class="term" data-term="headlamp" tabindex="0">Headlamp</span> dashboard.
 Tested on Omarchy/Arch. Only the steps marked &quot;needs sudo&quot; require
 privileges; everything else runs as your normal user.</p>
 <blockquote>
-<p>Current demo state: sessions use the tiny <code>demo-standin</code> image and
-<code>SESSION_GPU_LIMIT=0</code> because this machine has no GPU. Production Hosts
-use the Jazzy/Harmonic workspace image and <code>&quot;1&quot;</code>. See
+<p>Current demo state: <span class="term" data-term="session" tabindex="0">sessions</span> use the tiny <code>demo-standin</code> image and
+<code>SESSION_GPU_LIMIT=0</code> because this machine has no GPU. Production <span class="term" data-term="host" tabindex="0">Hosts</span>
+use the Jazzy/Harmonic <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> and <code>&quot;1&quot;</code>. See
 <code>local_dev_docs/checkpoint-11-gpu-optional.md</code> and
 <code>local_dev_docs/checkpoint-12-demo-standin-ready-path.md</code>.</p>
 </blockquote>
@@ -72,14 +74,14 @@ mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl apply -f 
 mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl apply -f manifests/control-panel-deployment.yaml
 mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl apply -f manifests/control-panel-service.yaml
 mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl apply -f manifests/control-panel-ingress.yaml
-mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl -n ldndrc rollout status deployment/ldndrc-control-panel</code></pre></div><p>Verify RBAC scope (expect <code>yes</code>, <code>yes</code>, <code>no</code>):</p>
+mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl -n ldndrc rollout status deployment/ldndrc-control-panel</code></pre></div><p>Verify <span class="term" data-term="rbac" tabindex="0">RBAC</span> scope (expect <code>yes</code>, <code>yes</code>, <code>no</code>):</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl -n ldndrc auth can-i create deployments \
   --as=system:serviceaccount:ldndrc:ldndrc-control-panel
 mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl -n ldndrc auth can-i delete persistentvolumeclaims \
   --as=system:serviceaccount:ldndrc:ldndrc-control-panel
 mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl -n ldndrc auth can-i list nodes \
   --as=system:serviceaccount:ldndrc:ldndrc-control-panel</code></pre></div><h2 id="4-deploy-headlamp">4. Deploy Headlamp</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl apply -f manifests/headlamp.yaml
-mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl -n ldndrc rollout status deployment/ldndrc-headlamp</code></pre></div><p>Login token (paste into the Headlamp login screen):</p>
+mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl -n ldndrc rollout status deployment/ldndrc-headlamp</code></pre></div><p>Login token (paste into the <span class="term" data-term="headlamp" tabindex="0">Headlamp</span> login screen):</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl -n ldndrc create token ldndrc-headlamp --duration=24h</code></pre></div><h2 id="5-expose-locally">5. Expose locally</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-comment"># Foreground kubectl via mise is fine; background port-forwards must use the</span>
 <span class="hljs-comment"># direct binary (backgrounded `mise exec` hangs):</span>
 KUBECTL=$(<span class="hljs-built_in">ls</span> -d ~/.local/share/mise/installs/kubectl/*/kubectl 2&gt;/dev/null | <span class="hljs-built_in">head</span> -1)
@@ -92,7 +94,7 @@ curl -o /dev/null -w <span class="hljs-string">&quot;%{http_code}\n&quot;</span>
 <p>Optional: real hostnames instead of <code>curl -H &quot;Host: ...&quot;</code> (needs sudo):</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash"><span class="hljs-comment"># add to /etc/hosts, with &lt;LAN-IP&gt; = this machine&#x27;s LAN address</span>
 <span class="hljs-comment"># &lt;LAN-IP&gt; control.ros-platform.local editor.ros-platform.local \</span>
-<span class="hljs-comment">#   desktop.ros-platform.local gazebo.ros-platform.local</span></code></pre></div><h3 id="mdns-advertisement-real-masters-only-never-k3d">mDNS advertisement (real masters only, never k3d)</h3><p>Pod network namespaces cannot reach LAN multicast, so the base Deployment
+<span class="hljs-comment">#   desktop.ros-platform.local gazebo.ros-platform.local</span></code></pre></div><h3 id="mdns-advertisement-real-masters-only-never-k3d">mDNS advertisement (real masters only, never k3d)</h3><p><span class="term" data-term="pod" tabindex="0">Pod</span> network <span class="term" data-term="namespace" tabindex="0">namespaces</span> cannot reach LAN <span class="term" data-term="multicast" tabindex="0">multicast</span>, so the base <span class="term" data-term="deployment" tabindex="0">Deployment</span>
 sets <code>ADVERTISE_MDNS=false</code>. On a real master laptop:</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">kubectl apply -f manifests/control-panel-hostnetwork-patch.yaml
 <span class="hljs-comment"># set ADVERTISE_MDNS=true in manifests/control-panel-deployment.yaml, re-apply</span>
@@ -102,7 +104,7 @@ list the master with TXT <code>cluster=ldndrc</code>.</p>
   -H <span class="hljs-string">&#x27;Content-Type: application/json&#x27;</span> \
   -d <span class="hljs-string">&#x27;{&quot;username&quot;:&quot;bob&quot;,&quot;password&quot;:&quot;secret123&quot;}&#x27;</span> | python3 -c <span class="hljs-string">&quot;import sys,json; print(json.load(sys.stdin)[&#x27;token&#x27;])&quot;</span>)
 curl -s -X POST http://127.0.0.1:8082/api/sessions -H <span class="hljs-string">&quot;Authorization: Bearer <span class="hljs-variable">$TOKEN</span>&quot;</span>
-mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl -n ldndrc get pods   <span class="hljs-comment"># session pod -&gt; Running</span></code></pre></div><p>Gateway checks (need the login cookie):</p>
+mise <span class="hljs-built_in">exec</span> kubectl@latest -- kubectl -n ldndrc get pods   <span class="hljs-comment"># session pod -&gt; Running</span></code></pre></div><p><span class="term" data-term="gateway" tabindex="0">Gateway</span> checks (need the login <span class="term" data-term="cookie" tabindex="0">cookie</span>):</p>
 <div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">COOKIE=$(curl -s -D - -o /dev/null -X POST http://127.0.0.1:8082/api/auth/login \
   -H <span class="hljs-string">&#x27;Content-Type: application/json&#x27;</span> \
   -d <span class="hljs-string">&#x27;{&quot;username&quot;:&quot;bob&quot;,&quot;password&quot;:&quot;secret123&quot;}&#x27;</span> \
@@ -117,28 +119,28 @@ curl -s -o /dev/null -w <span class="hljs-string">&quot;%{http_code}\n&quot;</sp
 </tr>
 </thead>
 <tbody><tr>
-<td>Session pod <code>Pending</code>, <code>didn&#39;t match node affinity</code></td>
-<td>Node lacks <code>role=host</code> label</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> <span class="term" data-term="pod" tabindex="0">pod</span> <code>Pending</code>, <code>didn&#39;t match node affinity</code></td>
+<td><span class="term" data-term="node" tabindex="0">Node</span> lacks <code>role=host</code> label</td>
 <td><code>kubectl label node k3d-ldndrc-server-0 node-role.kubernetes.io/role=host</code></td>
 </tr>
 <tr>
-<td>Session pod <code>Pending</code>, <code>Insufficient nvidia.com/gpu</code></td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> <span class="term" data-term="pod" tabindex="0">pod</span> <code>Pending</code>, <code>Insufficient nvidia.com/gpu</code></td>
 <td>GPU requested but no GPU present</td>
 <td>Expected unless <code>SESSION_GPU_LIMIT=0</code> is set (demo default)</td>
 </tr>
 <tr>
-<td>Session pod <code>ImagePullBackOff</code></td>
-<td>Image not imported into k3d</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> <span class="term" data-term="pod" tabindex="0">pod</span> <code>ImagePullBackOff</code></td>
+<td>Image not imported into <span class="term" data-term="k3d" tabindex="0">k3d</span></td>
 <td>Re-run the <code>k3d image import</code> step</td>
 </tr>
 <tr>
-<td>Session stuck <code>provisioning</code>, gateway 503</td>
-<td>Pod not Ready yet</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> stuck <code>provisioning</code>, <span class="term" data-term="gateway" tabindex="0">gateway</span> 503</td>
+<td><span class="term" data-term="pod" tabindex="0">Pod</span> not Ready yet</td>
 <td>Check <code>kubectl -n ldndrc describe pod &lt;name&gt;</code> events</td>
 </tr>
 <tr>
 <td>Port-forward dead after rollout restart</td>
-<td>Forward was tied to old pod</td>
+<td>Forward was tied to old <span class="term" data-term="pod" tabindex="0">pod</span></td>
 <td>Re-run the port-forward commands</td>
 </tr>
 <tr>
@@ -147,8 +149,8 @@ curl -s -o /dev/null -w <span class="hljs-string">&quot;%{http_code}\n&quot;</sp
 <td><code>k3d cluster list</code>; recreate if missing</td>
 </tr>
 </tbody></table>
-<h2 id="8-teardown">8. Teardown</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">mise <span class="hljs-built_in">exec</span> k3d@latest -- k3d cluster delete ldndrc</code></pre></div><p>This removes the whole cluster (workloads, PVC data, secrets). Re-run from
-step 1 to start fresh. The JWT Secret is generated per deploy and never
+<h2 id="8-teardown">8. Teardown</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">mise <span class="hljs-built_in">exec</span> k3d@latest -- k3d cluster delete ldndrc</code></pre></div><p>This removes the whole cluster (workloads, <span class="term" data-term="pvc" tabindex="0">PVC</span> data, secrets). Re-run from
+step 1 to start fresh. The <span class="term" data-term="jwt" tabindex="0">JWT</span> Secret is generated per deploy and never
 committed — see <code>manifests/control-panel-secret.example.yaml</code> for its shape.</p>
 </div>
 </div>

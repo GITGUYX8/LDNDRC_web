@@ -6,6 +6,8 @@
 <title>Checkpoint 8 — Static Verification and Manifest Cross-Check — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-08-static-verification.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -45,14 +47,14 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-08-static-verification.md · 6.1 KB</div>
 <h1 class="page-title">Checkpoint 8 — Static Verification and Manifest Cross-Check</h1>
-<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>The gateway code was written but never compiled or tested here — the Go
-toolchain was missing and no cluster was connected. Before asking a real K3s
+<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>The <span class="term" data-term="gateway" tabindex="0">gateway</span> code was written but never compiled or tested here — the Go
+toolchain was missing and no cluster was connected. Before asking a real <span class="term" data-term="k3s" tabindex="0">K3s</span>
 cluster to run any of it, we needed proof that the code at least builds,
 passes its unit tests, and that the YAML manifests agree with each other.
 This checkpoint did all the verification possible without root privileges.</p>
 <p>Think of it as the safety inspection before the first test drive: engine
 starts, brakes work, and the road signs point at real destinations. The test
-drive itself still needs keys we do not have yet (root access for Docker/K3s).</p>
+drive itself still needs keys we do not have yet (root access for <span class="term" data-term="docker" tabindex="0">Docker</span>/<span class="term" data-term="k3s" tabindex="0">K3s</span>).</p>
 <h2 id="what-got-built">What got built</h2><table>
 <thead>
 <tr>
@@ -79,7 +81,7 @@ drive itself still needs keys we do not have yet (root access for Docker/K3s).</
 <tr>
 <td><code>control-panel/README.md</code></td>
 <td>The Corrected Map</td>
-<td>Build docs now show Docker and podman, list all four hostnames, and describe the real provisioning-to-ready flow.</td>
+<td>Build docs now show <span class="term" data-term="docker" tabindex="0">Docker</span> and podman, list all four hostnames, and describe the real provisioning-to-ready flow.</td>
 </tr>
 <tr>
 <td><code>local_dev_docs/checkpoint-08-*.md</code></td>
@@ -101,20 +103,20 @@ fails CI gates and hides real diffs inside cosmetic noise.</p>
 did not match <code>gofmt</code>. Whitespace-only fix, verified clean afterward with
 <code>gofmt -l</code> reporting nothing.</p>
 <h3 id="the-corrected-map-control-panel-readme-md">The Corrected Map — <code>control-panel/README.md</code></h3><p>Three small staleness fixes: the build section assumed podman (this machine
-has a Docker binary instead, so both are shown); the hostname list omitted
-<code>desktop.ros-platform.local</code>; and a paragraph still claimed sessions stay in
+has a <span class="term" data-term="docker" tabindex="0">Docker</span> binary instead, so both are shown); the hostname list omitted
+<code>desktop.ros-platform.local</code>; and a paragraph still claimed <span class="term" data-term="session" tabindex="0">sessions</span> stay in
 <code>provisioning</code> until a &quot;next chunk&quot; that already landed in checkpoint 7.</p>
 <h2 id="how-it-all-connects">How it all connects</h2><ol>
 <li>User-local Go toolchain installed via mise (no root required).</li>
 <li><code>gofmt -w</code> cleaned the two flagged files; <code>gofmt -l</code> confirms clean.</li>
 <li><code>go mod tidy</code> completed the dependency list.</li>
 <li><code>go vet ./...</code> passes with exit 0.</li>
-<li><code>go test ./...</code> passes: gateway, httpapi, and sessions packages all <code>ok</code>.</li>
+<li><code>go test ./...</code> passes: <span class="term" data-term="gateway" tabindex="0">gateway</span>, httpapi, and <span class="term" data-term="session" tabindex="0">sessions</span> packages all <code>ok</code>.</li>
 <li><code>go build ./...</code> passes with exit 0.</li>
 <li>Every manifest parses as YAML (11 files, 15 documents).</li>
-<li>Cross-references checked with a script: namespace, ServiceAccount,
-Role/Binding, Service selector, ingress backends, cookie domain, and
-session image all agree.</li>
+<li>Cross-references checked with a script: <span class="term" data-term="namespace" tabindex="0">namespace</span>, ServiceAccount,
+Role/Binding, <span class="term" data-term="service" tabindex="0">Service</span> selector, <span class="term" data-term="ingress" tabindex="0">ingress</span> backends, <span class="term" data-term="cookie" tabindex="0">cookie</span> domain, and
+<span class="term" data-term="session" tabindex="0">session</span> image all agree.</li>
 <li>Legacy <code>test-join.sh</code> passes 4/4 (run under <code>timeout 60</code>).</li>
 </ol>
 <h2 id="proof-it-works">Proof it works</h2><p>Actual observed results:</p>
@@ -127,19 +129,19 @@ packages (<code>cmd/server</code>, <code>auth</code>) reported as such.</li>
 <li>YAML parse of all 11 manifest files → 15 documents, all with expected
 kind/name pairs.</li>
 <li>Structural cross-check → ServiceAccount <code>ldndrc-control-panel</code> in
-namespace <code>ldndrc</code>; Service selector matches Deployment pod labels;
-all four ingress hosts route to Service <code>ldndrc-control-panel</code> port
-<code>http</code>; Deployment env carries <code>COOKIE_DOMAIN=.ros-platform.local</code>,
-<code>GATEWAY_HOST_SUFFIX=ros-platform.local</code>, session image
+<span class="term" data-term="namespace" tabindex="0">namespace</span> <code>ldndrc</code>; <span class="term" data-term="service" tabindex="0">Service</span> selector matches <span class="term" data-term="deployment" tabindex="0">Deployment</span> <span class="term" data-term="pod" tabindex="0">pod</span> labels;
+all four <span class="term" data-term="ingress" tabindex="0">ingress</span> <span class="term" data-term="host" tabindex="0">hosts</span> route to <span class="term" data-term="service" tabindex="0">Service</span> <code>ldndrc-control-panel</code> port
+<code>http</code>; <span class="term" data-term="deployment" tabindex="0">Deployment</span> env carries <code>COOKIE_DOMAIN=.ros-platform.local</code>,
+<code>GATEWAY_HOST_SUFFIX=ros-platform.local</code>, <span class="term" data-term="session" tabindex="0">session</span> image
 <code>ldndrc/ros2-gz:jazzy-harmonic-workspace</code>.</li>
 <li><code>timeout 60 bash test-join.sh</code> → 4 passed, 0 failed, exit 0.</li>
 <li><code>kubectl apply --dry-run=client</code> → <strong>not possible</strong>: kubectl v1.37.0 was
 installed user-local via mise, but even client-side dry-run attempts API
 discovery against <code>localhost:8080</code> and fails with no cluster.</li>
-<li>Image builds and live K3s rollout → <strong>blocked</strong>: Docker daemon socket is
+<li>Image builds and live <span class="term" data-term="k3s" tabindex="0">K3s</span> rollout → <strong>blocked</strong>: <span class="term" data-term="docker" tabindex="0">Docker</span> daemon socket is
 <code>root:docker</code>, user <code>hari</code> is not in the <code>docker</code> group, the daemon is
 <code>inactive</code>, and <code>sudo</code> needs a password, so no container build or
-k3d/K3s cluster could be started from here.</li>
+<span class="term" data-term="k3d" tabindex="0">k3d</span>/<span class="term" data-term="k3s" tabindex="0">K3s</span> cluster could be started from here.</li>
 </ul>
 <h2 id="the-one-liner-version">The one-liner version</h2><table>
 <thead>
@@ -166,21 +168,21 @@ k3d/K3s cluster could be started from here.</li>
 </tr>
 <tr>
 <td>Live cluster</td>
-<td>Still blocked on root privileges for Docker/K3s.</td>
+<td>Still blocked on root privileges for <span class="term" data-term="docker" tabindex="0">Docker</span>/<span class="term" data-term="k3s" tabindex="0">K3s</span>.</td>
 </tr>
 </tbody></table>
 <h2 id="what-s-next">What&#39;s next</h2><ul>
 <li><input disabled="" type="checkbox"> Privileged step (needs your action): add <code>hari</code> to the <code>docker</code> group
-or start the Docker daemon, then build <code>ldndrc/control-panel:dev</code>.</li>
-<li><input disabled="" type="checkbox"> Privileged step: bring up K3s (or k3d) on this machine and export a
-kubeconfig this user can read.</li>
-<li><input disabled="" type="checkbox"> Apply the deployment bundle: RBAC → Secret → Deployment → Service →
-Ingress, then <code>rollout status</code> and <code>/healthz</code> via port-forward.</li>
+or start the <span class="term" data-term="docker" tabindex="0">Docker</span> daemon, then build <code>ldndrc/control-panel:dev</code>.</li>
+<li><input disabled="" type="checkbox"> Privileged step: bring up <span class="term" data-term="k3s" tabindex="0">K3s</span> (or <span class="term" data-term="k3d" tabindex="0">k3d</span>) on this machine and export a
+<span class="term" data-term="kubeconfig" tabindex="0">kubeconfig</span> this user can read.</li>
+<li><input disabled="" type="checkbox"> Apply the <span class="term" data-term="deployment" tabindex="0">deployment</span> bundle: <span class="term" data-term="rbac" tabindex="0">RBAC</span> → Secret → <span class="term" data-term="deployment" tabindex="0">Deployment</span> → <span class="term" data-term="service" tabindex="0">Service</span> →
+<span class="term" data-term="ingress" tabindex="0">Ingress</span>, then <code>rollout status</code> and <code>/healthz</code> via port-forward.</li>
 <li><input disabled="" type="checkbox"> Configure hostname resolution for the four <code>.ros-platform.local</code> names
-(hosts file, dnsmasq, or <code>sslip.io</code>).</li>
-<li><input disabled="" type="checkbox"> Run the two-user gateway test: separate Deployment/Service/PVC per
-session, both reach <code>ready</code>, cross-user access blocked, stopped
-session returns <code>503</code>.</li>
+(<span class="term" data-term="host" tabindex="0">hosts</span> file, dnsmasq, or <code>sslip.io</code>).</li>
+<li><input disabled="" type="checkbox"> Run the two-user <span class="term" data-term="gateway" tabindex="0">gateway</span> test: separate <span class="term" data-term="deployment" tabindex="0">Deployment</span>/<span class="term" data-term="service" tabindex="0">Service</span>/<span class="term" data-term="pvc" tabindex="0">PVC</span> per
+<span class="term" data-term="session" tabindex="0">session</span>, both reach <code>ready</code>, cross-user access blocked, stopped
+<span class="term" data-term="session" tabindex="0">session</span> returns <code>503</code>.</li>
 <li><input disabled="" type="checkbox"> After green verification, remove the legacy <code>ros2-ingress.yaml</code> path
 routes and write the live-cluster results into checkpoint 9.</li>
 </ul>

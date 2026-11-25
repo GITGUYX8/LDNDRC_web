@@ -6,6 +6,8 @@
 <title>The streamed desktop — LDNDRC</title>
 <meta name="description" content="WebRTC Linux desktop for GUI tools that will never work in a browser pane.">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -50,15 +52,15 @@
     </div>
     <h1 class="page-title">The streamed desktop</h1>
     <p style="color:var(--text-soft);font-size:1.05rem;line-height:1.55;margin:0 0 18px">WebRTC Linux desktop for GUI tools that will never work in a browser pane.</p>
-    <div class="prose"><p>Selkies streams a real Linux desktop to the browser over WebRTC. It exists because some tools will never work in a browser pane: RViz, rqt, Gazebo&#39;s GUI, anything that needs a window manager and a GPU-accelerated surface.</p>
-<p>It runs on port <code>8080</code> inside the session pod and is reachable at <code>desktop.ros-platform.local</code>.</p>
+    <div class="prose"><p>Selkies streams a real Linux desktop to the browser over WebRTC. It exists because some tools will never work in a browser pane: RViz, rqt, <span class="term" data-term="gazebo" tabindex="0">Gazebo</span>&#39;s GUI, anything that needs a window manager and a GPU-accelerated surface.</p>
+<p>It runs on port <code>8080</code> inside the <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span> and is reachable at <code>desktop.ros-platform.local</code>.</p>
 <h2 id="when-to-use-it">When to use it</h2><ul>
 <li>Visualising TF trees in RViz.</li>
 <li>Running <code>rqt</code> plugins.</li>
-<li>Debugging a Gazebo world that will not stream through the browser viewer.</li>
+<li>Debugging a <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> world that will not stream through the browser viewer.</li>
 <li>Anything that needs a second window.</li>
 </ul>
-<h2 id="the-2-0-0-migration">The 2.0.0 migration</h2><p>Selkies 2.0.0 changed its signalling and container layout. The migration checkpoint verified the desktop returns <code>200</code> through the gateway and that input works end to end. It is the reason the workspace image pins a specific Selkies version rather than tracking latest.</p>
+<h2 id="the-2-0-0-migration">The 2.0.0 migration</h2><p>Selkies 2.0.0 changed its signalling and container layout. The migration checkpoint verified the desktop returns <code>200</code> through the <span class="term" data-term="gateway" tabindex="0">gateway</span> and that input works end to end. It is the reason the <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> pins a specific Selkies version rather than tracking latest.</p>
 <h2 id="the-cost">The cost</h2><p>WebRTC is bandwidth-hungry and latency-sensitive. On a congested workshop Wi-Fi, the editor stays usable while the desktop degrades. That is why it is an escape hatch, not the default tool — see <a href="uiux-principles.html" class="topic-link">Focus over window management</a>.</p>
 <h2 id="check-it-yourself">Check it yourself</h2><div class="code term" data-lang="bash"><span class="lang-tag">bash</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-bash">curl -s -o /dev/null -w <span class="hljs-string">&#x27;%{http_code}\n&#x27;</span> \
   -H <span class="hljs-string">&#x27;Host: desktop.ros-platform.local&#x27;</span> -H <span class="hljs-string">&quot;Cookie: <span class="hljs-variable">$COOKIE</span>&quot;</span> \

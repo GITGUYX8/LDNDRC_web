@@ -6,6 +6,8 @@
 <title>Checkpoint 11 — GPU Requests Become Optional — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-11-gpu-optional.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -45,10 +47,10 @@
   <a class="back" href="../index.html#/">← back to the map</a>
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-11-gpu-optional.md · 3.8 KB</div>
 <h1 class="page-title">Checkpoint 11 — GPU Requests Become Optional</h1>
-<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>Bob&#39;s session pod sat in Pending with <code>Insufficient nvidia.com/gpu</code> because
-every session demanded one GPU time-slice, and the k3d demo node has no GPU.
-On real Host laptops that demand is correct; on a CPU-only demo cluster it
-made every session unschedulable. This checkpoint made the GPU request
+<div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>Bob&#39;s <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pod" tabindex="0">pod</span> sat in Pending with <code>Insufficient nvidia.com/gpu</code> because
+every <span class="term" data-term="session" tabindex="0">session</span> demanded one GPU time-slice, and the <span class="term" data-term="k3d" tabindex="0">k3d</span> demo <span class="term" data-term="node" tabindex="0">node</span> has no GPU.
+On real <span class="term" data-term="host" tabindex="0">Host</span> laptops that demand is correct; on a CPU-only demo cluster it
+made every <span class="term" data-term="session" tabindex="0">session</span> unschedulable. This checkpoint made the GPU request
 conditional: present by default, omitted when <code>SESSION_GPU_LIMIT=0</code>.</p>
 <p>Think of it as a venue with and without a stage lift — the show can go on in
 a smaller room, it just skips the lift act.</p>
@@ -73,7 +75,7 @@ a smaller room, it just skips the lift act.</p>
 <tr>
 <td><code>manifests/control-panel-deployment.yaml</code></td>
 <td>The Demo Setting</td>
-<td>Sets <code>SESSION_GPU_LIMIT: &quot;0&quot;</code> with a comment marking production Hosts as <code>&quot;1&quot;</code>.</td>
+<td>Sets <code>SESSION_GPU_LIMIT: &quot;0&quot;</code> with a comment marking production <span class="term" data-term="host" tabindex="0">Hosts</span> as <code>&quot;1&quot;</code>.</td>
 </tr>
 <tr>
 <td><code>local_dev_docs/checkpoint-11-*.md</code></td>
@@ -83,7 +85,7 @@ a smaller room, it just skips the lift act.</p>
 </tbody></table>
 <h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-flexible-rider-kubernetes-go">The Flexible Rider — <code>kubernetes.go</code></h3><p>The resource maps are built with CPU and memory first; the GPU key is added
 to both only when <code>p.gpuLimit</code> is non-empty and not <code>&quot;0&quot;</code>. The constructor
-default stays <code>&quot;1&quot;</code>, so any deployment that does not set the variable keeps
+default stays <code>&quot;1&quot;</code>, so any <span class="term" data-term="deployment" tabindex="0">deployment</span> that does not set the variable keeps
 the old behavior exactly. This mirrors the reference project&#39;s
 <code>SESSION_GPU_LIMIT</code> rule.</p>
 <h3 id="the-two-room-exam-kubernetes-test-go">The Two-Room Exam — <code>kubernetes_test.go</code></h3><p>The existing test now also checks GPU limits at <code>&quot;1&quot;</code>. A new test provisions
@@ -92,13 +94,13 @@ either map while CPU and memory remain.</p>
 <h3 id="the-demo-setting-deployment-manifest">The Demo Setting — deployment manifest</h3><p>One env value flipped to <code>&quot;0&quot;</code>, documented inline. Reverting is one line.</p>
 <h2 id="how-it-all-connects">How it all connects</h2><ol>
 <li>Control-panel image rebuilt, imported, rolled out on the live cluster.</li>
-<li>Bob&#39;s pre-change session (GPU request baked in) deleted; fresh session
+<li>Bob&#39;s pre-change <span class="term" data-term="session" tabindex="0">session</span> (GPU request baked in) deleted; fresh <span class="term" data-term="session" tabindex="0">session</span>
 created through the live API.</li>
-<li>Scheduler places the pod (nodeSelector already satisfied by the Host
-label); local-path binds the 5Gi PVC.</li>
-<li>Kubelet attempts the workspace image pull → <code>ImagePullBackOff</code>, the
+<li>Scheduler places the <span class="term" data-term="pod" tabindex="0">pod</span> (nodeSelector already satisfied by the <span class="term" data-term="host" tabindex="0">Host</span>
+label); local-path binds the 5Gi <span class="term" data-term="pvc" tabindex="0">PVC</span>.</li>
+<li><span class="term" data-term="kubelet" tabindex="0">Kubelet</span> attempts the <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> pull → <code>ImagePullBackOff</code>, the
 honest next blocker (image doesn&#39;t exist yet).</li>
-<li>Session stays <code>provisioning</code>; gateway keeps returning 503 — correctly
+<li><span class="term" data-term="session" tabindex="0">Session</span> stays <code>provisioning</code>; <span class="term" data-term="gateway" tabindex="0">gateway</span> keeps returning 503 — correctly
 refusing traffic to a workspace that isn&#39;t ready.</li>
 </ol>
 <h2 id="proof-it-works">Proof it works</h2><p>Observed:</p>
@@ -107,11 +109,11 @@ refusing traffic to a workspace that isn&#39;t ready.</li>
 the new <code>TestKubernetesProvisionerOmitsGPUWhenLimitIsZero</code> (verified with
 <code>-run GPU -v</code>: PASS).</li>
 <li><code>go build ./...</code> exit 0.</li>
-<li>Live Deployment JSON: <code>requests</code>/<code>limits</code> contain only CPU and memory —
+<li>Live <span class="term" data-term="deployment" tabindex="0">Deployment</span> JSON: <code>requests</code>/<code>limits</code> contain only CPU and memory —
 no <code>nvidia.com/gpu</code> key.</li>
-<li>Live pod moved Pending → <code>ImagePullBackOff</code>; PVC <code>Bound</code> 5Gi via
-local-path; gateway editor host with valid cookie → 503.</li>
-<li>Stale pre-change session resources (Deployment/Service/PVC) removed via
+<li>Live <span class="term" data-term="pod" tabindex="0">pod</span> moved Pending → <code>ImagePullBackOff</code>; <span class="term" data-term="pvc" tabindex="0">PVC</span> <code>Bound</code> 5Gi via
+local-path; <span class="term" data-term="gateway" tabindex="0">gateway</span> editor <span class="term" data-term="host" tabindex="0">host</span> with valid <span class="term" data-term="cookie" tabindex="0">cookie</span> → 503.</li>
+<li>Stale pre-change <span class="term" data-term="session" tabindex="0">session</span> resources (<span class="term" data-term="deployment" tabindex="0">Deployment</span>/<span class="term" data-term="service" tabindex="0">Service</span>/<span class="term" data-term="pvc" tabindex="0">PVC</span>) removed via
 kubectl since the restarted control panel&#39;s in-memory store no longer
 knew them — a known limitation, persistence is future work.</li>
 <li><code>git diff --check</code> clean.</li>
@@ -132,16 +134,16 @@ knew them — a known limitation, persistence is future work.</li>
 <td>Proves both rooms: GPU on at <code>&quot;1&quot;</code>, GPU gone at <code>&quot;0&quot;</code>.</td>
 </tr>
 <tr>
-<td>Deployment manifest</td>
+<td><span class="term" data-term="deployment" tabindex="0">Deployment</span> manifest</td>
 <td>Demo cluster opts out of GPUs with one documented line.</td>
 </tr>
 </tbody></table>
 <h2 id="what-s-next">What&#39;s next</h2><ul>
-<li><input disabled="" type="checkbox"> Option 2 follow-up: tiny stand-in workspace image so a session reaches
-<code>Running</code>/<code>ready</code> for full gateway 200-path verification.</li>
-<li><input disabled="" type="checkbox"> Or the real thing: build the Jazzy/Harmonic workspace image on GPU
+<li><input disabled="" type="checkbox"> Option 2 follow-up: tiny stand-in <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> so a <span class="term" data-term="session" tabindex="0">session</span> reaches
+<code>Running</code>/<code>ready</code> for full <span class="term" data-term="gateway" tabindex="0">gateway</span> 200-path verification.</li>
+<li><input disabled="" type="checkbox"> Or the real thing: build the Jazzy/Harmonic <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> on GPU
 hardware.</li>
-<li><input disabled="" type="checkbox"> Session store persistence so restarts don&#39;t orphan K3s resources.</li>
+<li><input disabled="" type="checkbox"> <span class="term" data-term="session" tabindex="0">Session</span> store persistence so restarts don&#39;t orphan <span class="term" data-term="k3s" tabindex="0">K3s</span> resources.</li>
 <li><input disabled="" type="checkbox"> Commit this checkpoint&#39;s three code files when ready.</li>
 </ul>
 </div>

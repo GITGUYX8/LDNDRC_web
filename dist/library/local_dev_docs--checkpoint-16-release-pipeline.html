@@ -6,6 +6,8 @@
 <title>Checkpoint 16 — The Vending Machine (Release Pipeline) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-16-release-pipeline.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -92,10 +94,10 @@ That bug was caught by our own verification, not by a user.</p>
 <li><strong>First push bounced</strong> — GitHub refused the workflow file because our login
 token lacked the <code>workflow</code> permission. Fixed with <code>gh auth refresh</code>,
 retried, went through.</li>
-<li><strong>All 5 builds green + release published</strong> in about 2 minutes (the Node.js
+<li><strong>All 5 builds green + release published</strong> in about 2 minutes (the <span class="term" data-term="node" tabindex="0">Node</span>.js
 warnings in the log are harmless noise from GitHub&#39;s side).</li>
-<li><strong>Fresh download, seal check OK</strong>, and the release binary printed the Host
-verdict under test overrides — plus the predicted Guest verdict on this
+<li><strong>Fresh download, seal check OK</strong>, and the release binary printed the <span class="term" data-term="host" tabindex="0">Host</span>
+verdict under test overrides — plus the predicted <span class="term" data-term="guest" tabindex="0">Guest</span> verdict on this
 laptop&#39;s real hardware (15 GB under the 16 GB bar), exit 0.</li>
 <li><strong>Second-laptop handoff ready</strong>: four copy-paste lines, checksums included.</li>
 </ul>
@@ -118,7 +120,7 @@ laptop&#39;s real hardware (15 GB under the 16 GB bar), exit 0.</li>
 <h2 id="what-s-next">What&#39;s next</h2><ul>
 <li><input disabled="" type="checkbox"> Push the local docs commit (<code>db8885c</code>) — no permission issues expected.</li>
 <li><input disabled="" type="checkbox"> Run the second-laptop acceptance: download, <code>--plain</code>, TUI matrix.</li>
-<li><input disabled="" type="checkbox"> P2 mDNS advertisement so <code>MASTER_IP</code> typing goes away.</li>
+<li><input disabled="" type="checkbox"> P2 <span class="term" data-term="mdns" tabindex="0">mDNS</span> advertisement so <code>MASTER_IP</code> typing goes away.</li>
 <li><input disabled="" type="checkbox"> Wire the TUI Join screen to the engine step runner.</li>
 </ul>
 </div>

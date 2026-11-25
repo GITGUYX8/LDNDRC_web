@@ -6,6 +6,8 @@
 <title>Checkpoint 7 — The Cookie-Powered Workspace Gateway — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-07-cookie-gateway-routing.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -47,11 +49,11 @@
 <h1 class="page-title">Checkpoint 7 — The Cookie-Powered Workspace Gateway</h1>
 <div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>The reference project showed us the clean way to connect browser tools to a
 student&#39;s private workspace: give each tool its own hostname, then let one
-gateway decide where the traffic belongs. This avoids asking browser iframes to
-carry custom authorization headers and avoids awkward WebSocket path rewriting.</p>
-<p>This checkpoint added that browser-facing gateway behavior to the Go control
-panel. A logged-in user&#39;s cookie now identifies the user, and the gateway can
-resolve that user&#39;s ready session to its private Kubernetes Service.</p>
+<span class="term" data-term="gateway" tabindex="0">gateway</span> decide where the traffic belongs. This avoids asking browser iframes to
+carry custom authorization headers and avoids awkward <span class="term" data-term="websocket" tabindex="0">WebSocket</span> path rewriting.</p>
+<p>This checkpoint added that browser-facing <span class="term" data-term="gateway" tabindex="0">gateway</span> behavior to the Go control
+panel. A logged-in user&#39;s <span class="term" data-term="cookie" tabindex="0">cookie</span> now identifies the user, and the <span class="term" data-term="gateway" tabindex="0">gateway</span> can
+resolve that user&#39;s ready <span class="term" data-term="session" tabindex="0">session</span> to its private <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> <span class="term" data-term="service" tabindex="0">Service</span>.</p>
 <h2 id="what-got-built">What got built</h2><table>
 <thead>
 <tr>
@@ -63,47 +65,47 @@ resolve that user&#39;s ready session to its private Kubernetes Service.</p>
 <tbody><tr>
 <td><code>control-panel/internal/auth/auth.go</code></td>
 <td>The Browser Pass</td>
-<td>Creates, clears, and verifies the HttpOnly session cookie.</td>
+<td>Creates, clears, and verifies the HttpOnly <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="cookie" tabindex="0">cookie</span>.</td>
 </tr>
 <tr>
 <td><code>control-panel/internal/gateway/session_gateway.go</code></td>
 <td>The Traffic Director</td>
-<td>Routes editor, desktop, and Gazebo hostnames to the user&#39;s session Service.</td>
+<td>Routes editor, desktop, and <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> hostnames to the user&#39;s <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="service" tabindex="0">Service</span>.</td>
 </tr>
 <tr>
 <td><code>control-panel/internal/gateway/session_gateway_test.go</code></td>
-<td>The Gateway Exam</td>
+<td>The <span class="term" data-term="gateway" tabindex="0">Gateway</span> Exam</td>
 <td>Checks that unauthenticated and unready workspace requests are rejected.</td>
 </tr>
 <tr>
 <td><code>control-panel/internal/sessions/store.go</code></td>
 <td>The Readiness Clerk</td>
-<td>Checks Kubernetes-backed readiness before allowing a workspace to receive traffic.</td>
+<td>Checks <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span>-backed readiness before allowing a workspace to receive traffic.</td>
 </tr>
 <tr>
 <td><code>control-panel/internal/sessions/kubernetes.go</code></td>
 <td>The Status Window</td>
-<td>Reads Deployment availability from K3s.</td>
+<td>Reads <span class="term" data-term="deployment" tabindex="0">Deployment</span> availability from <span class="term" data-term="k3s" tabindex="0">K3s</span>.</td>
 </tr>
 <tr>
 <td><code>control-panel/internal/httpapi/router.go</code></td>
 <td>The Login Desk</td>
-<td>Sets the browser cookie when login succeeds.</td>
+<td>Sets the browser <span class="term" data-term="cookie" tabindex="0">cookie</span> when login succeeds.</td>
 </tr>
 <tr>
 <td><code>control-panel/cmd/server/main.go</code></td>
 <td>The Wiring Board</td>
-<td>Places the gateway in front of the control-panel API.</td>
+<td>Places the <span class="term" data-term="gateway" tabindex="0">gateway</span> in front of the control-panel API.</td>
 </tr>
 <tr>
 <td><code>manifests/control-panel-ingress.yaml</code></td>
 <td>The New Front Door</td>
-<td>Sends control, editor, desktop, and Gazebo hostnames to the control panel.</td>
+<td>Sends control, editor, desktop, and <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> hostnames to the control panel.</td>
 </tr>
 <tr>
 <td><code>manifests/control-panel-deployment.yaml</code></td>
-<td>The Shared Cookie Rule</td>
-<td>Configures the cookie domain for all tool subdomains.</td>
+<td>The Shared <span class="term" data-term="cookie" tabindex="0">Cookie</span> Rule</td>
+<td>Configures the <span class="term" data-term="cookie" tabindex="0">cookie</span> domain for all tool subdomains.</td>
 </tr>
 <tr>
 <td><code>control-panel/README.md</code></td>
@@ -112,65 +114,65 @@ resolve that user&#39;s ready session to its private Kubernetes Service.</p>
 </tr>
 </tbody></table>
 <h2 id="how-each-piece-works">How each piece works</h2><h3 id="the-browser-pass-control-panel-internal-auth-auth-go">The Browser Pass — <code>control-panel/internal/auth/auth.go</code></h3><p>Think of this as a wristband that the browser receives after login. It stores
-the signed JWT in an HttpOnly cookie, so browser tools can send it automatically
+the signed <span class="term" data-term="jwt" tabindex="0">JWT</span> in an HttpOnly <span class="term" data-term="cookie" tabindex="0">cookie</span>, so browser tools can send it automatically
 without JavaScript reading the token.</p>
-<p>The cookie uses the root path, SameSite Lax, a configurable Secure flag, and an
-optional domain. The deployment sets the domain to <code>.ros-platform.local</code>, which
+<p>The <span class="term" data-term="cookie" tabindex="0">cookie</span> uses the root path, SameSite Lax, a configurable Secure flag, and an
+optional domain. The <span class="term" data-term="deployment" tabindex="0">deployment</span> sets the domain to <code>.ros-platform.local</code>, which
 lets one login work on <code>control</code>, <code>editor</code>, <code>desktop</code>, and <code>gazebo</code> subdomains.</p>
 <h3 id="the-traffic-director-control-panel-internal-gateway-session-gateway-go">The Traffic Director — <code>control-panel/internal/gateway/session_gateway.go</code></h3><p>This is the receptionist who reads the wristband and sends each visitor to the
 right room. It recognizes <code>editor</code>, <code>desktop</code>, and <code>gazebo</code> hostnames, checks the
-cookie, finds the authenticated user&#39;s current session, and chooses the correct
-port on that session&#39;s Kubernetes Service.</p>
-<p>It uses Go&#39;s reverse proxy, which handles ordinary HTTP and WebSocket upgrades.
+<span class="term" data-term="cookie" tabindex="0">cookie</span>, finds the authenticated user&#39;s current <span class="term" data-term="session" tabindex="0">session</span>, and chooses the correct
+port on that <span class="term" data-term="session" tabindex="0">session</span>&#39;s <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> <span class="term" data-term="service" tabindex="0">Service</span>.</p>
+<p>It uses Go&#39;s reverse proxy, which handles ordinary HTTP and <span class="term" data-term="websocket" tabindex="0">WebSocket</span> upgrades.
 No user-provided upstream URL is accepted, so a browser cannot redirect the
-gateway to an arbitrary machine.</p>
-<h3 id="the-gateway-exam-session-gateway-test-go">The Gateway Exam — <code>session_gateway_test.go</code></h3><p>The test sends a request to the editor hostname without a cookie and expects
-<code>401 Unauthorized</code>. It then gives the request a valid cookie but a session that
+<span class="term" data-term="gateway" tabindex="0">gateway</span> to an arbitrary machine.</p>
+<h3 id="the-gateway-exam-session-gateway-test-go">The Gateway Exam — <code>session_gateway_test.go</code></h3><p>The test sends a request to the editor hostname without a <span class="term" data-term="cookie" tabindex="0">cookie</span> and expects
+<code>401 Unauthorized</code>. It then gives the request a valid <span class="term" data-term="cookie" tabindex="0">cookie</span> but a <span class="term" data-term="session" tabindex="0">session</span> that
 is still starting, and expects <code>503 Service Unavailable</code> instead of allowing
 traffic to a workspace that is not ready.</p>
-<h3 id="the-readiness-clerk-internal-sessions-store-go">The Readiness Clerk — <code>internal/sessions/store.go</code></h3><p>This clerk does not trust a session label alone. When a Kubernetes provisioner
-is available and a session is still provisioning, it asks the provisioner
-whether the Deployment has an available replica before the gateway accepts it.</p>
-<h3 id="the-status-window-internal-sessions-kubernetes-go">The Status Window — <code>internal/sessions/kubernetes.go</code></h3><p>This is the small window into K3s. It reads the session Deployment&#39;s
+<h3 id="the-readiness-clerk-internal-sessions-store-go">The Readiness Clerk — <code>internal/sessions/store.go</code></h3><p>This clerk does not trust a <span class="term" data-term="session" tabindex="0">session</span> label alone. When a <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> provisioner
+is available and a <span class="term" data-term="session" tabindex="0">session</span> is still provisioning, it asks the provisioner
+whether the <span class="term" data-term="deployment" tabindex="0">Deployment</span> has an available replica before the <span class="term" data-term="gateway" tabindex="0">gateway</span> accepts it.</p>
+<h3 id="the-status-window-internal-sessions-kubernetes-go">The Status Window — <code>internal/sessions/kubernetes.go</code></h3><p>This is the small window into <span class="term" data-term="k3s" tabindex="0">K3s</span>. It reads the <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="deployment" tabindex="0">Deployment</span>&#39;s
 <code>availableReplicas</code> value and reports ready only when at least one workspace
-replica is available. A missing Deployment is treated as not ready, while real
-Kubernetes errors are reported back to the caller.</p>
-<h3 id="the-login-desk-internal-httpapi-router-go">The Login Desk — <code>internal/httpapi/router.go</code></h3><p>After the existing login validation and JWT signing succeed, the API now also
-sets the browser session cookie. The JSON token response remains available for
-API clients, while browsers can use the cookie naturally with iframes and
-WebSockets.</p>
-<h3 id="the-wiring-board-control-panel-cmd-server-main-go">The Wiring Board — <code>control-panel/cmd/server/main.go</code></h3><p>The gateway now sits in front of the regular API handler. Tool subdomains are
-handled by the gateway; other requests continue to the control-panel routes.
-This keeps health checks and session APIs available while adding the new browser
+replica is available. A missing <span class="term" data-term="deployment" tabindex="0">Deployment</span> is treated as not ready, while real
+<span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> errors are reported back to the caller.</p>
+<h3 id="the-login-desk-internal-httpapi-router-go">The Login Desk — <code>internal/httpapi/router.go</code></h3><p>After the existing login validation and <span class="term" data-term="jwt" tabindex="0">JWT</span> signing succeed, the API now also
+sets the browser <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="cookie" tabindex="0">cookie</span>. The JSON token response remains available for
+API clients, while browsers can use the <span class="term" data-term="cookie" tabindex="0">cookie</span> naturally with iframes and
+<span class="term" data-term="websocket" tabindex="0">WebSockets</span>.</p>
+<h3 id="the-wiring-board-control-panel-cmd-server-main-go">The Wiring Board — <code>control-panel/cmd/server/main.go</code></h3><p>The <span class="term" data-term="gateway" tabindex="0">gateway</span> now sits in front of the regular API handler. Tool subdomains are
+handled by the <span class="term" data-term="gateway" tabindex="0">gateway</span>; other requests continue to the control-panel routes.
+This keeps health checks and <span class="term" data-term="session" tabindex="0">session</span> APIs available while adding the new browser
 traffic path.</p>
-<h3 id="the-new-front-door-manifests-control-panel-ingress-yaml">The New Front Door — <code>manifests/control-panel-ingress.yaml</code></h3><p>This Ingress is the K3s/Traefik signpost. It sends four hostnames to the
-control-panel Service:</p>
+<h3 id="the-new-front-door-manifests-control-panel-ingress-yaml">The New Front Door — <code>manifests/control-panel-ingress.yaml</code></h3><p>This <span class="term" data-term="ingress" tabindex="0">Ingress</span> is the <span class="term" data-term="k3s" tabindex="0">K3s</span>/<span class="term" data-term="traefik" tabindex="0">Traefik</span> signpost. It sends four hostnames to the
+control-panel <span class="term" data-term="service" tabindex="0">Service</span>:</p>
 <div class="code term" data-lang="text"><span class="lang-tag">text</span><button class="copy" data-copy aria-label="Copy code"><svg aria-hidden="true"><use href="#i-copy"/></svg></button><pre><code class="hljs language-text">control.ros-platform.local
 editor.ros-platform.local
 desktop.ros-platform.local
-gazebo.ros-platform.local</code></pre></div><p>The old path-based ingress remains untouched for rollback during migration. It
-should be removed only after the new host routes work on a real cluster.</p>
-<h3 id="the-shared-cookie-rule-control-panel-deployment-yaml">The Shared Cookie Rule — <code>control-panel-deployment.yaml</code></h3><p>The deployment now supplies <code>COOKIE_DOMAIN=.ros-platform.local</code> and the matching
-gateway suffix. Without this setting, a cookie issued on the control hostname
+gazebo.ros-platform.local</code></pre></div><p>The old path-based <span class="term" data-term="ingress" tabindex="0">ingress</span> remains untouched for rollback during migration. It
+should be removed only after the new <span class="term" data-term="host" tabindex="0">host</span> routes work on a real cluster.</p>
+<h3 id="the-shared-cookie-rule-control-panel-deployment-yaml">The Shared Cookie Rule — <code>control-panel-deployment.yaml</code></h3><p>The <span class="term" data-term="deployment" tabindex="0">deployment</span> now supplies <code>COOKIE_DOMAIN=.ros-platform.local</code> and the matching
+<span class="term" data-term="gateway" tabindex="0">gateway</span> suffix. Without this setting, a <span class="term" data-term="cookie" tabindex="0">cookie</span> issued on the control hostname
 would stay there and never reach the tool subdomains.</p>
 <h2 id="how-it-all-connects">How it all connects</h2><ol>
 <li>The browser logs in through the control hostname.</li>
-<li>The control panel signs a JWT and sets an HttpOnly cookie.</li>
-<li>The browser opens the editor, desktop, or Gazebo hostname.</li>
-<li>The gateway reads the cookie and identifies the user.</li>
-<li>The session store finds that user&#39;s current ready session.</li>
-<li>The gateway sends traffic to the matching port on that session&#39;s private
-Kubernetes Service.</li>
-<li>HTTP requests and WebSocket connections stay tied to the same workspace.</li>
+<li>The control panel signs a <span class="term" data-term="jwt" tabindex="0">JWT</span> and sets an HttpOnly <span class="term" data-term="cookie" tabindex="0">cookie</span>.</li>
+<li>The browser opens the editor, desktop, or <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> hostname.</li>
+<li>The <span class="term" data-term="gateway" tabindex="0">gateway</span> reads the <span class="term" data-term="cookie" tabindex="0">cookie</span> and identifies the user.</li>
+<li>The <span class="term" data-term="session" tabindex="0">session</span> store finds that user&#39;s current ready <span class="term" data-term="session" tabindex="0">session</span>.</li>
+<li>The <span class="term" data-term="gateway" tabindex="0">gateway</span> sends traffic to the matching port on that <span class="term" data-term="session" tabindex="0">session</span>&#39;s private
+<span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span> <span class="term" data-term="service" tabindex="0">Service</span>.</li>
+<li>HTTP requests and <span class="term" data-term="websocket" tabindex="0">WebSocket</span> connections stay tied to the same workspace.</li>
 </ol>
 <h2 id="proof-it-works">Proof it works</h2><ul>
 <li>All new and modified YAML manifests passed Ruby YAML parsing.</li>
 <li><code>git diff --check</code> passed.</li>
-<li>The gateway tests were added for missing authentication and unready sessions.</li>
-<li>The existing hardware test was attempted but hung in its simulated Host path
+<li>The <span class="term" data-term="gateway" tabindex="0">gateway</span> tests were added for missing authentication and unready <span class="term" data-term="session" tabindex="0">sessions</span>.</li>
+<li>The existing hardware test was attempted but hung in its simulated <span class="term" data-term="host" tabindex="0">Host</span> path
 because the legacy shell script&#39;s curl command has no timeout.</li>
 <li>Go tests and formatting were not run because <code>go</code> and <code>gofmt</code> are unavailable.</li>
-<li>Docker and live K3s verification were not run because Docker daemon access was
+<li><span class="term" data-term="docker" tabindex="0">Docker</span> and live <span class="term" data-term="k3s" tabindex="0">K3s</span> verification were not run because <span class="term" data-term="docker" tabindex="0">Docker</span> daemon access was
 denied and <code>kubectl</code> is unavailable.</li>
 </ul>
 <h2 id="the-one-liner-version">The one-liner version</h2><table>
@@ -182,7 +184,7 @@ denied and <code>kubectl</code> is unavailable.</li>
 </thead>
 <tbody><tr>
 <td><code>auth.go</code></td>
-<td>Gives browsers a secure session wristband they can send automatically.</td>
+<td>Gives browsers a secure <span class="term" data-term="session" tabindex="0">session</span> wristband they can send automatically.</td>
 </tr>
 <tr>
 <td><code>session_gateway.go</code></td>
@@ -190,7 +192,7 @@ denied and <code>kubectl</code> is unavailable.</li>
 </tr>
 <tr>
 <td><code>kubernetes.go</code></td>
-<td>Checks K3s before declaring a workspace ready.</td>
+<td>Checks <span class="term" data-term="k3s" tabindex="0">K3s</span> before declaring a workspace ready.</td>
 </tr>
 <tr>
 <td><code>control-panel-ingress.yaml</code></td>
@@ -198,17 +200,17 @@ denied and <code>kubectl</code> is unavailable.</li>
 </tr>
 <tr>
 <td><code>main.go</code></td>
-<td>Places the gateway in front of the API.</td>
+<td>Places the <span class="term" data-term="gateway" tabindex="0">gateway</span> in front of the API.</td>
 </tr>
 </tbody></table>
 <h2 id="what-s-next">What&#39;s next</h2><ul>
 <li><input disabled="" type="checkbox"> Install Go and run <code>gofmt</code>, <code>go mod tidy</code>, <code>go test ./...</code>, and <code>go build</code>.</li>
-<li><input disabled="" type="checkbox"> Install kubectl or connect to the K3s host and apply the deployment bundle.</li>
+<li><input disabled="" type="checkbox"> Install kubectl or connect to the <span class="term" data-term="k3s" tabindex="0">K3s</span> <span class="term" data-term="host" tabindex="0">host</span> and apply the <span class="term" data-term="deployment" tabindex="0">deployment</span> bundle.</li>
 <li><input disabled="" type="checkbox"> Configure wildcard DNS or <code>sslip.io</code> names for the four hostnames.</li>
-<li><input disabled="" type="checkbox"> Build and import the control-panel and workspace images into K3s.</li>
-<li><input disabled="" type="checkbox"> Verify HTTP and WebSocket routing with two separate user sessions.</li>
-<li><input disabled="" type="checkbox"> Remove the old shared path-based ingress after successful verification.</li>
-<li><input disabled="" type="checkbox"> Add CSRF protection to state-changing browser API requests, matching the
+<li><input disabled="" type="checkbox"> Build and import the control-panel and <span class="term" data-term="workspace-image" tabindex="0">workspace images</span> into <span class="term" data-term="k3s" tabindex="0">K3s</span>.</li>
+<li><input disabled="" type="checkbox"> Verify HTTP and <span class="term" data-term="websocket" tabindex="0">WebSocket</span> routing with two separate user <span class="term" data-term="session" tabindex="0">sessions</span>.</li>
+<li><input disabled="" type="checkbox"> Remove the old shared path-based <span class="term" data-term="ingress" tabindex="0">ingress</span> after successful verification.</li>
+<li><input disabled="" type="checkbox"> Add <span class="term" data-term="csrf" tabindex="0">CSRF</span> protection to state-changing browser API requests, matching the
 reference project&#39;s final security model.</li>
 </ul>
 </div>

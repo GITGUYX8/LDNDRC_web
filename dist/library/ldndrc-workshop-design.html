@@ -6,6 +6,8 @@
 <title>Design: LDNDRC Workshop Cluster — full HLD + LLD (staged, agnostic) — LDNDRC library</title>
 <meta name="description" content="Source document: ldndrc-workshop-design.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -47,13 +49,13 @@
 <h1 class="page-title">Design: LDNDRC Workshop Cluster — full HLD + LLD (staged, agnostic)</h1>
 <div class="prose"><h1 id="dont-take-action-on-this-its-only-for-future">DONT TAKE ACTION ON THIS (its only for future)</h1><ul>
 <li>Slice: <code>--full</code></li>
-<li>Scope line: design LDNDRC for local workshops at 100–150 users, strong session ownership and isolation / eventual sim freshness.</li>
+<li>Scope line: design LDNDRC for local workshops at 100–150 users, strong <span class="term" data-term="session" tabindex="0">session</span> ownership and isolation / eventual sim freshness.</li>
 <li><blockquote>
-<p>Archetype: hybrid: transactional core + live fan-out — because session create and host approve need exact once-per-user state, while update rate times fan-out for Gazebo scene plus Selkies desktop dominates bandwidth and freshness SLO (service-level objective: the promise you measure yourself against).</p>
+<p>Archetype: hybrid: transactional core + live fan-out — because <span class="term" data-term="session" tabindex="0">session</span> create and <span class="term" data-term="host" tabindex="0">host</span> approve need exact once-per-user state, while update rate times fan-out for <span class="term" data-term="gazebo" tabindex="0">Gazebo</span> scene plus Selkies desktop dominates bandwidth and freshness SLO (<span class="term" data-term="service" tabindex="0">service</span>-level objective: the promise you measure yourself against).</p>
 </blockquote>
 </li>
 </ul>
-<h2 id="step-0-assumptions-fr-nfr-out-of-scope">Step 0 — Assumptions (FR / NFR / out-of-scope)</h2><p>One-sentence restatement: you run browser-only robotics labs on laptops you already own, with one isolated ROS (Robot Operating System: robotics middleware for topics and nodes) workspace per student.</p>
+<h2 id="step-0-assumptions-fr-nfr-out-of-scope">Step 0 — Assumptions (FR / NFR / out-of-scope)</h2><p>One-sentence restatement: you run browser-only robotics labs on laptops you already own, with one isolated ROS (Robot Operating System: robotics middleware for topics and <span class="term" data-term="node" tabindex="0">nodes</span>) workspace per student.</p>
 <table>
 <thead>
 <tr>
@@ -64,44 +66,44 @@
 </thead>
 <tbody><tr>
 <td>FR (functional requirements: what the system does, verb-first)</td>
-<td>1. Log in and launch a personal session 2. Code and drive sim from browser tabs 3. Register and approve host laptops 4. Tear down sessions on demand</td>
+<td>1. Log in and launch a personal <span class="term" data-term="session" tabindex="0">session</span> 2. Code and drive sim from browser tabs 3. Register and approve <span class="term" data-term="host" tabindex="0">host</span> laptops 4. Tear down <span class="term" data-term="session" tabindex="0">sessions</span> on demand</td>
 <td>Names the journey the design lives or dies by; every box traces to launch, use, join, or cleanup</td>
 </tr>
 <tr>
 <td>Scale horizon</td>
-<td><code>Assumption:</code> 150 DAU (daily active users: distinct people in one day) for one workshop day, 1 session per user, peak factor 3.0 at start-of-class, no growth needed</td>
-<td>Decides host count, PVC (persistent volume claim: reserved disk per session) total, and LAN (local area network: your room network, not the internet) bandwidth</td>
+<td><code>Assumption:</code> 150 DAU (daily active users: distinct people in one day) for one workshop day, 1 <span class="term" data-term="session" tabindex="0">session</span> per user, peak factor 3.0 at start-of-class, no growth needed</td>
+<td>Decides <span class="term" data-term="host" tabindex="0">host</span> count, <span class="term" data-term="pvc" tabindex="0">PVC</span> (persistent volume claim: reserved disk per <span class="term" data-term="session" tabindex="0">session</span>) total, and LAN (local area network: your room network, not the internet) bandwidth</td>
 </tr>
 <tr>
 <td>Read:write + payload</td>
-<td><code>Assumption:</code> control-plane 30 actions/user/day at ~2KB each; streaming ~5 Mbps per active sim; home data 5Gi per session; retention 2 days</td>
+<td><code>Assumption:</code> control-plane 30 actions/user/day at ~2KB each; streaming ~5 Mbps per active sim; home data 5Gi per <span class="term" data-term="session" tabindex="0">session</span>; retention 2 days</td>
 <td>Splits tiny control reads and writes from heavy live streams</td>
 </tr>
 <tr>
 <td>Latency / availability</td>
-<td><code>Assumption:</code> p99 (99th-percentile latency: the near-worst case almost every request beats) login under 1s, session ready under 90s, editor keystroke echo under 200ms on LAN, sim scene under 500ms; 99.0% session launch success during workshop</td>
+<td><code>Assumption:</code> p99 (99th-percentile latency: the near-worst case almost every request beats) login under 1s, <span class="term" data-term="session" tabindex="0">session</span> ready under 90s, editor keystroke echo under 200ms on LAN, sim scene under 500ms; 99.0% <span class="term" data-term="session" tabindex="0">session</span> launch success during workshop</td>
 <td>Bans wide-area tiers from hot paths; sets degrade bar to stale or shared sim over error</td>
 </tr>
 <tr>
 <td>Consistency / durability</td>
-<td>Strong per-user session ownership and unique ROS_DOMAIN_ID (ROS domain id: number isolating one robot network from another); eventual sim scene and desktop frames; RPO (recovery point objective: how much recent data you can afford to lose) 1 session record on panel crash without PVC loss</td>
-<td>Splits exact session registry from best-effort pixels</td>
+<td>Strong per-user <span class="term" data-term="session" tabindex="0">session</span> ownership and unique ROS_DOMAIN_ID (ROS <span class="term" data-term="domain-id" tabindex="0">domain id</span>: number isolating one robot network from another); eventual sim scene and desktop frames; RPO (recovery point objective: how much recent data you can afford to lose) 1 <span class="term" data-term="session" tabindex="0">session</span> record on panel crash without <span class="term" data-term="pvc" tabindex="0">PVC</span> loss</td>
+<td>Splits exact <span class="term" data-term="session" tabindex="0">session</span> registry from best-effort pixels</td>
 </tr>
 <tr>
 <td>Out-of-scope (3–5)</td>
 <td>1. Internet-scale multi-region 2. Real credential directory and billing 3. Full-text search over code or docs 4. Long-term artifact archive beyond workshop 5.Zero-touch OS provisioning of laptops</td>
-<td>Deferred with forcing condition: revisit when workshops repeat weekly, when audit needs real identity, when corpus exceeds trivial filters, when retention exceeds 2 days, when fleet exceeds 30 hosts</td>
+<td>Deferred with forcing condition: revisit when workshops repeat weekly, when audit needs real identity, when corpus exceeds trivial filters, when retention exceeds 2 days, when fleet exceeds 30 <span class="term" data-term="host" tabindex="0">hosts</span></td>
 </tr>
 </tbody></table>
 <p>Scope method follows <code>requirements-scoping</code> (scope capture: turn vague prompt into FR plus NFR plus out-of-scope): three lists plus revisable <code>Assumption:</code> lines, no silent facts. You state the guesses now so you can argue with them later.</p>
-<h2 id="step-1-naive-v1-mermaid-1-3-nodes-archetype-shaped">Step 1 — Naive v1 + mermaid #1 (≤3 nodes, archetype-shaped)</h2><p>Archetype: hybrid, so v1 is the cheapest correct control loop: browser talks to one Go (Go language: compiled single-binary backend) panel, panel creates one pod on one K3s (lightweight Kubernetes: cluster manager for containers on laptops) node. You feel the real shape early: correctness lives in session ownership, cost lives in streams.</p>
+<h2 id="step-1-naive-v1-mermaid-1-3-nodes-archetype-shaped">Step 1 — Naive v1 + mermaid #1 (≤3 nodes, archetype-shaped)</h2><p>Archetype: hybrid, so v1 is the cheapest correct control loop: browser talks to one Go (Go language: compiled single-binary backend) panel, panel creates one <span class="term" data-term="pod" tabindex="0">pod</span> on one <span class="term" data-term="k3s" tabindex="0">K3s</span> (lightweight <span class="term" data-term="kubernetes" tabindex="0">Kubernetes</span>: cluster manager for containers on laptops) <span class="term" data-term="node" tabindex="0">node</span>. You feel the real shape early: correctness lives in <span class="term" data-term="session" tabindex="0">session</span> ownership, cost lives in streams.</p>
 <div class="mermaid-diagram" data-mermaid="flowchart LR
     C[Guests] --&gt;|1 HTTP login| API[Panel&lt;br/&gt;Go single]
     API --&gt;|2 create pod| K8S[(K3s single&lt;br/&gt;one node)]"><pre><code class="language-mermaid">flowchart LR
     C[Guests] --&gt;|1 HTTP login| API[Panel&lt;br/&gt;Go single]
     API --&gt;|2 create pod| K8S[(K3s single&lt;br/&gt;one node)]</code></pre></div><ul>
-<li>Why starting simple is correct: (a) one panel plus K3s API (application programming interface: exact request plus response contract) satisfies FR-1 and FR-4 with local transactions and no distribution tax; (b) control-plane QPS (queries per second: requests arriving each second) is near zero, so no cache, queue, or shard earns its keep yet; (c) BOTEC (back-of-the-envelope calculation: rough sizing math that decides the shape) host math becomes the baseline before you add ingress, gateway hosts, or GPU (graphics processing unit: chip that renders sim and video) slicing.</li>
-<li>Deliberately deferred: Traefik ingress until second host or hostname routing is needed; cookie gateway hosts until browser tabs need per-user routing; GPU time-slicing until real Harmonic image lands; session file persistence until first restart orphan; LAN DNS (domain name system: name to address lookup) until <code>/etc/hosts</code> (local hostname file: manual name mapping on each laptop) stops scaling.</li>
+<li>Why starting simple is correct: (a) one panel plus <span class="term" data-term="k3s" tabindex="0">K3s</span> API (application programming interface: exact request plus response contract) satisfies FR-1 and FR-4 with local transactions and no distribution tax; (b) control-plane QPS (queries per second: requests arriving each second) is near zero, so no cache, queue, or shard earns its keep yet; (c) BOTEC (back-of-the-envelope calculation: rough sizing math that decides the shape) <span class="term" data-term="host" tabindex="0">host</span> math becomes the baseline before you add <span class="term" data-term="ingress" tabindex="0">ingress</span>, <span class="term" data-term="gateway" tabindex="0">gateway</span> <span class="term" data-term="host" tabindex="0">hosts</span>, or GPU (graphics processing unit: chip that renders sim and video) slicing.</li>
+<li>Deliberately deferred: <span class="term" data-term="traefik" tabindex="0">Traefik</span> <span class="term" data-term="ingress" tabindex="0">ingress</span> until second <span class="term" data-term="host" tabindex="0">host</span> or hostname routing is needed; <span class="term" data-term="cookie" tabindex="0">cookie</span> <span class="term" data-term="gateway" tabindex="0">gateway</span> <span class="term" data-term="host" tabindex="0">hosts</span> until browser tabs need per-user routing; GPU <span class="term" data-term="gpu-timeslicing" tabindex="0">time-slicing</span> until real Harmonic image lands; <span class="term" data-term="session" tabindex="0">session</span> file persistence until first restart orphan; LAN DNS (domain name system: name to address lookup) until <code>/etc/hosts</code> (local hostname file: manual name mapping on each laptop) stops scaling.</li>
 </ul>
 <h2 id="step-2-botec-break-table-only-chains-that-can-change-a-decision">Step 2 — BOTEC break-table (only chains that can change a decision)</h2><p>Formulas: <code>QPS_avg = DAU × actions/day ÷ 86,400</code>; <code>QPS_peak = avg × peak_factor</code>; <code>storage/day = writes/day × bytes</code>; <code>total = storage/day × retention</code>; <code>bandwidth = QPS × payload</code> plus stream rate times viewers; <code>servers ≈ peak ÷ per-server_QPS</code> (RDBMS (relational database: tables with joins and transactions) ~1k, KV (key-value store: get and put by key only) ~10k, cache ~100k–1M per <code>back-of-the-envelope</code> (sizing math: turn vague scale into QPS plus storage plus servers)). Exact control check via <code>skills/back-of-the-envelope/scripts/botec.py</code>. Every row shows inputs with units. You size the room, not the internet.</p>
 <table>
@@ -120,36 +122,36 @@
 <tr>
 <td>Control peak QPS</td>
 <td>0.05 QPS × 3.0 peak_factor = 0.16 QPS peak, burst ~150 creates over 120 s = 1.25 creates/s (<code>botec.py --dau 150 --actions 30 --peak 3</code> → avg 0 / peak 0, storage 9.0MB/day)</td>
-<td>Forces K3s API burst handling, not panel scale; single Go binary at 50m–250m CPU (central processing unit: compute cores) is enough</td>
+<td>Forces <span class="term" data-term="k3s" tabindex="0">K3s</span> API burst handling, not panel scale; single Go binary at 50m–250m CPU (central processing unit: compute cores) is enough</td>
 </tr>
 <tr>
-<td>Session concurrency</td>
-<td>150 users × 1 session/user = 150 concurrent pods</td>
-<td>Breaks single host; forces bin-pack scheduler plus admission queue</td>
+<td><span class="term" data-term="session" tabindex="0">Session</span> concurrency</td>
+<td>150 users × 1 <span class="term" data-term="session" tabindex="0">session</span>/user = 150 concurrent <span class="term" data-term="pod" tabindex="0">pods</span></td>
+<td>Breaks single <span class="term" data-term="host" tabindex="0">host</span>; forces bin-pack scheduler plus admission queue</td>
 </tr>
 <tr>
-<td>Hosts by CPU</td>
-<td>150 pods × 3.5 CPU avg = 525 CPU cores ÷ 10 allocatable cores/host = 52.5 → 53 Hosts</td>
-<td>Deciding verdict V-cpu: 150 full sims need ~53 gaming laptops; 12-Host workshop caps at ~36 full sims</td>
+<td><span class="term" data-term="host" tabindex="0">Hosts</span> by CPU</td>
+<td>150 <span class="term" data-term="pod" tabindex="0">pods</span> × 3.5 CPU avg = 525 CPU cores ÷ 10 allocatable cores/<span class="term" data-term="host" tabindex="0">host</span> = 52.5 → 53 <span class="term" data-term="host" tabindex="0">Hosts</span></td>
+<td>Deciding verdict V-cpu: 150 full sims need ~53 gaming laptops; 12-<span class="term" data-term="host" tabindex="0">Host</span> workshop caps at ~36 full sims</td>
 </tr>
 <tr>
-<td>Hosts by RAM</td>
-<td>150 pods × 6Gi avg = 900Gi ÷ 28Gi allocatable/host = 32.1 → 33 Hosts</td>
-<td>RAM (main memory: fast workspace holding running pods) is kinder than CPU, but CPU still decides</td>
+<td><span class="term" data-term="host" tabindex="0">Hosts</span> by RAM</td>
+<td>150 <span class="term" data-term="pod" tabindex="0">pods</span> × 6Gi avg = 900Gi ÷ 28Gi allocatable/<span class="term" data-term="host" tabindex="0">host</span> = 32.1 → 33 <span class="term" data-term="host" tabindex="0">Hosts</span></td>
+<td>RAM (main memory: fast workspace holding running <span class="term" data-term="pod" tabindex="0">pods</span>) is kinder than CPU, but CPU still decides</td>
 </tr>
 <tr>
-<td>Hosts by GPU slice</td>
-<td>150 pods × 1 slice ÷ 4 slices/GPU = 37.5 → 38 GPUs, so 38 Hosts</td>
-<td>GPU time-slicing helps, CPU still binds first; demo-standin with <code>SESSION_GPU_LIMIT=0</code> removes this row</td>
+<td><span class="term" data-term="host" tabindex="0">Hosts</span> by GPU slice</td>
+<td>150 <span class="term" data-term="pod" tabindex="0">pods</span> × 1 slice ÷ 4 slices/GPU = 37.5 → 38 GPUs, so 38 <span class="term" data-term="host" tabindex="0">Hosts</span></td>
+<td>GPU <span class="term" data-term="gpu-timeslicing" tabindex="0">time-slicing</span> helps, CPU still binds first; demo-standin with <code>SESSION_GPU_LIMIT=0</code> removes this row</td>
 </tr>
 <tr>
 <td>Home storage total</td>
-<td>150 sessions × 5Gi/session = 750Gi live</td>
-<td>Forces per-host local provisioner spread plus cleanup on DELETE; fits 15 Hosts × 100Gi spare, fails on 5 Hosts</td>
+<td>150 <span class="term" data-term="session" tabindex="0">sessions</span> × 5Gi/<span class="term" data-term="session" tabindex="0">session</span> = 750Gi live</td>
+<td>Forces per-<span class="term" data-term="host" tabindex="0">host</span> local provisioner spread plus cleanup on DELETE; fits 15 <span class="term" data-term="host" tabindex="0">Hosts</span> × 100Gi spare, fails on 5 <span class="term" data-term="host" tabindex="0">Hosts</span></td>
 </tr>
 <tr>
-<td>Workspace image bytes</td>
-<td><code>Assumption:</code> 10GB image × 15 Hosts = 150GB one-time pull, cached per host</td>
+<td><span class="term" data-term="workspace-image" tabindex="0">Workspace image</span> bytes</td>
+<td><code>Assumption:</code> 10GB image × 15 <span class="term" data-term="host" tabindex="0">Hosts</span> = 150GB one-time pull, cached per <span class="term" data-term="host" tabindex="0">host</span></td>
 <td>Forces pre-pull night before; cold pull storm on class start saturates LAN</td>
 </tr>
 <tr>
@@ -163,25 +165,25 @@
 <td>Forces wired master plus multiple 5 GHz cells; single consumer AP (access point: radio box serving Wi-Fi clients) melts</td>
 </tr>
 <tr>
-<td>K3s object writes</td>
-<td>150 sessions × 3 objects = 450 objects over 120 s = 3.75 writes/s</td>
-<td>Fits single etcd (consistent store: majority-agree metadata log for cluster state) on master; no shard forced</td>
+<td><span class="term" data-term="k3s" tabindex="0">K3s</span> object writes</td>
+<td>150 <span class="term" data-term="session" tabindex="0">sessions</span> × 3 objects = 450 objects over 120 s = 3.75 writes/s</td>
+<td>Fits single <span class="term" data-term="etcd" tabindex="0">etcd</span> (consistent store: majority-agree metadata log for cluster state) on master; no shard forced</td>
 </tr>
 </tbody></table>
-<p>Conclusion: V-cpu and 690 Mbps force admission control plus wired LAN plus image pre-warm; control QPS and etcd writes confirm v1 panel and single-master K3s hold. Skipped: cross-region bandwidth and multi-year retention, CDN (content delivery network: edge cache for static files) offload, and per-row TX (transaction: all-or-nothing multi-step commit) analysis — YAGNI (you aren&#39;t gonna need it: do not build what no number demands) for a 2-day LAN room with no cloud named.</p>
+<p>Conclusion: V-cpu and 690 Mbps force admission control plus wired LAN plus image pre-warm; control QPS and <span class="term" data-term="etcd" tabindex="0">etcd</span> writes confirm v1 panel and single-master <span class="term" data-term="k3s" tabindex="0">K3s</span> hold. Skipped: cross-region bandwidth and multi-year retention, CDN (content delivery network: edge cache for static files) offload, and per-row TX (transaction: all-or-nothing multi-step commit) analysis — YAGNI (you aren&#39;t gonna need it: do not build what no number demands) for a 2-day LAN room with no cloud named.</p>
 <h2 id="step-3-api-interface-contracts-lld-surface">Step 3 — API / interface contracts (LLD surface)</h2><p>Per <code>api-design</code> (contract design: exact shapes plus retries plus pagination plus errors): REST (representational state transfer: resource URLs with JSON over HTTP) plus JSON (JavaScript object notation: text record format) default, verbs by retry safety, cursor only where lists grow, stable error envelope, no version in code yet so use <code>/api</code> with additive fields. Your contract is what browsers and laptops actually marry.</p>
 <ul>
-<li><code>POST /api/auth/login</code> <code>{&quot;username&quot;:&quot;bob&quot;,&quot;password&quot;:&quot;secret123&quot;}</code> → 200 <code>{&quot;token&quot;:&quot;JWT&quot;,&quot;expires_in&quot;:86400}</code> plus <code>Set-Cookie: session=...; Domain=.ros-platform.local; HttpOnly</code> — retry-safe read of credential check today. Serves FR-1. Rationale: cookie carries gateway auth across four hosts without per-tab tokens.</li>
-<li><code>POST /api/sessions</code> <code>Authorization: Bearer JWT</code> → 202 <code>{&quot;id&quot;:&quot;ses_abc&quot;,&quot;status&quot;:&quot;provisioning&quot;}</code> — non-idempotent create, so clients send <code>Idempotency-Key: uuid</code> (client-sent dedupe token: same token returns stored answer). Serves FR-1. Rationale: start-of-class double-clicks must not mint two pods.</li>
+<li><code>POST /api/auth/login</code> <code>{&quot;username&quot;:&quot;bob&quot;,&quot;password&quot;:&quot;secret123&quot;}</code> → 200 <code>{&quot;token&quot;:&quot;JWT&quot;,&quot;expires_in&quot;:86400}</code> plus <code>Set-Cookie: session=...; Domain=.ros-platform.local; HttpOnly</code> — retry-safe read of credential check today. Serves FR-1. Rationale: <span class="term" data-term="cookie" tabindex="0">cookie</span> carries <span class="term" data-term="gateway" tabindex="0">gateway</span> auth across four <span class="term" data-term="host" tabindex="0">hosts</span> without per-tab tokens.</li>
+<li><code>POST /api/sessions</code> <code>Authorization: Bearer JWT</code> → 202 <code>{&quot;id&quot;:&quot;ses_abc&quot;,&quot;status&quot;:&quot;provisioning&quot;}</code> — non-idempotent create, so clients send <code>Idempotency-Key: uuid</code> (client-sent dedupe token: same token returns stored answer). Serves FR-1. Rationale: start-of-class double-clicks must not mint two <span class="term" data-term="pod" tabindex="0">pods</span>.</li>
 <li><code>GET /api/sessions</code> → 200 <code>{&quot;data&quot;:[...],&quot;next_cursor&quot;:null}</code> with cursor over creation time — cacheable for 5s in panel memory. Serves FR-2. Rationale: polling storms collapse to cheap reads.</li>
-<li><code>GET /api/sessions/{id}</code> → 200 <code>{&quot;id&quot;:&quot;...&quot;,&quot;status&quot;:&quot;ready&quot;,&quot;node&quot;:&quot;host-7&quot;,&quot;hosts&quot;:{&quot;editor&quot;:&quot;...&quot;,&quot;desktop&quot;:&quot;...&quot;,&quot;gazebo&quot;:&quot;...&quot;}}</code> / 404 unknown. Serves FR-2. Rationale: gateway routes only on <code>ready</code>, else 503 with <code>Retry-After: 5</code>.</li>
+<li><code>GET /api/sessions/{id}</code> → 200 <code>{&quot;id&quot;:&quot;...&quot;,&quot;status&quot;:&quot;ready&quot;,&quot;node&quot;:&quot;host-7&quot;,&quot;hosts&quot;:{&quot;editor&quot;:&quot;...&quot;,&quot;desktop&quot;:&quot;...&quot;,&quot;gazebo&quot;:&quot;...&quot;}}</code> / 404 unknown. Serves FR-2. Rationale: <span class="term" data-term="gateway" tabindex="0">gateway</span> routes only on <code>ready</code>, else 503 with <code>Retry-After: 5</code>.</li>
 <li><code>DELETE /api/sessions/{id}</code> → 202 <code>{&quot;status&quot;:&quot;stopping&quot;}</code> — naturally idempotent delete. Serves FR-4. Rationale: safe to retry cleanup without orphan risk.</li>
 <li><code>POST /api/nodes/register</code> <code>{&quot;hostname&quot;:&quot;laptop-a&quot;,&quot;cpu&quot;:12,&quot;ram_gb&quot;:32,&quot;gpu&quot;:&quot;NVIDIA RTX&quot;}</code> → 200 <code>{&quot;id&quot;:&quot;node_x&quot;,&quot;status&quot;:&quot;pending&quot;}</code> with rate limit 5/min/IP — unauthenticated by design. Serves FR-3. Rationale: join must work before trust exists; <code>JOIN_KEY</code> (pre-shared join secret: password laptops present to register) gates abuse.</li>
 <li><code>GET /api/nodes/{id}</code> → 200 <code>{&quot;status&quot;:&quot;approved&quot;,&quot;k3s_url&quot;:&quot;https://192.168.1.50:6443&quot;,&quot;k3s_token&quot;:&quot;K10...&quot;,&quot;node_name&quot;:&quot;ldndrc-&lt;id&gt;&quot;}</code> — poll every 5s, token minted once. Serves FR-3. Rationale: one-time token prevents replay joins.</li>
-<li><code>POST /api/nodes/{id}/approve</code> and <code>/deny</code> with operator JWT → 200 <code>{&quot;status&quot;:&quot;approved&quot;}</code> / 403 forbidden. Serves FR-3. Rationale: human gate matches workshop trust.</li>
-<li><code>GET /healthz</code> → 200 <code>{&quot;status&quot;:&quot;ok&quot;}</code> shallow, plus <code>GET /readyz</code> checking K3s reachability. Rationale: liveness never fails on slow K3s, readiness does.</li>
-<li><code>WS /ws/{session}</code> upgraded WebSocket (persistent two-way socket: long-lived channel for live updates) proxy with cookie auth — reconnect with jitter (randomized delay spread: avoids synchronized retries). Serves FR-2. Rationale: editor, gzweb, and Selkies share one auth front door.</li>
-<li>Errors: <code>{error:{code,message,request_id,retryable}}</code> plus <code>429 + Retry-After</code> on register flood, <code>401</code> missing cookie, <code>404</code> no session, <code>503</code> provisioning, <code>502</code> pod unhealthy. Versioning: additive fields only; reserve <code>/v1</code> when student UI (user interface: browser app) pins a contract.</li>
+<li><code>POST /api/nodes/{id}/approve</code> and <code>/deny</code> with <span class="term" data-term="operator" tabindex="0">operator</span> <span class="term" data-term="jwt" tabindex="0">JWT</span> → 200 <code>{&quot;status&quot;:&quot;approved&quot;}</code> / 403 forbidden. Serves FR-3. Rationale: human gate matches workshop trust.</li>
+<li><code>GET /healthz</code> → 200 <code>{&quot;status&quot;:&quot;ok&quot;}</code> shallow, plus <code>GET /readyz</code> checking <span class="term" data-term="k3s" tabindex="0">K3s</span> reachability. Rationale: liveness never fails on slow <span class="term" data-term="k3s" tabindex="0">K3s</span>, readiness does.</li>
+<li><code>WS /ws/{session}</code> upgraded <span class="term" data-term="websocket" tabindex="0">WebSocket</span> (persistent two-way socket: long-lived channel for live updates) proxy with <span class="term" data-term="cookie" tabindex="0">cookie</span> auth — reconnect with jitter (randomized delay spread: avoids synchronized retries). Serves FR-2. Rationale: editor, <span class="term" data-term="gzweb" tabindex="0">gzweb</span>, and Selkies share one auth front door.</li>
+<li>Errors: <code>{error:{code,message,request_id,retryable}}</code> plus <code>429 + Retry-After</code> on register flood, <code>401</code> missing <span class="term" data-term="cookie" tabindex="0">cookie</span>, <code>404</code> no <span class="term" data-term="session" tabindex="0">session</span>, <code>503</code> provisioning, <code>502</code> <span class="term" data-term="pod" tabindex="0">pod</span> unhealthy. Versioning: additive fields only; reserve <code>/v1</code> when student UI (user interface: browser app) pins a contract.</li>
 </ul>
 <h2 id="step-4-evolved-reads-hld-mermaid-2-10-nodes-step-2-read-verdict-forces-it">Step 4 — Evolved reads HLD + mermaid #2 (≤10 nodes; Step-2 read verdict forces it)</h2><p>Verdicts forcing reads: 690 Mbps aggregate plus per-user 4.6 Mbps plus image 10GB pull storm. Principle first: streams should never touch the panel twice, and bytes should stay on the room wire.</p>
 <div class="mermaid-diagram" data-mermaid="flowchart LR
@@ -200,13 +202,13 @@
     SVC -.-&gt;|WebRTC desktop| DE[Desktop&lt;br/&gt;Selkies]
     IMG[(Image cache&lt;br/&gt;pulled once)] -.-&gt;|image warm| SVC</code></pre></div><p>Per added component — <strong>Why / Without-it / Change-when</strong>:</p>
 <ul>
-<li>Traefik L7 route — Why: host-based <code>editor/desktop/gazebo/control</code> split serves 150 browsers from one LAN address per V-lan. Without-it: path prefixes leak across users and sticky affinity breaks. Change-when: single Traefik CPU exceeds 70% for 5 min → add second entrypoint on another master. Uses <code>load-balancing</code> (traffic spread: L4 versus L7 plus health plus affinity): L7 for host routing, least-connections for long WebSockets, slow-start on recovered pods.</li>
-<li>Cookie gateway in panel — Why: one HttpOnly cookie authenticates all four subdomains to the correct per-user Service per FR-2. Without-it: each tool needs its own login and tab-switch drops auth. Change-when: gateway p99 exceeds 100ms → move host match to Traefik middleware with shared JWT (JSON web token: signed login stamp) verifier.</li>
-<li>Session Service per user — Why: isolates RSVP per student so one crash does not reroute 149 others. Without-it: shared Service plus ClientIP affinity pins strangers together and scales down badly. Change-when: Services exceed 500 objects → switch to single gateway map plus ClusterIP (internal service address: stable virtual IP inside cluster) per pod.</li>
-<li>Image cache per host — Why: 10GB times 150 pulls would replay 1.5TB over LAN; pull-once holds it to 150GB. Without-it: class start stampedes the registry and sessions stay <code>provisioning</code>. Change-when: disk pressure exceeds 80% → add registry mirror on master plus <code>ImagePullPolicy: IfNotPresent</code>. Uses <code>blob-store</code> (large-object storage: immutable bytes by key with durability tiers): images are immutable blobs, panel stores only pointer plus tag.</li>
-<li>Editor versus stream split — Why: code-server stays sync request-response while Selkies and gzweb stay async push, matching their freshness budgets. Without-it: polling the scene at 30 Hz multiplies control QPS 100-fold. Change-when: scene Hz times viewers exceeds AP budget → drop to 10 Hz plus delta frames. Uses <code>content-delivery</code> (edge bytes: push static close to users): deferred as internet CDN, applied as LAN pre-warm plus pull-once.</li>
+<li><span class="term" data-term="traefik" tabindex="0">Traefik</span> L7 route — Why: <span class="term" data-term="host" tabindex="0">host</span>-based <code>editor/desktop/gazebo/control</code> split serves 150 browsers from one LAN address per V-lan. Without-it: path prefixes leak across users and sticky affinity breaks. Change-when: single <span class="term" data-term="traefik" tabindex="0">Traefik</span> CPU exceeds 70% for 5 min → add second entrypoint on another master. Uses <code>load-balancing</code> (traffic spread: L4 versus L7 plus health plus affinity): L7 for <span class="term" data-term="host" tabindex="0">host</span> routing, least-connections for long <span class="term" data-term="websocket" tabindex="0">WebSockets</span>, slow-start on recovered <span class="term" data-term="pod" tabindex="0">pods</span>.</li>
+<li><span class="term" data-term="cookie" tabindex="0">Cookie</span> <span class="term" data-term="gateway" tabindex="0">gateway</span> in panel — Why: one HttpOnly <span class="term" data-term="cookie" tabindex="0">cookie</span> authenticates all four subdomains to the correct per-user <span class="term" data-term="service" tabindex="0">Service</span> per FR-2. Without-it: each tool needs its own login and tab-switch drops auth. Change-when: <span class="term" data-term="gateway" tabindex="0">gateway</span> p99 exceeds 100ms → move <span class="term" data-term="host" tabindex="0">host</span> match to <span class="term" data-term="traefik" tabindex="0">Traefik</span> middleware with shared <span class="term" data-term="jwt" tabindex="0">JWT</span> (<span class="term" data-term="jwt" tabindex="0">JSON web token</span>: signed login stamp) verifier.</li>
+<li><span class="term" data-term="session" tabindex="0">Session</span> <span class="term" data-term="service" tabindex="0">Service</span> per user — Why: isolates RSVP per student so one crash does not reroute 149 others. Without-it: shared <span class="term" data-term="service" tabindex="0">Service</span> plus ClientIP affinity pins strangers together and scales down badly. Change-when: <span class="term" data-term="service" tabindex="0">Services</span> exceed 500 objects → switch to single <span class="term" data-term="gateway" tabindex="0">gateway</span> map plus ClusterIP (internal <span class="term" data-term="service" tabindex="0">service</span> address: stable virtual IP inside cluster) per <span class="term" data-term="pod" tabindex="0">pod</span>.</li>
+<li>Image cache per <span class="term" data-term="host" tabindex="0">host</span> — Why: 10GB times 150 pulls would replay 1.5TB over LAN; pull-once holds it to 150GB. Without-it: class start stampedes the registry and <span class="term" data-term="session" tabindex="0">sessions</span> stay <code>provisioning</code>. Change-when: disk pressure exceeds 80% → add registry mirror on master plus <code>ImagePullPolicy: IfNotPresent</code>. Uses <code>blob-store</code> (large-object storage: immutable bytes by key with durability tiers): images are immutable blobs, panel stores only pointer plus tag.</li>
+<li>Editor versus stream split — Why: <span class="term" data-term="code-server" tabindex="0">code-server</span> stays sync request-response while Selkies and <span class="term" data-term="gzweb" tabindex="0">gzweb</span> stay async push, matching their freshness budgets. Without-it: polling the scene at 30 Hz multiplies control QPS 100-fold. Change-when: scene Hz times viewers exceeds AP budget → drop to 10 Hz plus delta frames. Uses <code>content-delivery</code> (edge bytes: push static close to users): deferred as internet CDN, applied as LAN pre-warm plus pull-once.</li>
 </ul>
-<h2 id="step-5-evolved-writes-hld-mermaid-3-10-nodes-write-and-coupling-verdict-forces-it">Step 5 — Evolved writes HLD + mermaid #3 (≤10 nodes; write and coupling verdict forces it)</h2><p>Verdict forcing writes: 150 concurrent Deployments plus PVC mounts plus one-time join tokens. Principle first: keep the money path — your session record — synchronous and exact, push everything else to poll and retry.</p>
+<h2 id="step-5-evolved-writes-hld-mermaid-3-10-nodes-write-and-coupling-verdict-forces-it">Step 5 — Evolved writes HLD + mermaid #3 (≤10 nodes; write and coupling verdict forces it)</h2><p>Verdict forcing writes: 150 concurrent <span class="term" data-term="deployment" tabindex="0">Deployments</span> plus <span class="term" data-term="pvc" tabindex="0">PVC</span> mounts plus one-time join tokens. Principle first: keep the money path — your <span class="term" data-term="session" tabindex="0">session</span> record — synchronous and exact, push everything else to poll and retry.</p>
 <div class="mermaid-diagram" data-mermaid="flowchart TB
     C[Guests] --&gt;|1 POST login| CP[Panel&lt;br/&gt;auth sessions]
     C --&gt;|2 POST sessions| CP
@@ -227,13 +229,13 @@
     CP -.-&gt;|mint token once| LAP
     W[Watcher&lt;br/&gt;label loop] -.-&gt;|label host| API</code></pre></div><p>Per added component — <strong>Why / Without-it / Change-when</strong>:</p>
 <ul>
-<li>JSON file store for nodes plus sessions — Why: survives panel container restart without running a database for 150 rows. Without-it: every restart orphans live Deployments as seen in CP09 and CP11. Change-when: writes exceed 50/s or two panel replicas appear → move to SQLite (light file database: single-file relational store) then Postgres, with reconcile on boot. Uses <code>data-storage</code> (record home: pick SQL versus NoSQL plus keys plus replication): single-file relational wins until write QPS or multi-writer forces it.</li>
-<li>K3s API plus etcd single master — Why: 3.75 writes/s fits one Raft (consensus protocol: majority agrees on one log) majority with zero operator cost. Without-it: external DB adds a second SPOF (single point of failure: one box whose loss stops a core flow) you cannot fix in a classroom. Change-when: master loss exceeds 10 min tolerance → add standby master plus <code>etcd</code> snapshot to USB. Uses <code>consistency-coordination</code> (agree rules: what readers see during lag or partition): single-leader writes, local reads, fail closed on partition.</li>
-<li>Per-session Deployment plus Service plus PVC — Why: gives independent lifecycle, stable DNS name, and 5Gi home per FR-1 and FR-4. Without-it: StatefulSet (ordered pod set: numbered pods with sticky identity) ordinals couple ROS_DOMAIN_ID to replica count and block heterogeneous hosts. Change-when: object count exceeds 1,000 → template with deterministic <code>ROS_DOMAIN_ID = 100 + hash mod 200</code>. Uses <code>sequencer</code> (id mint: unique sortable ids without central bottleneck): ULID (time-sortable id: timestamp plus random, sorts by creation) for session ids today, ordinal math only as fallback.</li>
+<li>JSON file store for <span class="term" data-term="node" tabindex="0">nodes</span> plus <span class="term" data-term="session" tabindex="0">sessions</span> — Why: survives panel container restart without running a database for 150 rows. Without-it: every restart orphans live <span class="term" data-term="deployment" tabindex="0">Deployments</span> as seen in CP09 and CP11. Change-when: writes exceed 50/s or two panel replicas appear → move to SQLite (light file database: single-file relational store) then Postgres, with reconcile on boot. Uses <code>data-storage</code> (record home: pick SQL versus NoSQL plus keys plus replication): single-file relational wins until write QPS or multi-writer forces it.</li>
+<li><span class="term" data-term="k3s" tabindex="0">K3s</span> API plus <span class="term" data-term="etcd" tabindex="0">etcd</span> single master — Why: 3.75 writes/s fits one Raft (consensus protocol: majority agrees on one log) majority with zero <span class="term" data-term="operator" tabindex="0">operator</span> cost. Without-it: external DB adds a second SPOF (single point of failure: one box whose loss stops a core flow) you cannot fix in a classroom. Change-when: master loss exceeds 10 min tolerance → add standby master plus <code>etcd</code> snapshot to USB. Uses <code>consistency-coordination</code> (agree rules: what readers see during lag or partition): single-leader writes, local reads, fail closed on partition.</li>
+<li>Per-<span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="deployment" tabindex="0">Deployment</span> plus <span class="term" data-term="service" tabindex="0">Service</span> plus <span class="term" data-term="pvc" tabindex="0">PVC</span> — Why: gives independent lifecycle, stable DNS name, and 5Gi home per FR-1 and FR-4. Without-it: StatefulSet (ordered <span class="term" data-term="pod" tabindex="0">pod</span> set: numbered <span class="term" data-term="pod" tabindex="0">pods</span> with sticky identity) ordinals couple ROS_DOMAIN_ID to replica count and block heterogeneous <span class="term" data-term="host" tabindex="0">hosts</span>. Change-when: object count exceeds 1,000 → template with deterministic <code>ROS_DOMAIN_ID = 100 + hash mod 200</code>. Uses <code>sequencer</code> (id mint: unique sortable ids without central bottleneck): ULID (time-sortable id: timestamp plus random, sorts by creation) for <span class="term" data-term="session" tabindex="0">session</span> ids today, ordinal math only as fallback.</li>
 <li>Join poll plus one-time token — Why: laptops behind NAT (network address translation: shared-IP fixup hiding devices) cannot receive callbacks, but they can poll every 5s. Without-it: push webhook never reaches the laptop. Change-when: fleet exceeds 200 pollers or 5s staleness hurts → switch to long-poll plus server-sent hints. Uses <code>task-scheduling</code> (when plus who runs it: leases plus retries plus fairness): join is a leased task with visibility timeout plus DLQ (dead-letter queue: parking lot for repeatedly failing messages) on bad hardware reports.</li>
-<li>5s label watcher — Why: marks <code>Ready</code> nodes <code>role=host</code> so session scheduler lands pods only on qualified laptops. Without-it: pods pend on the master or weak Guests. Change-when: watch lag exceeds 15s → move label to join-time admission webhook. Uses <code>messaging-streaming</code> (async transport: queue versus stream plus DLQ): applied as poll plus file, stream deferred because no replay or fan-out need exists.</li>
+<li>5s label watcher — Why: marks <code>Ready</code> <span class="term" data-term="node" tabindex="0">nodes</span> <code>role=host</code> so <span class="term" data-term="session" tabindex="0">session</span> scheduler lands <span class="term" data-term="pod" tabindex="0">pods</span> only on qualified laptops. Without-it: <span class="term" data-term="pod" tabindex="0">pods</span> pend on the master or weak <span class="term" data-term="guest" tabindex="0">Guests</span>. Change-when: watch lag exceeds 15s → move label to join-time admission webhook. Uses <code>messaging-streaming</code> (async transport: queue versus stream plus DLQ): applied as poll plus file, stream deferred because no replay or fan-out need exists.</li>
 </ul>
-<h2 id="step-6-lld-deep-dive-mermaid-4-10-nodes-one-subsystem-only">Step 6 — LLD deep-dive + mermaid #4 (≤10 nodes, one subsystem only)</h2><p>Target: gateway fan-out plus per-user routing — the tightest latency SLO and the first place 150 browsers collide.</p>
+<h2 id="step-6-lld-deep-dive-mermaid-4-10-nodes-one-subsystem-only">Step 6 — LLD deep-dive + mermaid #4 (≤10 nodes, one subsystem only)</h2><p>Target: <span class="term" data-term="gateway" tabindex="0">gateway</span> fan-out plus per-user routing — the tightest latency SLO and the first place 150 browsers collide.</p>
 <div class="mermaid-diagram" data-mermaid="flowchart TB
     G[Browser] --&gt;|1 HTTPS host| TR[Traefik&lt;br/&gt;entry]
     TR --&gt;|2 forward host| GW[Gateway&lt;br/&gt;cookie auth]
@@ -249,10 +251,10 @@
     SV --&gt;|5 serve code| ED[Editor&lt;br/&gt;7682]
     SV -.-&gt;|WS scene 9002| GZ[Sim bridge&lt;br/&gt;WS]
     SV -.-&gt;|WebRTC 8080| DE[Desktop&lt;br/&gt;Selkies]</code></pre></div><ul>
-<li>Hot-path walk with per-hop protocol plus payload bytes. You click <code>editor.ros-platform.local</code> → TLS (transport layer security: encrypted HTTP wrapper) to Traefik in ~2ms on wire, host match in ~1ms, gateway cookie verify with JWT secret in ~1ms, in-memory session map lookup <code>user → ClusterIP:7682</code> in microseconds, ReverseProxy GET to code-server with ~2KB headers plus ~50KB page, editor WebSocket for keystrokes at ~200 bytes per event. Scene path: gzweb WS (WebSocket: persistent two-way channel) subscribes at 30 Hz, each JSON frame <code>Assumption:</code> 5–50KB → 1.5 Mbps typical. Desktop path: Selkies WebRTC (real-time media: low-delay video over UDP) negotiates once, then 2–5 Mbps video, no per-frame panel cost. Panel stays out of media bytes after proxy handshake where possible.</li>
-<li>Key, index, TTL, and partition table. <code>sessions.json: key session_id ULID → {user, status, service_name, node, ROS_DOMAIN_ID, created_at}</code> with in-memory index on <code>user → session_id</code> and TTL (time to live: auto-expire timer) 2 days plus tombstone on DELETE. <code>nodes.json: key node_id → {hostname, cpu, ram_gb, gpu, status, k3s_token_issued_bool}</code> with index on <code>status</code>. Gateway session cookie 24h HttpOnly, <code>COOKIE_DOMAIN=.ros-platform.local</code>, CSRF (cross-site request forgery: evil site reusing your cookie) token per R3. K3s Service name <code>sess-&lt;shortid&gt;</code> is the partition key: all three tool hosts resolve to one ClusterIP, so affinity is by name, not by client IP.</li>
-<li>Failure injection: kill each box and state user-visible degrade plus recovery. Traefik down → all tabs fail; degrade to direct <code>panelIP:8082</code> emergency list; recover by restarting static binary, clients retry with jitter. Gateway slow → 503 with <code>Retry-After: 5</code>; degrade to cached <code>ready</code> map for GETs, fail closed for POSTs; recover with half-open probe plus slow-start. Session pod crash → editor 502, scene freezes; degrade to <code>provisioning</code> page plus auto-recreate from PVC; recover with exponential backoff plus jitter, max 3 restarts then <code>stopped</code>. Master etcd stall → creates queue; degrade to read-only use of running sessions; recover by compaction plus snapshot, drain join polls first. Uses <code>resilience-failure</code> (stay-up tricks: timeouts plus breakers plus degrade): every remote call gets timeout at p99 plus breaker plus explicit stale-or-closed choice.</li>
-<li>Bottleneck metric plus signal threshold. Watch gateway p99 above 100ms for 5 min, Traefik active WebSockets above 400 per instance, per-Host CPU above 85% for 10 min, and session <code>provisioning → ready</code> p90 above 90s. Any one firing means the room, not the code, is full.</li>
+<li>Hot-path walk with per-hop protocol plus payload bytes. You click <code>editor.ros-platform.local</code> → <span class="term" data-term="tls" tabindex="0">TLS</span> (transport layer security: encrypted HTTP wrapper) to <span class="term" data-term="traefik" tabindex="0">Traefik</span> in ~2ms on wire, <span class="term" data-term="host" tabindex="0">host</span> match in ~1ms, <span class="term" data-term="gateway" tabindex="0">gateway</span> <span class="term" data-term="cookie" tabindex="0">cookie</span> verify with <span class="term" data-term="jwt" tabindex="0">JWT</span> secret in ~1ms, in-memory <span class="term" data-term="session" tabindex="0">session</span> map lookup <code>user → ClusterIP:7682</code> in microseconds, ReverseProxy GET to <span class="term" data-term="code-server" tabindex="0">code-server</span> with ~2KB headers plus ~50KB page, editor <span class="term" data-term="websocket" tabindex="0">WebSocket</span> for keystrokes at ~200 bytes per event. Scene path: <span class="term" data-term="gzweb" tabindex="0">gzweb</span> WS (<span class="term" data-term="websocket" tabindex="0">WebSocket</span>: persistent two-way channel) subscribes at 30 Hz, each JSON frame <code>Assumption:</code> 5–50KB → 1.5 Mbps typical. Desktop path: Selkies WebRTC (real-time media: low-delay video over UDP) negotiates once, then 2–5 Mbps video, no per-frame panel cost. Panel stays out of media bytes after proxy handshake where possible.</li>
+<li>Key, index, TTL, and partition table. <code>sessions.json: key session_id ULID → {user, status, service_name, node, ROS_DOMAIN_ID, created_at}</code> with in-memory index on <code>user → session_id</code> and TTL (time to live: auto-expire timer) 2 days plus tombstone on DELETE. <code>nodes.json: key node_id → {hostname, cpu, ram_gb, gpu, status, k3s_token_issued_bool}</code> with index on <code>status</code>. <span class="term" data-term="gateway" tabindex="0">Gateway</span> <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="cookie" tabindex="0">cookie</span> 24h HttpOnly, <code>COOKIE_DOMAIN=.ros-platform.local</code>, <span class="term" data-term="csrf" tabindex="0">CSRF</span> (cross-site request forgery: evil site reusing your <span class="term" data-term="cookie" tabindex="0">cookie</span>) token per R3. <span class="term" data-term="k3s" tabindex="0">K3s</span> <span class="term" data-term="service" tabindex="0">Service</span> name <code>sess-&lt;shortid&gt;</code> is the partition key: all three tool <span class="term" data-term="host" tabindex="0">hosts</span> resolve to one ClusterIP, so affinity is by name, not by client IP.</li>
+<li>Failure injection: kill each box and state user-visible degrade plus recovery. <span class="term" data-term="traefik" tabindex="0">Traefik</span> down → all tabs fail; degrade to direct <code>panelIP:8082</code> emergency list; recover by restarting static binary, clients retry with jitter. <span class="term" data-term="gateway" tabindex="0">Gateway</span> slow → 503 with <code>Retry-After: 5</code>; degrade to cached <code>ready</code> map for GETs, fail closed for POSTs; recover with half-open probe plus slow-start. <span class="term" data-term="session" tabindex="0">Session</span> <span class="term" data-term="pod" tabindex="0">pod</span> crash → editor 502, scene freezes; degrade to <code>provisioning</code> page plus auto-recreate from <span class="term" data-term="pvc" tabindex="0">PVC</span>; recover with exponential backoff plus jitter, max 3 restarts then <code>stopped</code>. Master <span class="term" data-term="etcd" tabindex="0">etcd</span> stall → creates queue; degrade to read-only use of running <span class="term" data-term="session" tabindex="0">sessions</span>; recover by compaction plus snapshot, drain join polls first. Uses <code>resilience-failure</code> (stay-up tricks: timeouts plus breakers plus degrade): every remote call gets timeout at p99 plus breaker plus explicit stale-or-closed choice.</li>
+<li>Bottleneck metric plus signal threshold. Watch <span class="term" data-term="gateway" tabindex="0">gateway</span> p99 above 100ms for 5 min, <span class="term" data-term="traefik" tabindex="0">Traefik</span> active <span class="term" data-term="websocket" tabindex="0">WebSockets</span> above 400 per instance, per-<span class="term" data-term="host" tabindex="0">Host</span> CPU above 85% for 10 min, and <span class="term" data-term="session" tabindex="0">session</span> <code>provisioning → ready</code> p90 above 90s. Any one firing means the room, not the code, is full.</li>
 </ul>
 <h2 id="step-7-final-topology-mermaid-5-14-nodes-topology-only">Step 7 — Final topology + mermaid #5 (≤14 nodes, topology only)</h2><div class="mermaid-diagram" data-mermaid="flowchart TB
     subgraph Edge[Edge]
@@ -323,13 +325,13 @@
     style SP fill:#1f3b2d,stroke:#fff,color:#fff
     style K8S fill:#3b310d,stroke:#fff,color:#fff
     style E fill:#111,stroke:#fff,color:#fff</code></pre></div><p>No rationale on arrows. Full detail lives in Steps 4–6 and §8–§10.</p>
-<h2 id="8-data-model-structures">8. Data model / structures</h2><p>Stores: <code>sessions.json</code> plus <code>nodes.json</code> on <code>emptyDir</code> today, PVC per session for home, K3s etcd for desired state. You keep the registry tiny and the bytes where they belong.</p>
+<h2 id="8-data-model-structures">8. Data model / structures</h2><p>Stores: <code>sessions.json</code> plus <code>nodes.json</code> on <code>emptyDir</code> today, <span class="term" data-term="pvc" tabindex="0">PVC</span> per <span class="term" data-term="session" tabindex="0">session</span> for home, <span class="term" data-term="k3s" tabindex="0">K3s</span> <span class="term" data-term="etcd" tabindex="0">etcd</span> for desired state. You keep the registry tiny and the bytes where they belong.</p>
 <ul>
-<li>Session record: <code>session_id ULID</code>, <code>user</code>, <code>status: provisioning | ready | stopping | stopped</code>, <code>service_name sess-&lt;short&gt;</code>, <code>node</code>, <code>ROS_DOMAIN_ID int 100–250</code>, <code>created_at</code>, <code>idempotency_key</code> 24h. Rationale: ULID sorts by time for cursor polls; idempotency key makes start-of-class retries safe. Index per hot query: <code>user → session_id</code> for gateway, <code>status → list</code> for admin.</li>
-<li>Node record: <code>node_id</code>, <code>hostname</code>, <code>cpu</code>, <code>ram_gb</code>, <code>gpu string</code>, <code>status: pending | approved | joined | denied</code>, <code>k3s_token_issued bool</code>, <code>created_at</code>. Rationale: one-time token flag stops double-mint. Index: <code>status</code>.</li>
-<li>Home PVC: <code>pvc-sess-&lt;short&gt;</code>, 5Gi, <code>ReadWriteOnce</code>, retained until DELETE plus 2-day TTL sweeper. Rationale: code survives pod crash, not semester. Uses <code>data-storage</code>: file plus PVC wins at 150 rows; no shard key needed.</li>
-<li>K3s objects per session: Deployment plus Service, labels <code>app=ldndrc-session</code>, <code>session=&lt;id&gt;</code>, <code>user=&lt;hash&gt;</code>. Rationale: label selector is the gateway resolver without extra DB hop.</li>
-<li>TTLs and retention: session cookie 24h, CSRF token per login, idempotency keys 24h, gateway negative cache 5s for <code>provisioning</code>, metrics 7 days local, logs 2 days hot then drop. Image tags immutable (<code>:jazzy-harmonic-&lt;sha&gt;</code>), never <code>:latest</code> for sessions.</li>
+<li><span class="term" data-term="session" tabindex="0">Session</span> record: <code>session_id ULID</code>, <code>user</code>, <code>status: provisioning | ready | stopping | stopped</code>, <code>service_name sess-&lt;short&gt;</code>, <code>node</code>, <code>ROS_DOMAIN_ID int 100–250</code>, <code>created_at</code>, <code>idempotency_key</code> 24h. Rationale: ULID sorts by time for cursor polls; idempotency key makes start-of-class retries safe. Index per hot query: <code>user → session_id</code> for <span class="term" data-term="gateway" tabindex="0">gateway</span>, <code>status → list</code> for admin.</li>
+<li><span class="term" data-term="node" tabindex="0">Node</span> record: <code>node_id</code>, <code>hostname</code>, <code>cpu</code>, <code>ram_gb</code>, <code>gpu string</code>, <code>status: pending | approved | joined | denied</code>, <code>k3s_token_issued bool</code>, <code>created_at</code>. Rationale: one-time token flag stops double-mint. Index: <code>status</code>.</li>
+<li>Home <span class="term" data-term="pvc" tabindex="0">PVC</span>: <code>pvc-sess-&lt;short&gt;</code>, 5Gi, <code>ReadWriteOnce</code>, retained until DELETE plus 2-day TTL sweeper. Rationale: code survives <span class="term" data-term="pod" tabindex="0">pod</span> crash, not semester. Uses <code>data-storage</code>: file plus <span class="term" data-term="pvc" tabindex="0">PVC</span> wins at 150 rows; no shard key needed.</li>
+<li><span class="term" data-term="k3s" tabindex="0">K3s</span> objects per <span class="term" data-term="session" tabindex="0">session</span>: <span class="term" data-term="deployment" tabindex="0">Deployment</span> plus <span class="term" data-term="service" tabindex="0">Service</span>, labels <code>app=ldndrc-session</code>, <code>session=&lt;id&gt;</code>, <code>user=&lt;hash&gt;</code>. Rationale: label selector is the <span class="term" data-term="gateway" tabindex="0">gateway</span> resolver without extra DB hop.</li>
+<li>TTLs and retention: <span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="cookie" tabindex="0">cookie</span> 24h, <span class="term" data-term="csrf" tabindex="0">CSRF</span> token per login, idempotency keys 24h, <span class="term" data-term="gateway" tabindex="0">gateway</span> negative cache 5s for <code>provisioning</code>, metrics 7 days local, logs 2 days hot then drop. Image tags immutable (<code>:jazzy-harmonic-&lt;sha&gt;</code>), never <code>:latest</code> for <span class="term" data-term="session" tabindex="0">sessions</span>.</li>
 </ul>
 <h2 id="9-key-decisions-trade-offs">9. Key decisions &amp; trade-offs</h2><table>
 <thead>
@@ -341,34 +343,34 @@
 </tr>
 </thead>
 <tbody><tr>
-<td>Single-master K3s on operator laptop</td>
+<td>Single-master <span class="term" data-term="k3s" tabindex="0">K3s</span> on <span class="term" data-term="operator" tabindex="0">operator</span> laptop</td>
 <td>Solves FR-1 at 3.75 writes/s and zero extra hardware</td>
 <td>Worsens master SPOF: sleep, death, or Wi-Fi drop freezes creates</td>
 <td>Change when workshop exceeds 1 day or master loss tolerance under 10 min → standby master plus snapshot</td>
 </tr>
 <tr>
-<td>Per-session Deployment plus Service plus PVC</td>
+<td>Per-<span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="deployment" tabindex="0">Deployment</span> plus <span class="term" data-term="service" tabindex="0">Service</span> plus <span class="term" data-term="pvc" tabindex="0">PVC</span></td>
 <td>Solves FR-1 isolation and FR-4 cleanup at 150 concurrency</td>
 <td>Worsens object sprawl: 450 objects plus scheduler pressure at start spike</td>
 <td>Change when objects exceed 1,000 or ready p90 exceeds 90s → pool plus reuse plus quota</td>
 </tr>
 <tr>
-<td>Host hostnames plus LAN hosts file first</td>
+<td><span class="term" data-term="host" tabindex="0">Host</span> hostnames plus LAN <span class="term" data-term="host" tabindex="0">hosts</span> file first</td>
 <td>Solves FR-2 today with zero DNS ops</td>
 <td>Worsens onboarding toil: 150 edits plus stale entries plus <code>.local</code> collisions</td>
 <td>Change when setup time exceeds 30 min or second room appears → LAN DNS with 60s TTL</td>
 </tr>
 <tr>
-<td>Cookie gateway in Go panel</td>
-<td>Solves FR-2 single login across 4 hosts</td>
-<td>Worsens panel blast radius: gateway bug or CPU stall hits all tabs</td>
-<td>Change when gateway p99 exceeds 100ms for 5 min → split gateway Deployment with 2 replicas</td>
+<td><span class="term" data-term="cookie" tabindex="0">Cookie</span> <span class="term" data-term="gateway" tabindex="0">gateway</span> in Go panel</td>
+<td>Solves FR-2 single login across 4 <span class="term" data-term="host" tabindex="0">hosts</span></td>
+<td>Worsens panel blast radius: <span class="term" data-term="gateway" tabindex="0">gateway</span> bug or CPU stall hits all tabs</td>
+<td>Change when <span class="term" data-term="gateway" tabindex="0">gateway</span> p99 exceeds 100ms for 5 min → split <span class="term" data-term="gateway" tabindex="0">gateway</span> <span class="term" data-term="deployment" tabindex="0">Deployment</span> with 2 replicas</td>
 </tr>
 <tr>
 <td>Time-sliced single GPU times 4</td>
 <td>Solves sim for 4 users per GPU per V-gpu</td>
 <td>Worsens frame jitter under contention: 4 sims share one encoder</td>
-<td>Change when scene p99 exceeds 500ms or encoder above 90% → cap 2 per GPU or add Hosts</td>
+<td>Change when scene p99 exceeds 500ms or encoder above 90% → cap 2 per GPU or add <span class="term" data-term="host" tabindex="0">Hosts</span></td>
 </tr>
 <tr>
 <td>JSON file store, reconcile on boot</td>
@@ -379,7 +381,7 @@
 <tr>
 <td>Pre-pull 10GB image night before</td>
 <td>Solves 150GB pull storm per V-image</td>
-<td>Worsens disk: 10GB pinned per Host plus slow first cache</td>
+<td>Worsens disk: 10GB pinned per <span class="term" data-term="host" tabindex="0">Host</span> plus slow first cache</td>
 <td>Change when disk above 80% or image weekly → registry mirror on master</td>
 </tr>
 <tr>
@@ -401,14 +403,14 @@
 <tbody><tr>
 <td>Master laptop sleeps or dies</td>
 <td>Creates hang, running sims keep rendering briefly</td>
-<td>Fail closed for creates, fail open for running pods; show read-only banner</td>
-<td>Wake plus K3s restart, snapshot restore if etcd corrupt, staggered re-poll with jitter</td>
+<td>Fail closed for creates, fail open for running <span class="term" data-term="pod" tabindex="0">pods</span>; show read-only banner</td>
+<td>Wake plus <span class="term" data-term="k3s" tabindex="0">K3s</span> restart, snapshot restore if <span class="term" data-term="etcd" tabindex="0">etcd</span> corrupt, staggered re-poll with jitter</td>
 </tr>
 <tr>
-<td>Host laptop closes lid</td>
-<td>Its 3 sessions freeze</td>
-<td>Reschedule to spare Host from PVC, show <code>provisioning</code> with queue position</td>
-<td>K3s NotReady after ~40s, evict plus reschedule, image already warm, slow-start gateway</td>
+<td><span class="term" data-term="host" tabindex="0">Host</span> laptop closes lid</td>
+<td>Its 3 <span class="term" data-term="session" tabindex="0">sessions</span> freeze</td>
+<td>Reschedule to spare <span class="term" data-term="host" tabindex="0">Host</span> from <span class="term" data-term="pvc" tabindex="0">PVC</span>, show <code>provisioning</code> with queue position</td>
+<td><span class="term" data-term="k3s" tabindex="0">K3s</span> NotReady after ~40s, evict plus reschedule, image already warm, slow-start <span class="term" data-term="gateway" tabindex="0">gateway</span></td>
 </tr>
 <tr>
 <td>GPU encoder saturated</td>
@@ -417,28 +419,28 @@
 <td>Shed lowest-priority sim, half-open re-admit one per 30s</td>
 </tr>
 <tr>
-<td>Traefik overload</td>
+<td><span class="term" data-term="traefik" tabindex="0">Traefik</span> overload</td>
 <td>Tabs 502 or WS drops</td>
-<td>Direct panel IP emergency page plus session list</td>
+<td>Direct panel IP emergency page plus <span class="term" data-term="session" tabindex="0">session</span> list</td>
 <td>Add second entrypoint, drain plus slow-start, jittered client reconnect</td>
 </tr>
 <tr>
 <td>Panel restart</td>
 <td>In-memory map empty</td>
-<td>Serve from reloaded JSON plus K3s reconcile; creates 503 for 30s</td>
-<td>Reconcile adopt-or-tombstone, warm gateway cache, cap creates at 2/s for 2 min</td>
+<td>Serve from reloaded JSON plus <span class="term" data-term="k3s" tabindex="0">K3s</span> reconcile; creates 503 for 30s</td>
+<td>Reconcile adopt-or-tombstone, warm <span class="term" data-term="gateway" tabindex="0">gateway</span> cache, cap creates at 2/s for 2 min</td>
 </tr>
 <tr>
 <td>Join token replay</td>
 <td>Second laptop denied</td>
-<td>Fail closed with <code>already-minted</code>, operator re-approves manually</td>
-<td>Rotate <code>K3S_JOIN_URL</code> token, audit nodes file</td>
+<td>Fail closed with <code>already-minted</code>, <span class="term" data-term="operator" tabindex="0">operator</span> re-approves manually</td>
+<td>Rotate <code>K3S_JOIN_URL</code> token, audit <span class="term" data-term="node" tabindex="0">nodes</span> file</td>
 </tr>
 <tr>
-<td>PVC full</td>
+<td><span class="term" data-term="pvc" tabindex="0">PVC</span> full</td>
 <td>Save fails with clear error</td>
 <td>Quota 5Gi hard, show cleanup hint, keep sim running</td>
-<td>Delete caches plus old bags, expand to 10Gi only on spare Hosts</td>
+<td>Delete caches plus old bags, expand to 10Gi only on spare <span class="term" data-term="host" tabindex="0">Hosts</span></td>
 </tr>
 <tr>
 <td>LAN AP collapse</td>
@@ -447,10 +449,10 @@
 <td>Move master to wire, halve active sims, staged rejoin per table</td>
 </tr>
 </tbody></table>
-<h2 id="11-scale-evolution-10-100">11. Scale evolution (10× / 100×)</h2><p>Current bottleneck plus signals: CPU bin-pack at ~3 full sims per Host and 690 Mbps LAN; signals are pending pods above 10 for 5 min, Host CPU above 85%, gateway ready p90 above 90s, Traefik WS above 400. Uses <code>scaling-evolution</code> (growth ladder: single box to tiers to replicas to cache to stateless to shard): climb one rung when a number crosses, not before. You live happily at replicated Hosts plus pre-warmed images; sharding and multi-region never appear here.</p>
-<p>What changes at 10× (1,500 users): single room dies — split into cells of 40 users per master with separate <code>/etc/hosts</code> or LAN DNS zone, registry mirror per cell, session TTL 4h plus aggressive DELETE sweeper, panel 2 replicas with shared SQLite on master USB, admission queue with visible position. Metric says time: pending above 30 or LAN above 800 Mbps for 10 min.</p>
-<p>What changes at 100× (15,000 users): LAN model dies — move to building backbone with 10 Gbps, dedicated registry plus image CDN mirror, K3s to multi-master or hosted control, session store to Postgres with read replica, per-tenant quota plus fair-share scheduler. Metric says time: etcd write p99 above 500ms or PVC provision above 2 min. Never claim perfection: weakest dimension today is Host churn tolerance — one lid-close still migrates 3 users with visible freeze.</p>
-<h2 id="12-open-questions-validation">12. Open questions + validation</h2><p>Open: confirm 150 truly concurrent full sims or waves of 40; confirm Host count and GPU models on hand; confirm wired switch available; deferred per archetype with one line each — media blobs: container images via <code>blob-store</code>, no user video store; IDs: ULID plus ROS_DOMAIN_ID via <code>sequencer</code>, no Snowflake needed; search: <code>distributed-search</code> deferred, corpus under 1k files so DB filter wins; logs: <code>distributed-logging</code> minimal file plus <code>kubectl logs</code>, no ELK at 150 users; SLOs: <code>observability</code> (measure what matters: RED plus USE plus burn alerts) with <code>/healthz</code> plus <code>/readyz</code> plus gateway p99, full Prometheus deferred to R7; jobs: <code>task-scheduling</code> as session lease plus sweeper, no Airflow; counters: <code>sharded-counters</code> deferred, hottest count under 10/s so single atomic wins; queue: <code>messaging-streaming</code> deferred to poll plus file; cache: <code>caching</code> (hot-copy tricks: TTL plus herd guards) deferred for control reads, scene deltas only if AP melts; <code>dns</code> (name front door: records plus TTL plus failover) as hosts file now, 60s LAN zone at second room; <code>load-balancing</code> health plus slow-start as above; <code>service-decomposition</code> (service cuts: monolith versus gateway versus workers) stays modular panel until gateway p99 forces split; <code>consistency-coordination</code> single-leader as above.</p>
+<h2 id="11-scale-evolution-10-100">11. Scale evolution (10× / 100×)</h2><p>Current bottleneck plus signals: CPU bin-pack at ~3 full sims per <span class="term" data-term="host" tabindex="0">Host</span> and 690 Mbps LAN; signals are pending <span class="term" data-term="pod" tabindex="0">pods</span> above 10 for 5 min, <span class="term" data-term="host" tabindex="0">Host</span> CPU above 85%, <span class="term" data-term="gateway" tabindex="0">gateway</span> ready p90 above 90s, <span class="term" data-term="traefik" tabindex="0">Traefik</span> WS above 400. Uses <code>scaling-evolution</code> (growth ladder: single box to tiers to replicas to cache to stateless to shard): climb one rung when a number crosses, not before. You live happily at replicated <span class="term" data-term="host" tabindex="0">Hosts</span> plus pre-warmed images; sharding and multi-region never appear here.</p>
+<p>What changes at 10× (1,500 users): single room dies — split into cells of 40 users per master with separate <code>/etc/hosts</code> or LAN DNS zone, registry mirror per cell, <span class="term" data-term="session" tabindex="0">session</span> TTL 4h plus aggressive DELETE sweeper, panel 2 replicas with shared SQLite on master USB, admission queue with visible position. Metric says time: pending above 30 or LAN above 800 Mbps for 10 min.</p>
+<p>What changes at 100× (15,000 users): LAN model dies — move to building backbone with 10 Gbps, dedicated registry plus image CDN mirror, <span class="term" data-term="k3s" tabindex="0">K3s</span> to multi-master or hosted control, <span class="term" data-term="session" tabindex="0">session</span> store to Postgres with read replica, per-tenant quota plus fair-share scheduler. Metric says time: <span class="term" data-term="etcd" tabindex="0">etcd</span> write p99 above 500ms or <span class="term" data-term="pvc" tabindex="0">PVC</span> provision above 2 min. Never claim perfection: weakest dimension today is <span class="term" data-term="host" tabindex="0">Host</span> churn tolerance — one lid-close still migrates 3 users with visible freeze.</p>
+<h2 id="12-open-questions-validation">12. Open questions + validation</h2><p>Open: confirm 150 truly concurrent full sims or waves of 40; confirm <span class="term" data-term="host" tabindex="0">Host</span> count and GPU models on hand; confirm wired switch available; deferred per archetype with one line each — media blobs: container images via <code>blob-store</code>, no user video store; IDs: ULID plus ROS_DOMAIN_ID via <code>sequencer</code>, no Snowflake needed; search: <code>distributed-search</code> deferred, corpus under 1k files so DB filter wins; logs: <code>distributed-logging</code> minimal file plus <code>kubectl logs</code>, no ELK at 150 users; SLOs: <code>observability</code> (measure what matters: RED plus USE plus burn alerts) with <code>/healthz</code> plus <code>/readyz</code> plus <span class="term" data-term="gateway" tabindex="0">gateway</span> p99, full Prometheus deferred to R7; jobs: <code>task-scheduling</code> as <span class="term" data-term="session" tabindex="0">session</span> lease plus sweeper, no Airflow; counters: <code>sharded-counters</code> deferred, hottest count under 10/s so single atomic wins; queue: <code>messaging-streaming</code> deferred to poll plus file; cache: <code>caching</code> (hot-copy tricks: TTL plus herd guards) deferred for control reads, scene deltas only if AP melts; <code>dns</code> (name front door: records plus TTL plus failover) as <span class="term" data-term="host" tabindex="0">hosts</span> file now, 60s LAN zone at second room; <code>load-balancing</code> health plus slow-start as above; <code>service-decomposition</code> (<span class="term" data-term="service" tabindex="0">service</span> cuts: monolith versus <span class="term" data-term="gateway" tabindex="0">gateway</span> versus workers) stays modular panel until <span class="term" data-term="gateway" tabindex="0">gateway</span> p99 forces split; <code>consistency-coordination</code> single-leader as above.</p>
 <ul>
 <li><input disabled="" type="checkbox"> Every §9 row has non-empty Worsens + breaking point.</li>
 <li><input disabled="" type="checkbox"> Every number carries inputs + units; skipped chains justified (YAGNI).</li>
@@ -458,7 +460,7 @@
 <li><input disabled="" type="checkbox"> Every critical dependency has a degrade path (not just &quot;retry&quot;); money paths fail closed.</li>
 <li><input disabled="" type="checkbox"> Mermaid caps hold (10 / 10 / 10 / 10 / 14); arrows numbered sync solid, async dashed.</li>
 <li><input disabled="" type="checkbox"> Coverage sweep: media / IDs / search / logs / SLOs / jobs / counters addressed or explicitly deferred.</li>
-<li><input disabled="" type="checkbox"> No managed-service names/quotas unless user named a cloud (then &quot;verify against current docs&quot;).</li>
+<li><input disabled="" type="checkbox"> No managed-<span class="term" data-term="service" tabindex="0">service</span> names/quotas unless user named a cloud (then &quot;verify against current docs&quot;).</li>
 <li><input disabled="" type="checkbox"> Weakest dimension + current bottleneck + next-magnitude change stated; never claims perfection.</li>
 </ul>
 </div>

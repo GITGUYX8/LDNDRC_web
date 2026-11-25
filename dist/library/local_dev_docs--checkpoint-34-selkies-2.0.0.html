@@ -6,6 +6,8 @@
 <title>Checkpoint 34 — Selkies 2.0.0 Migration (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-34-selkies-2.0.0.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -49,7 +51,7 @@
 Selkies install to upstream 2.0.0 (the 1.6.2 assets were deleted).
 No panel/backend changes.</p>
 <h2 id="what-2-0-0-changed-found-by-inspecting-the-deb">What 2.0.0 changed (found by inspecting the .deb)</h2><ul>
-<li>Pure-Python WebRTC/WebSockets stack (<code>selkies.webrtc</code>, aiortc-style):
+<li>Pure-Python WebRTC/<span class="term" data-term="websocket" tabindex="0">WebSockets</span> stack (<code>selkies.webrtc</code>, aiortc-style):
 <strong>no GStreamer at all</strong> — no gst tarball to download, no gst-env to
 source, no NVENC plugin build.</li>
 <li>Self-contained <code>/opt/selkies</code> venv (python3.12) + <code>/usr/bin/selkies</code>
@@ -68,8 +70,8 @@ deb Depends + VirtualGL (kept, no-op without GPU) via apt, then
 <code>selkies --version</code> assertion. Dropped: GStreamer tarball, wheel +
 venv build, web tarball, js-interposer, audio patch.</li>
 <li><code>images/workspace/bin/start-selkies.sh</code>: Xvfb/IceWM setup kept
-(still valid); launch rewritten for 2.0.0 flags — auth/TLS off
-(gateway owns them), audio off, clipboard/resize/bitrate/framerate
+(still valid); launch rewritten for 2.0.0 flags — auth/<span class="term" data-term="tls" tabindex="0">TLS</span> off
+(<span class="term" data-term="gateway" tabindex="0">gateway</span> owns them), audio off, clipboard/resize/bitrate/framerate
 mapped, TURN/STUN in dash form, <code>auto</code> encoder omits the flag,
 <code>SELKIES_MODE</code> override passthrough. Dead GPU-detection and stale
 <code>encoder</code>/<code>WEB_ROOT</code> references removed.</li>
@@ -86,9 +88,9 @@ mapped, TURN/STUN in dash form, <code>auto</code> encoder omits the flag,
 <li><code>:7682/</code> still 302 → 200 IDE (unchanged).</li>
 </ul>
 <h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>Only the 4 files above + this report (staged for commit). The 8
-join/nodes files + <code>join-cluster.sh</code> untouched/unstaged; untracked
+join/<span class="term" data-term="node" tabindex="0">nodes</span> files + <code>join-cluster.sh</code> untouched/unstaged; untracked
 junk left alone. Test container removed.</p>
-<h2 id="next">Next</h2><p>New immutable tag + <code>docker save</code> → operator <code>sudo k3s ctr images import</code> → live session matrix with desktop 200 (no longer 502) →
+<h2 id="next">Next</h2><p>New immutable tag + <code>docker save</code> → <span class="term" data-term="operator" tabindex="0">operator</span> <code>sudo k3s ctr images import</code> → live <span class="term" data-term="session" tabindex="0">session</span> matrix with desktop 200 (no longer 502) →
 checkpoint. Then: merge with <code>feat/r3-csrf</code>, R2-final, join-time
 image pre-warm.</p>
 </div>

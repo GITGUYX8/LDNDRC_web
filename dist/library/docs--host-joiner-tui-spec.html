@@ -6,6 +6,8 @@
 <title>Host Joiner TUI Spec (`ldndrc-join`) — LDNDRC library</title>
 <meta name="description" content="Source document: docs/host-joiner-tui-spec.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -47,7 +49,7 @@
 <h1 class="page-title">Host Joiner TUI Spec (`ldndrc-join`)</h1>
 <div class="prose"><p>Reference spec for the laptop-side onboarding client: a single static Go
 binary with a keyboard-driven terminal UI (Bubble Tea). Companion to
-<code>onboarding-design-report.md</code> (protocol) and checkpoint 14 (nodes API, P1).
+<code>onboarding-design-report.md</code> (protocol) and checkpoint 14 (<span class="term" data-term="node" tabindex="0">nodes</span> API, P1).
 This document locks the UX decisions agreed 2026-09-06.</p>
 <h2 id="decisions">Decisions</h2><ul>
 <li><strong>Interface: terminal UI (option C).</strong> No Fyne/Wails/Electron. Reasons:
@@ -55,7 +57,7 @@ single static binary, zero signing pain on Linux, works over SSH, tiny
 dependency footprint (<code>bubbletea</code>, <code>bubbles</code>, <code>lipgloss</code> — pure Go, no cgo).</li>
 <li><strong>Zero budget: no code-signing certificates, ever.</strong> Windows SmartScreen
 is handled with a documented &quot;More info → Run anyway&quot; step plus published
-SHA256 checksums. macOS ships a guest-only binary (runs, prints the
+SHA256 checksums. macOS ships a <span class="term" data-term="guest" tabindex="0">guest</span>-only binary (runs, prints the
 browser URL, installs nothing, exits 0) — no agent/toolkit paths there.</li>
 <li><strong>Engine/UI split:</strong> all detection and install logic lives in testable
 non-UI functions. <code>model.go</code>/<code>view.go</code> render state and forward keypresses
@@ -71,7 +73,7 @@ only — they must not contain detection or install logic.</li>
 </li>
 </ul>
 <h3 id="locked-decisions-cited-as-d1-d4-below">Locked decisions (cited as D1–D4 below)</h3><ul>
-<li><strong>D1 — strictness, no override.</strong> A red blocking row ends the Host path.
+<li><strong>D1 — strictness, no override.</strong> A red blocking row ends the <span class="term" data-term="host" tabindex="0">Host</span> path.
 No &quot;continue anyway&quot;.</li>
 <li><strong>D2 — driver rule.</strong> Floor 535 (blocking), amber 535–549 (&quot;works, 550+
 recommended&quot; + upgrade command), green ≥550. <code>lspci</code> proves existence
@@ -108,28 +110,28 @@ blocking rows are green.</p>
 <td><code>runtime.GOOS</code> + version</td>
 <td>recent Linux; Win 10/11 (WSL2 path)</td>
 <td>—</td>
-<td>macOS → Guest ending (no K3s/NVIDIA possible)</td>
+<td>macOS → <span class="term" data-term="guest" tabindex="0">Guest</span> ending (no <span class="term" data-term="k3s" tabindex="0">K3s</span>/NVIDIA possible)</td>
 </tr>
 <tr>
 <td>CPU</td>
 <td>core count</td>
 <td>≥ 8</td>
 <td>—</td>
-<td>&lt; 8 → Guest</td>
+<td>&lt; 8 → <span class="term" data-term="guest" tabindex="0">Guest</span></td>
 </tr>
 <tr>
 <td>RAM</td>
 <td>total physical RAM</td>
 <td>≥ 16 GB</td>
 <td>—</td>
-<td>&lt; 16 GB → Guest</td>
+<td>&lt; 16 GB → <span class="term" data-term="guest" tabindex="0">Guest</span></td>
 </tr>
 <tr>
 <td>GPU</td>
 <td><code>nvidia-smi -L</code></td>
 <td>NVIDIA present</td>
 <td>—</td>
-<td>absent → Guest</td>
+<td>absent → <span class="term" data-term="guest" tabindex="0">Guest</span></td>
 </tr>
 <tr>
 <td>Driver</td>
@@ -148,16 +150,16 @@ blocking rows are green.</p>
 <tr>
 <td>Disk</td>
 <td>free space on <code>/</code></td>
-<td>≥ 25 GB (R6 budget: 10.2 GB workspace image + ~1 GB agent + 5 Gi first-session PVC + ~2 GB headroom ≈ 18–20 GB)</td>
+<td>≥ 25 GB (R6 budget: 10.2 GB <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> + ~1 GB agent + 5 Gi first-<span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pvc" tabindex="0">PVC</span> + ~2 GB headroom ≈ 18–20 GB)</td>
 <td>—</td>
-<td>below → Guest/stop</td>
+<td>below → <span class="term" data-term="guest" tabindex="0">Guest</span>/stop</td>
 </tr>
 <tr>
 <td>Network</td>
 <td>TCP dial master:6443</td>
 <td>reachable</td>
 <td>—</td>
-<td>fail → Join stays locked <em>and</em> red means one of two things: (1) firewall — show exact <code>ufw allow</code> lines; (2) <strong>nothing serves :6443 at all</strong> (e.g. demo master runs k3d, not a real K3s server) — no firewall change fixes that; a real master is required. Observed live 2026-09-12: red-for-absence is correct D1 behavior, not a TUI bug.</td>
+<td>fail → Join stays locked <em>and</em> red means one of two things: (1) firewall — show exact <code>ufw allow</code> lines; (2) <strong>nothing serves :6443 at all</strong> (e.g. demo master runs <span class="term" data-term="k3d" tabindex="0">k3d</span>, not a real <span class="term" data-term="k3s" tabindex="0">K3s</span> server) — no firewall change fixes that; a real master is required. Observed live 2026-09-12: red-for-absence is correct D1 behavior, not a TUI bug.</td>
 </tr>
 <tr>
 <td>Sudo</td>
@@ -168,18 +170,18 @@ blocking rows are green.</p>
 </tr>
 <tr>
 <td>Master</td>
-<td>address set (typed now, mDNS-filled later)</td>
+<td>address set (typed now, <span class="term" data-term="mdns" tabindex="0">mDNS</span>-filled later)</td>
 <td>set</td>
 <td>—</td>
 <td>unset → Join locked</td>
 </tr>
 </tbody></table>
-<p>Failing any blocking gate ends the Host path on Screen 1: browser URL,
+<p>Failing any blocking gate ends the <span class="term" data-term="host" tabindex="0">Host</span> path on Screen 1: browser URL,
 nothing installed, exit 0. <strong>No &quot;continue anyway&quot; override — strictness is
 mandatory (D1).</strong></p>
 <h2 id="driver-rule-detail-d2">Driver rule detail (D2)</h2><ul>
-<li>Floor <strong>535</strong>: the branch where container-toolkit time-slicing and the
-workspace image&#39;s CUDA needs are reliably supported. Below it, GPU sharing
+<li>Floor <strong>535</strong>: the branch where container-toolkit <span class="term" data-term="gpu-timeslicing" tabindex="0">time-slicing</span> and the
+<span class="term" data-term="workspace-image" tabindex="0">workspace image</span>&#39;s CUDA needs are reliably supported. Below it, GPU sharing
 silently misbehaves — hence blocking, not advisory.</li>
 <li>Recommended <strong>550+</strong>: aging-out-of-support window; newer toolkit releases
 assume newer branches.</li>
@@ -189,12 +191,12 @@ but not loaded → enroll key or disable Secure Boot), <code>r</code> to re-run 
 single check. Informational only — never executes (see consent rule).</li>
 </ul>
 <h2 id="screens">Screens</h2><ol>
-<li><strong>Checks</strong> — matrix above; Guest ending here for unqualified machines.</li>
+<li><strong>Checks</strong> — matrix above; <span class="term" data-term="guest" tabindex="0">Guest</span> ending here for unqualified machines.</li>
 <li><strong>Fix guidance</strong> — focused red row → fix card (meaning + exact command +
 re-run). Drivers: info only, acquisition is gated per consent rule.</li>
 <li><strong>Join</strong> — master field, Join keypress, ordered step log:
 register → approval wait → short-lived token (never on disk, never shown
-in full) → toolkit install if consented → K3s agent install with
+in full) → toolkit install if consented → <span class="term" data-term="k3s" tabindex="0">K3s</span> agent install with
 <code>role=host</code> → verify Ready + labelled → success + URLs + leave
 instructions. Approval wait: 5s poll, 15-min timeout, clean
 denied/timeout paths.</li>
@@ -206,9 +208,9 @@ fix command + <code>d</code> to write <code>ldndrc-diagnostics-&lt;timestamp&gt;
 laptop, not the VM. On qualify: if WSL2 is present (<code>wsl --status</code>), the
 binary copies the Linux build into the WSL filesystem and re-runs steps
 3–9 inside it. If WSL2 is absent: guided steps only (<code>wsl --install</code>,
-reboot, mirrored networking on Win 11 22H2+ so Flannel VXLAN UDP 8472 is
+reboot, mirrored networking on Win 11 22H2+ so <span class="term" data-term="flannel" tabindex="0">Flannel</span> <span class="term" data-term="vxlan" tabindex="0">VXLAN</span> UDP 8472 is
 reachable inbound) — no silent auto-install. If mirrored networking is
-unavailable: graceful Guest-mode fallback with explanation.</p>
+unavailable: graceful <span class="term" data-term="guest" tabindex="0">Guest</span>-mode fallback with explanation.</p>
 <h2 id="diagnostics-upload-vs-network-health-d3">Diagnostics upload vs network health (D3)</h2><ul>
 <li>Local bundle file is <strong>always</strong> written first — the manual path never
 depends on the network.</li>
@@ -249,7 +251,7 @@ terminal needed) + golden snapshots of the check screen.</li>
 <li><input checked="" disabled="" type="checkbox"> Approval-polling as the network-health signal (D3, locked 2026-09-06).</li>
 <li><input disabled="" type="checkbox"> Windows SmartScreen-bypass + checksum-verify docs.</li>
 <li><input disabled="" type="checkbox"> <code>GOOS=windows</code> compile check in CI.</li>
-<li><input disabled="" type="checkbox"> P2 mDNS to pre-fill the master field (server side first).</li>
+<li><input disabled="" type="checkbox"> P2 <span class="term" data-term="mdns" tabindex="0">mDNS</span> to pre-fill the master field (server side first).</li>
 </ul>
 </div>
 </div>

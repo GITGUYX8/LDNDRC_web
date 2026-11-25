@@ -6,6 +6,8 @@
 <title>Checkpoint 31 — R6 Disk-Spec Budget (detailed) — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-31-r6-disk-spec.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -46,15 +48,15 @@
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-31-r6-disk-spec.md · 1.4 KB</div>
 <h1 class="page-title">Checkpoint 31 — R6 Disk-Spec Budget (detailed)</h1>
 <div class="prose"><h2 id="context">Context</h2><p>Small R6 chunk on <code>feat/r6-workspace-image</code>: the join flow&#39;s 25GB
-free-space gate predates the 10.2GB workspace image and its math
-still described the stand-in era. Per operator decision: document
+free-space gate predates the 10.2GB <span class="term" data-term="workspace-image" tabindex="0">workspace image</span> and its math
+still described the stand-in era. Per <span class="term" data-term="operator" tabindex="0">operator</span> decision: document
 the real budget, keep the threshold. No behavior change, no
 threshold change.</p>
 <h2 id="changes-2-files">Changes (2 files)</h2><ul>
 <li><code>control-panel/internal/join/hardware.go</code>: budget comment on
 <code>DefaultThresholds</code> — 10.2GB image + ~1GB agent + 5Gi
-first-session PVC + ~2GB headroom ≈ 18–20GB, so 25GB holds with
-margin. Revisit triggers noted: 3+ local sessions (15Gi PVCs) or
+first-<span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="pvc" tabindex="0">PVC</span> + ~2GB headroom ≈ 18–20GB, so 25GB holds with
+margin. Revisit triggers noted: 3+ local <span class="term" data-term="session" tabindex="0">sessions</span> (15Gi <span class="term" data-term="pvc" tabindex="0">PVCs</span>) or
 image past ~12GB.</li>
 <li><code>docs/host-joiner-tui-spec.md</code>: Disk row green-cell updated from
 the stale &quot;(join ~1.5 GB + first workload pull ~5–10 GB +
@@ -66,11 +68,11 @@ headroom)&quot; to the R6 budget. Spec and code agree again.</li>
 (<code>diskFreeGB(&quot;/&quot;)</code>) untouched.</li>
 </ul>
 <h2 id="dirty-tree-discipline">Dirty-tree discipline</h2><p>Only the 2 spec files above + this report (staged for commit). The
-8 join/nodes behavior files + <code>join-cluster.sh</code> untouched/unstaged;
+8 join/<span class="term" data-term="node" tabindex="0">nodes</span> behavior files + <code>join-cluster.sh</code> untouched/unstaged;
 untracked junk left alone.</p>
-<h2 id="next">Next</h2><p>Live matrix chunk: operator <code>sudo k3s ctr images import</code>, then
-<code>SESSION_IMAGE</code> flip (committed) → session → ready with real
-services → checkpoint. Still queued: Selkies 2.0.0 migration,
+<h2 id="next">Next</h2><p>Live matrix chunk: <span class="term" data-term="operator" tabindex="0">operator</span> <code>sudo k3s ctr images import</code>, then
+<code>SESSION_IMAGE</code> flip (committed) → <span class="term" data-term="session" tabindex="0">session</span> → ready with real
+<span class="term" data-term="service" tabindex="0">services</span> → checkpoint. Still queued: Selkies 2.0.0 migration,
 registry-mirror / join-time pre-warm step, R2-final.</p>
 </div>
 </div>

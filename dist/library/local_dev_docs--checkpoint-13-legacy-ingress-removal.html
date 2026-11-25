@@ -6,6 +6,8 @@
 <title>Checkpoint 13 — Legacy Ingress Removal — LDNDRC library</title>
 <meta name="description" content="Source document: local_dev_docs/checkpoint-13-legacy-ingress-removal.md">
 <link rel="stylesheet" href="../assets/theme.css">
+<script defer src="../assets/glossary.js"></script>
+<script defer src="../assets/tooltip.js"></script>
 <script defer src="../assets/vendor/mermaid.min.js"></script>
 <script defer src="../assets/mermaid-viewer.js"></script>
 
@@ -46,12 +48,12 @@
   <div class="eyebrow" style="margin-bottom:10px">source document · local_dev_docs/checkpoint-13-legacy-ingress-removal.md · 2.5 KB</div>
 <h1 class="page-title">Checkpoint 13 — Legacy Ingress Removal</h1>
 <div class="prose"><h2 id="the-big-picture-first">The big picture first</h2><p>Since checkpoint 7 the cluster has carried two front doors: the new
-host-based ingress (<code>control</code>, <code>editor</code>, <code>desktop</code>, <code>gazebo</code> subdomains)
+<span class="term" data-term="host" tabindex="0">host</span>-based <span class="term" data-term="ingress" tabindex="0">ingress</span> (<code>control</code>, <code>editor</code>, <code>desktop</code>, <code>gazebo</code> subdomains)
 and the legacy path-based one (<code>/code</code>, <code>/stream</code>, <code>/sim</code> on the bare
-hostname, backed by a shared Service and a fixed 3-replica StatefulSet).
-The legacy door was kept purely as rollback insurance. With the host routes
+hostname, backed by a shared <span class="term" data-term="service" tabindex="0">Service</span> and a fixed 3-replica StatefulSet).
+The legacy door was kept purely as rollback insurance. With the <span class="term" data-term="host" tabindex="0">host</span> routes
 proven live across checkpoints 9 and 12, the insurance expired — and dead
-routes are a footgun (a future deploy could resurrect the shared-service
+routes are a footgun (a future deploy could resurrect the shared-<span class="term" data-term="service" tabindex="0">service</span>
 model by accident). This checkpoint removed them.</p>
 <p>Think of it as taking down the old wooden sign after the new neon one has
 run glitch-free for weeks.</p>
@@ -65,15 +67,15 @@ run glitch-free for weeks.</p>
 </thead>
 <tbody><tr>
 <td><code>manifests/ros2-ingress.yaml</code></td>
-<td>Never applied live; host ingress verified instead</td>
+<td>Never applied live; <span class="term" data-term="host" tabindex="0">host</span> <span class="term" data-term="ingress" tabindex="0">ingress</span> verified instead</td>
 </tr>
 <tr>
 <td><code>manifests/ros2-service.yaml</code></td>
-<td>Only referenced by the deleted ingress</td>
+<td>Only referenced by the deleted <span class="term" data-term="ingress" tabindex="0">ingress</span></td>
 </tr>
 <tr>
 <td><code>manifests/ros2-platform.yaml</code></td>
-<td>Fixed StatefulSet superseded by per-session Deployments</td>
+<td>Fixed StatefulSet superseded by per-<span class="term" data-term="session" tabindex="0">session</span> <span class="term" data-term="deployment" tabindex="0">Deployments</span></td>
 </tr>
 <tr>
 <td>Stale &quot;keep until verified&quot; comments</td>
@@ -87,11 +89,11 @@ design narrative (historical record of how the architecture evolved).</p>
 <li>Repo-wide search: no Go file, script, or live manifest references
 <code>ros2-platform-svc</code> or the old paths. Only docs mention them.</li>
 <li>Live cluster check: <code>kubectl get ingress -A</code> shows solely
-<code>ldndrc-control-panel</code>; no StatefulSet or shared Service ever existed
-in the <code>ldndrc</code> namespace.</li>
+<code>ldndrc-control-panel</code>; no StatefulSet or shared <span class="term" data-term="service" tabindex="0">Service</span> ever existed
+in the <code>ldndrc</code> <span class="term" data-term="namespace" tabindex="0">namespace</span>.</li>
 <li>All 9 remaining manifests still YAML-parse.</li>
-<li>Gateway re-verified after removal: editor 200, desktop/gazebo 502
-(stand-in, by design), no-cookie 401, health 200.</li>
+<li><span class="term" data-term="gateway" tabindex="0">Gateway</span> re-verified after removal: editor 200, desktop/<span class="term" data-term="gazebo" tabindex="0">gazebo</span> 502
+(stand-in, by design), no-<span class="term" data-term="cookie" tabindex="0">cookie</span> 401, health 200.</li>
 <li>The old <code>/code</code> path on the bare hostname now returns 404 — proof no
 route (and therefore no user flow) depended on it.</li>
 <li><code>git diff --check</code> clean.</li>
@@ -105,20 +107,20 @@ route (and therefore no user flow) depended on it.</li>
 </thead>
 <tbody><tr>
 <td>Three deleted manifests</td>
-<td>The old shared-service front door is gone.</td>
+<td>The old shared-<span class="term" data-term="service" tabindex="0">service</span> front door is gone.</td>
 </tr>
 <tr>
-<td>Gateway re-check</td>
-<td>Host routes behave exactly as before the removal.</td>
+<td><span class="term" data-term="gateway" tabindex="0">Gateway</span> re-check</td>
+<td><span class="term" data-term="host" tabindex="0">Host</span> routes behave exactly as before the removal.</td>
 </tr>
 <tr>
-<td>Bare-host <code>/code</code> → 404</td>
+<td>Bare-<span class="term" data-term="host" tabindex="0">host</span> <code>/code</code> → 404</td>
 <td>Confirms nothing depended on the legacy paths.</td>
 </tr>
 </tbody></table>
 <h2 id="what-s-next">What&#39;s next</h2><ul>
-<li><input disabled="" type="checkbox"> R3 CSRF protection on state-changing browser requests.</li>
-<li><input disabled="" type="checkbox"> R2 session persistence (restarts still orphan K3s resources).</li>
+<li><input disabled="" type="checkbox"> R3 <span class="term" data-term="csrf" tabindex="0">CSRF</span> protection on state-changing browser requests.</li>
+<li><input disabled="" type="checkbox"> R2 <span class="term" data-term="session" tabindex="0">session</span> persistence (restarts still orphan <span class="term" data-term="k3s" tabindex="0">K3s</span> resources).</li>
 <li><input disabled="" type="checkbox"> R4 student frontend UI against the verified API.</li>
 <li><input disabled="" type="checkbox"> Commit this checkpoint&#39;s changes when ready.</li>
 </ul>
