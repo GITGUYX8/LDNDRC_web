@@ -4,11 +4,6 @@ A standalone, static documentation site for LDNDRC. It presents the project as a
 map of concepts rather than a folder of files: each node is a topic, each arrow is
 a prerequisite, and every topic can build a route from the roots to itself.
 
-The interaction model and visual language follow
-[vimjoyer.com/nixmap](https://vimjoyer.com/nixmap/) — a pannable SVG map, a
-side sheet for reading, and a status bar — re-implemented from the design tokens
-rather than copied. No nixmap assets, CSS, mascot, or simulations are used.
-
 ## Build and run
 
 ```bash
