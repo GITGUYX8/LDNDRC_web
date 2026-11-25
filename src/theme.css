@@ -389,12 +389,12 @@ code, pre, kbd, samp { font-family: var(--font-mono); font-variant-ligatures: no
   color: var(--text-faint);
   cursor: pointer;
   font: 700 1.2rem var(--font-mono);
-  opacity: .35;
+  opacity: .8;
   transition: opacity var(--quick) ease, background var(--quick) ease, color var(--quick) ease;
 }
 .sheet-expand:hover, .sheet-expand:focus-visible { opacity: 1; color: var(--text); background: var(--line); }
-.sheet-expand-left { left: -13px; }
-.sheet-expand-right { right: -13px; }
+.sheet-expand-left { left: 8px; }
+.sheet-expand-right { right: 8px; }
 
 .sheet-body {
   padding: 6px 22px 24px;
@@ -918,6 +918,7 @@ body.standalone { overflow: auto; }
     border-radius: 0;
     transform: translateY(100%);
   }
+  .sheet.maximized { width: 100%; }
   .sheet.open { transform: none; }
   .sheet-head { padding-top: 26px; }
   .sheet-expand { display: none; }
