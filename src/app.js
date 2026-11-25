@@ -795,6 +795,19 @@
   }
 
   document.getElementById("sheet-close").addEventListener("click", closeSheet);
+  function toggleSheetMax() {
+    sheet.classList.toggle("maximized");
+    var expanded = sheet.classList.contains("maximized");
+    document.querySelectorAll(".sheet-expand").forEach(function (button) {
+      button.textContent = expanded ? "›" : (button.classList.contains("sheet-expand-left") ? "‹" : "›");
+      button.setAttribute("aria-label", expanded ? "Restore document panel" : "Expand document panel");
+      button.setAttribute("title", expanded ? "Restore document panel" : "Expand document panel");
+    });
+    if (state.route) frameRoute();
+    else if (state.topic) frameIds([state.topic].concat((byId[state.topic] || {}).requires || []));
+  }
+  document.getElementById("sheet-expand-left").addEventListener("click", toggleSheetMax);
+  document.getElementById("sheet-expand-right").addEventListener("click", toggleSheetMax);
 
   function metaLine(t) {
     var dom = domById[t.domain] || { name: "Topic" };

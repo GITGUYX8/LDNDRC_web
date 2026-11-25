@@ -322,6 +322,9 @@ code, pre, kbd, samp { font-family: var(--font-mono); font-variant-ligatures: no
   overflow: hidden;
 }
 .sheet.open { transform: none; opacity: 1; }
+.sheet.maximized {
+  width: min(900px, calc(100vw - 24px));
+}
 .sheet::before {
   content: "";
   position: absolute;
@@ -373,6 +376,25 @@ code, pre, kbd, samp { font-family: var(--font-mono); font-variant-ligatures: no
 }
 .sheet-close:hover { color: var(--text); background: color-mix(in srgb, var(--line) 70%, var(--surface-raised)); }
 .sheet-close svg { width: 16px; height: 16px; }
+.sheet-expand {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 25px;
+  height: 58px;
+  margin-top: -29px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--surface-raised);
+  color: var(--text-faint);
+  cursor: pointer;
+  font: 700 1.2rem var(--font-mono);
+  opacity: .35;
+  transition: opacity var(--quick) ease, background var(--quick) ease, color var(--quick) ease;
+}
+.sheet-expand:hover, .sheet-expand:focus-visible { opacity: 1; color: var(--text); background: var(--line); }
+.sheet-expand-left { left: -13px; }
+.sheet-expand-right { right: -13px; }
 
 .sheet-body {
   padding: 6px 22px 24px;
@@ -898,6 +920,7 @@ body.standalone { overflow: auto; }
   }
   .sheet.open { transform: none; }
   .sheet-head { padding-top: 26px; }
+  .sheet-expand { display: none; }
   .status-bar .hide-sm { display: none; }
   .route-banner { top: auto; bottom: 10px; }
   .legend { display: none; }
